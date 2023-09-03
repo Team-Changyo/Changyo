@@ -8,5 +8,14 @@ spring:
   h2:
     console:
       enabled: true
+  # jpa setting
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+    open-in-view: true
 
 
