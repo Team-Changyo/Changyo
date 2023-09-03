@@ -18,4 +18,9 @@ spring:
         format_sql: true
     open-in-view: true
 
+# log setting
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.shinhan.changyo: debug
 
