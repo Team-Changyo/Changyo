@@ -8,11 +8,7 @@ import { usePathMatch } from 'hooks/usePathMatch';
 import { Link, useNavigate } from 'react-router-dom';
 import { TabbarCenterItemWrapper, TabbarItemWrapper } from './style';
 
-interface TabbarItemProps {
-	pathname: string;
-}
-
-export function TabbarItem({ pathname }: TabbarItemProps) {
+export function TabbarItem({ pathname }: { pathname: string }) {
 	const $isActive = usePathMatch(pathname);
 
 	const render = (() => {
