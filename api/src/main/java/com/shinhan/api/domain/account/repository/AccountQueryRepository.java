@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
+import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -27,6 +28,21 @@ public class AccountQueryRepository {
             ))
             .from(account)
             .where(account.accountNumber.eq(accountNumber))
+            .fetchOne();
+    }
+
+    public CustomerNameResponse getCustomerName(String bankCode, String accountNumber) {
+        return queryFactory
+            .select(Projections.constructor(CustomerNameResponse.class,
+                Expressions.asString(bankCode),
+                Expressions.asString(accountNumber),
+                account.customerName
+            ))
+            .from(account)
+            .where(
+                account.bankCode.eq(bankCode),
+                account.accountNumber.eq(accountNumber)
+            )
             .fetchOne();
     }
 }
