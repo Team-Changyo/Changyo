@@ -4,6 +4,7 @@ import AccountPageLayout from 'layouts/page/AccountPageLayout';
 import AccountSummary from 'components/organisms/account/AccountSummary';
 import AccountFilterList from 'components/organisms/account/AccountFilterList';
 import AccountList from 'components/organisms/account/AccountList';
+import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
 
 function AccountPage() {
 	const [selectedCode, setSelectedCode] = useState('000');
@@ -12,6 +13,7 @@ function AccountPage() {
 	return (
 		<PageLayout>
 			<AccountPageLayout
+				Navbar={<MainTabNavbar tabName="내 계좌" />}
 				AccountSummary={<AccountSummary accountCnt={2} totalMoney={200501} />}
 				AccountFilterList={
 					<AccountFilterList bankCodes={[]} selectedCode={selectedCode} setSelectedCode={setSelectedCode} />

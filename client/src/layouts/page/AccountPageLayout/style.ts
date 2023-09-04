@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 export const AccountPageLayoutContainer = styled.div`
 	position: relative;
-	margin-top: 44px;
+	margin-top: 3rem;
 
 	.account-summary {
 		padding: 2rem 0;

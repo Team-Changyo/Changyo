@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const NavbarWrapper = styled.aside`
+export const NavbarLayoutWrapper = styled.aside`
 	position: fixed;
 	right: 0;
 	left: 0;
@@ -8,11 +8,11 @@ export const NavbarWrapper = styled.aside`
 	z-index: 20;
 `;
 
-export const NavbarContainer = styled.nav`
+export const NavbarLayoutContainer = styled.nav`
 	display: flex;
 	align-items: center;
 	width: 100%;
 	max-width: 500px;
-	height: 44px;
+	height: 3rem;
 	margin: 0 auto;
 `;
