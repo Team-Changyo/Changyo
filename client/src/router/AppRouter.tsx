@@ -6,10 +6,12 @@ import AppLayout from 'layouts/common/AppLayout';
 import { GlobalStyles } from 'styles/GlobalStyles';
 import { RecoilRoot } from 'recoil';
 import Navbar from 'components/organisms/common/Navbar';
+import { GlobalFonts } from 'styles/GlobalFonts';
 
 function AppRouter() {
 	return (
 		<RecoilRoot>
+			<GlobalFonts />
 			<GlobalStyles />
 			<BrowserRouter>
 				<AppLayout>
