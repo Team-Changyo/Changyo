@@ -6,5 +6,5 @@ export const PageLayoutContainer = styled.div`
 	min-height: 100vh;
 	max-height: 100vh;
 	overflow-y: scroll;
-	padding: 0 10px;
+	padding: 0 15px;
 `;
