@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
 import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
+import com.shinhan.api.domain.account.Account;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -44,5 +45,12 @@ public class AccountQueryRepository {
                 account.accountNumber.eq(accountNumber)
             )
             .fetchOne();
+    }
+
+    public Account getAccount(String accountNumber) {
+        return queryFactory
+                .selectFrom(account)
+                .where(account.accountNumber.eq(accountNumber))
+                .fetchOne();
     }
 }
