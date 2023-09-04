@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+spring:
+  # database setting
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  # h2 setting
+  h2:
+    console:
+      enabled: true
+  # jpa setting
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+    open-in-view: true
+
+# log setting
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.shinhan.api: debug
+
