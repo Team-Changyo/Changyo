@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import AccountPage from 'pages/AccountPage';
-import Tabbar from 'components/organisms/common/Tabbar';
-import AppLayout from 'layouts/common/AppLayout';
 import { GlobalStyles } from 'styles/GlobalStyles';
 import { RecoilRoot } from 'recoil';
-import Navbar from 'components/organisms/common/Navbar';
 import { GlobalFonts } from 'styles/GlobalFonts';
+import Tabbar from 'components/organisms/common/Tabbar';
+import AppLayout from 'layouts/common/AppLayout';
+import AccountPage from 'pages/AccountPage';
+import QRPage from 'pages/QRPage';
+import DepositPage from 'pages/DepositPage';
 
 function AppRouter() {
 	return (
@@ -15,11 +16,10 @@ function AppRouter() {
 			<GlobalStyles />
 			<BrowserRouter>
 				<AppLayout>
-					<Navbar />
 					<Routes>
 						<Route path="/" element={<AccountPage />} />
-						<Route path="/qr" element={<AccountPage />} />
-						<Route path="/deposit" element={<AccountPage />} />
+						<Route path="/qr" element={<QRPage />} />
+						<Route path="/deposit" element={<DepositPage />} />
 					</Routes>
 					<Tabbar />
 				</AppLayout>
