@@ -1,3 +1,4 @@
+// imgs
 declare module '*.jpg';
 declare module '*.png';
 declare module '*.jpeg';
@@ -9,3 +10,6 @@ declare module '*.svg' {
 	const src: string;
 	export default src;
 }
+
+// font
+declare module '*.otf';
