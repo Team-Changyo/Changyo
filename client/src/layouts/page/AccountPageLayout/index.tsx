@@ -3,14 +3,16 @@ import { AccountPageLayoutContainer } from './style';
 
 interface AccountPageLayoutProps {
 	AccountSummary: ReactNode;
-	AccountInfo: ReactNode;
+	AccountFilterList: ReactNode;
+	AccountList: ReactNode;
 }
 
-function AccountPageLayout({ AccountSummary, AccountInfo }: AccountPageLayoutProps) {
+function AccountPageLayout({ AccountSummary, AccountFilterList, AccountList }: AccountPageLayoutProps) {
 	return (
 		<AccountPageLayoutContainer>
 			<div className="account-summary">{AccountSummary}</div>
-			<div className="account-info">{AccountInfo}</div>
+			<div className="account-filter">{AccountFilterList}</div>
+			<div className="account-list">{AccountList}</div>
 		</AccountPageLayoutContainer>
 	);
 }
