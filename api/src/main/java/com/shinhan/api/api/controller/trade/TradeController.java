@@ -18,7 +18,7 @@ public class TradeController {
     private final TradeQueryService tradeQueryService;
 
     @PostMapping("/v1/search/transaction")
-    public ApiResponse<TradeResponse> getTrade(@RequestBody TradeRequest request) {
+    public ApiResponse<TradeResponse> getTrades(@RequestBody TradeRequest request) {
         TradeResponse response = tradeQueryService.getTrade(request.getAccountNumber());
         return ApiResponse.ok(response);
     }
