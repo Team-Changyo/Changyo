@@ -2,7 +2,9 @@ package com.shinhan.api.docs.account;
 
 import com.shinhan.api.api.controller.account.AccountController;
 import com.shinhan.api.api.controller.account.request.AccountRequest;
+import com.shinhan.api.api.controller.account.request.CustomerNameRequest;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
+import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.api.service.account.AccountQueryService;
 import com.shinhan.api.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -75,6 +77,58 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         .description("지불가능금액")
                 )
             ));
+    }
 
+    @DisplayName("예금주 실명조회 API")
+    @Test
+    void getCustomerName() throws Exception {
+
+        CustomerNameRequest request = CustomerNameRequest.builder()
+            .bankCode("088")
+            .accountNumber("110184999999")
+            .build();
+
+        CustomerNameResponse response = CustomerNameResponse.builder()
+            .bankCode("088")
+            .accountNumber("110184999999")
+            .customerName("김신한")
+            .build();
+
+        given(accountQueryService.getCustomerName(anyString(), anyString()))
+            .willReturn(response);
+
+        mockMvc.perform(
+                post("/v1/search/name")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("account-name",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("bankCode").type(JsonFieldType.STRING)
+                        .description("입금은행코드"),
+                    fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                        .description("입금계좌번호")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("코드"),
+                    fieldWithPath("status").type(JsonFieldType.STRING)
+                        .description("상태"),
+                    fieldWithPath("message").type(JsonFieldType.STRING)
+                        .description("메시지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                        .description("응답데이터"),
+                    fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                        .description("입금은행코드"),
+                    fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                        .description("입금계좌번호"),
+                    fieldWithPath("data.customerName").type(JsonFieldType.STRING)
+                        .description("입금계좌성명")
+                )
+            ));
     }
 }
