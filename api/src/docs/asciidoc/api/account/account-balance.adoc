@@ -1,0 +1,10 @@
+[[account-balance]]
+=== 계좌잔액조회
+
+==== HTTP Request
+include::{snippets}/account-balance/http-request.adoc[]
+include::{snippets}/account-balance/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/account-balance/http-response.adoc[]
+include::{snippets}/account-balance/response-fields.adoc[]

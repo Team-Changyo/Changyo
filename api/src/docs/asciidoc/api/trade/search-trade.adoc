@@ -1,0 +1,10 @@
+[[search-trade]]
+=== 거래내역조회
+
+==== HTTP Request
+include::{snippets}/search-trade/http-request.adoc[]
+include::{snippets}/search-trade/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-trade/http-response.adoc[]
+include::{snippets}/search-trade/response-fields.adoc[]

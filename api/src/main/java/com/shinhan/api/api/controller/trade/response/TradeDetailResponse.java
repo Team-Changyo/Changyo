@@ -1,5 +1,6 @@
 package com.shinhan.api.api.controller.trade.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -15,6 +16,7 @@ public class TradeDetailResponse {
     private String status;
     private String dealershipName;
 
+    @Builder
     public TradeDetailResponse(String tradeDate, String tradeTime, String summary, int withdrawalAmount, int depositAmount, String content, int balance, String status, String dealershipName) {
         this.tradeDate = tradeDate;
         this.tradeTime = tradeTime;

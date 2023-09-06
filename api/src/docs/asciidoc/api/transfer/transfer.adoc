@@ -1,0 +1,10 @@
+[[transfer]]
+=== 이체(원화)
+
+==== HTTP Request
+include::{snippets}/transfer/http-request.adoc[]
+include::{snippets}/transfer/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/transfer/http-response.adoc[]
+include::{snippets}/transfer/response-fields.adoc[]

@@ -1,0 +1,10 @@
+[[transfer-one]]
+=== 1원 이체
+
+==== HTTP Request
+include::{snippets}/transfer-one/http-request.adoc[]
+include::{snippets}/transfer-one/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/transfer-one/http-response.adoc[]
+include::{snippets}/transfer-one/response-fields.adoc[]

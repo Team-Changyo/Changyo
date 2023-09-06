@@ -1,0 +1,10 @@
+[[account-name]]
+=== 예금주 실명조회
+
+==== HTTP Request
+include::{snippets}/account-name/http-request.adoc[]
+include::{snippets}/account-name/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/account-name/http-response.adoc[]
+include::{snippets}/account-name/response-fields.adoc[]

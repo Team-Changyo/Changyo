@@ -1,0 +1,27 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 신한 해커톤 REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Account-API]]
+== Account API
+
+include::api/account/account-balance.adoc[]
+include::api/account/account-name.adoc[]
+
+[[Transfer-API]]
+== Transfer API
+
+include::api/transfer/transfer.adoc[]
+include::api/transfer/transfer-one.adoc[]
+
+[[Trade-API]]
+== Trade API
+
+include::api/trade/search-trade.adoc[]

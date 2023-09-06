@@ -1,19 +1,19 @@
-package com.shinhan.api.api.controller.account.request;
+package com.shinhan.api.api.service.transfer.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class CustomerNameRequest {
+public class OneTransferDto {
 
     private String bankCode;
     private String accountNumber;
+    private String memo;
 
     @Builder
-    public CustomerNameRequest(String bankCode, String accountNumber) {
+    public OneTransferDto(String bankCode, String accountNumber, String memo) {
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
+        this.memo = memo;
     }
 }
