@@ -8,6 +8,7 @@ import AppLayout from 'layouts/common/AppLayout';
 import AccountPage from 'pages/AccountPage';
 import QRPage from 'pages/QRPage';
 import DepositPage from 'pages/DepositPage';
+import CreateQRPage from 'pages/CreateQRPage';
 
 function AppRouter() {
 	return (
@@ -19,6 +20,7 @@ function AppRouter() {
 					<Routes>
 						<Route path="/" element={<AccountPage />} />
 						<Route path="/qr" element={<QRPage />} />
+						<Route path="/qr/create" element={<CreateQRPage />} />
 						<Route path="/deposit" element={<DepositPage />} />
 					</Routes>
 					<Tabbar />
