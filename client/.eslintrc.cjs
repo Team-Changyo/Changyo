@@ -17,6 +17,7 @@ module.exports = {
 	plugins: ['@typescript-eslint', 'react', 'prettier'],
 	rules: {
 		'prettier/prettier': ['error', { endOfLine: 'auto' }],
-		'import/prefer-default-export' : 'off',
+		'import/prefer-default-export': 'off',
+		"react/require-default-props": "off"
 	},
 };
