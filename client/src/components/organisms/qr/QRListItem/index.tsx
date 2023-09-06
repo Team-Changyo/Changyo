@@ -25,9 +25,14 @@ function QRListItem({ title, bankCode, accountNumber, moneyUnit }: IQRListItemPr
 					<span>{title}</span> 건
 				</div>
 				<div className="account">
-					{formattedBankCode} {accountNumber}
+					받을계좌{' '}
+					<span>
+						{formattedBankCode} {accountNumber}
+					</span>
 				</div>
-				{formattedMoneyUnit} 원
+				<div className="money-unit">
+					송금단위 <span>{formattedMoneyUnit}</span> 원
+				</div>
 			</div>
 			<div className="detail-btn">
 				<button type="button">상세</button>

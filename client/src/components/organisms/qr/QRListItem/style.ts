@@ -33,14 +33,30 @@ export const QRListItemContainer = styled.div`
 		flex-grow: 1;
 		padding-left: 10px;
 
-		.alias {
-			font-size: 0.9rem;
-			color: var(--black-100);
+		.title {
+			span {
+				color: var(--main-color);
+			}
 		}
+	}
 
-		.balance {
-			color: var(--black-500);
-			font-weight: bold;
+	.account {
+		font-size: 0.9rem;
+		color: var(--gray-500);
+
+		span {
+			font-size: 0.9rem;
+			color: var(--gray-400);
+		}
+	}
+
+	.money-unit {
+		font-size: 0.9rem;
+		color: var(--gray-500);
+
+		span {
+			font-size: 0.9rem;
+			color: var(--gray-400);
 		}
 	}
 
