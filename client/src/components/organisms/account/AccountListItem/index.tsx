@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as Shinhan } from 'assets/icons/banklogo/shinhan.svg';
+import { ReactComponent as Shinhan } from 'assets/icons/banklogo/088.svg';
 import { formatMoney } from 'utils/common/formatMoney';
 import { AccountListItemContainer } from './style';
 

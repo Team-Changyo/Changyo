@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as QR } from 'assets/icons/qr-default-icon.svg';
+import { ReactComponent as QR } from 'assets/icons/qr/qr-default-icon.svg';
 import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
 import QRPageLayout from 'layouts/page/QRPageLayout';
 import PageLayout from 'layouts/common/PageLayout';

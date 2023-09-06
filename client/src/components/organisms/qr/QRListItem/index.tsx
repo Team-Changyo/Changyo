@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as QR } from 'assets/icons/qr-default-icon.svg';
+import { ReactComponent as QR } from 'assets/icons/qr/qr-default-icon.svg';
 import { formatMoney } from 'utils/common/formatMoney';
 import { formatBankCode } from 'utils/common/formatBankCode';
 import { QRListItemContainer } from './style';
