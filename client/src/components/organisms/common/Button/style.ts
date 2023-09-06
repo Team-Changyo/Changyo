@@ -21,6 +21,18 @@ export const ButtonWrapper = styled.div<{ $type: 'Normal' | 'Primary' | 'Danger'
 	width: 100%;
 	min-height: 3rem;
 	max-height: 3rem;
+	cursor: pointer;
+
+	.icon {
+		svg {
+			width: 40px;
+			height: 40px;
+		}
+		position: absolute;
+		left: 2.5rem;
+		bottom: 0;
+		fill: ${({ $type }) => ($type === 'Normal' ? 'var(--black-color)' : 'var(--white-color)')};
+	}
 
 	button {
 		font-size: 1rem;
