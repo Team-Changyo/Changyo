@@ -19,6 +19,16 @@ export const SubTabNavbarContainer = styled.div`
 		}
 	}
 
+	.close-btn {
+		position: absolute;
+		right: 5px; // TODO : 임시
+
+		svg {
+			width: 35px;
+			height: 35px;
+		}
+	}
+
 	h1 {
 		font-size: 1.1rem;
 		font-weight: bold;
