@@ -1,15 +1,18 @@
 import React, { ReactNode } from 'react';
-import Button from 'components/organisms/common/Button';
 import { QRPageLayoutContainer } from './style';
 
 interface IQRPageLayoutProps {
 	Navbar: ReactNode;
+	CreateQRButton: ReactNode;
+	QRList: ReactNode;
 }
-function QRPageLayout({ Navbar }: IQRPageLayoutProps) {
+
+function QRPageLayout({ Navbar, CreateQRButton, QRList }: IQRPageLayoutProps) {
 	return (
 		<QRPageLayoutContainer>
 			<div className="navbar">{Navbar}</div>
-			<Button handleClick={() => {}} text="한건씩 반환" type="Danger" />
+			<div className="create-qr-btn">{CreateQRButton}</div>
+			<div className="qr-list">{QRList}</div>
 		</QRPageLayoutContainer>
 	);
 }
