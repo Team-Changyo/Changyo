@@ -1,4 +1,5 @@
 import React from 'react';
+import GuideText from 'components/atoms/common/GuideText';
 import { QRGuideTextContainer } from './style';
 
 interface IQRGuideTextProps {
@@ -9,7 +10,7 @@ interface IQRGuideTextProps {
 function QRGuideText({ isDepositRequest, remainTime }: IQRGuideTextProps) {
 	return (
 		<QRGuideTextContainer>
-			<p className="message">고객에게 송금 QR을 보여주세요</p>
+			<GuideText text="고객에게 송금 QR을 보여주세요" />
 			{isDepositRequest ? (
 				<div />
 			) : (
