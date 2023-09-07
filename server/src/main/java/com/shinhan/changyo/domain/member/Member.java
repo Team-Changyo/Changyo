@@ -1,4 +1,4 @@
-package com.shinhan.changyo.domain.members;
+package com.shinhan.changyo.domain.member;
 
 import com.shinhan.changyo.domain.TimeBaseEntity;
 import lombok.AccessLevel;
