@@ -8,3 +8,13 @@ include::{snippets}/create-member/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/create-member/http-response.adoc[]
 include::{snippets}/create-member/response-fields.adoc[]
+
+=== 로그인
+
+==== HTTP Request
+include::{snippets}/member-login/http-request.adoc[]
+include::{snippets}/member-login/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/member-login/http-response.adoc[]
+include::{snippets}/member-login/response-fields.adoc[]
