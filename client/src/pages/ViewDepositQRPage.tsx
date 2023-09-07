@@ -4,11 +4,11 @@ import SubTextButton from 'components/atoms/common/SubTextButton';
 import Button from 'components/organisms/common/Button';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import QRGuideText from 'components/organisms/qr/QRGuideText';
-import RemittanceRequestInfo from 'components/organisms/qr/RemittanceRequestInfo';
 import PageLayout from 'layouts/common/PageLayout';
 import ViewQRPageLayout from 'layouts/page/ViewQRPageLayout';
+import RemittanceRequestInfo from 'components/organisms/qr/RemittanceRequestInfo';
 
-function ViewQRPageDeposit() {
+function ViewDepositQRPage() {
 	return (
 		<PageLayout>
 			<ViewQRPageLayout
@@ -27,9 +27,9 @@ function ViewQRPageDeposit() {
 				GuideText={<QRGuideText isDepositRequest />}
 				QRShareBtn={<Button type="Primary" handleClick={() => {}} text="QR 공유하기" />}
 				LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />}
-			/>{' '}
+			/>
 		</PageLayout>
 	);
 }
 
-export default ViewQRPageDeposit;
+export default ViewDepositQRPage;

@@ -4,11 +4,11 @@ import React from 'react';
 import Button from 'components/organisms/common/Button';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import QRGuideText from 'components/organisms/qr/QRGuideText';
-import RemittanceRequestInfo from 'components/organisms/qr/RemittanceRequestInfo';
 import PageLayout from 'layouts/common/PageLayout';
 import ViewQRPageLayout from 'layouts/page/ViewQRPageLayout';
+import RemittanceRequestInfo from 'components/organisms/qr/RemittanceRequestInfo';
 
-function ViewQRPageNormal() {
+function ViewNormalQRPage() {
 	return (
 		<PageLayout>
 			<ViewQRPageLayout
@@ -28,4 +28,4 @@ function ViewQRPageNormal() {
 	);
 }
 
-export default ViewQRPageNormal;
+export default ViewNormalQRPage;
