@@ -3,6 +3,7 @@ package com.shinhan.changyo.api.controller.member;
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.member.request.JoinRequest;
 import com.shinhan.changyo.api.controller.member.request.LoginRequest;
+import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
 import com.shinhan.changyo.api.service.member.AccountService;
@@ -63,5 +64,16 @@ public class MemberController {
         log.debug("LoginResponse={}", response);
 
         return ApiResponse.ok(response);
+    }
+
+    @PostMapping("/withdrawal")
+    public ApiResponse<Boolean> withdrawal(@Valid @RequestBody WithdrawalRequest request) {
+        log.debug("MemberController#withdrawal");
+        log.debug("WithdrawalRequest={}",request);
+
+        Boolean result = memberService.withdrawal(request.getLoginId(), request.getPassword());
+        log.debug("result={}", result);
+
+        return ApiResponse.found(result);
     }
 }

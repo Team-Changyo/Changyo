@@ -3,8 +3,7 @@ package com.shinhan.changyo.api;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 public class ApiResponse<T> {
@@ -31,5 +30,9 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> created(T data) {
         return of(CREATED, "CREATED", data);
+    }
+
+    public static <T> ApiResponse<T> found(T data) {
+        return of(FOUND, "FOUND", data);
     }
 }
