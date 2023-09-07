@@ -9,6 +9,8 @@ import AccountPage from 'pages/AccountPage';
 import QRPage from 'pages/QRPage';
 import DepositPage from 'pages/DepositPage';
 import CreateQRPage from 'pages/CreateQRPage';
+import ViewQRPageNormal from 'pages/ViewQRPageNormal';
+import ViewQRPageDeposit from 'pages/ViewQRPageDeposit';
 
 function AppRouter() {
 	return (
@@ -20,6 +22,8 @@ function AppRouter() {
 					<Routes>
 						<Route path="/" element={<AccountPage />} />
 						<Route path="/qr" element={<QRPage />} />
+						<Route path="/qr/normal" element={<ViewQRPageNormal />} />
+						<Route path="/qr/deposit/:qid" element={<ViewQRPageDeposit />} />
 						<Route path="/qr/create" element={<CreateQRPage />} />
 						<Route path="/deposit" element={<DepositPage />} />
 					</Routes>
