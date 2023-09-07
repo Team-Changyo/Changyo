@@ -1,6 +1,7 @@
 package com.shinhan.changyo.domain.member.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.shinhan.changyo.domain.member.Member;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -51,5 +52,19 @@ public class MemberQueryRepository {
                 .fetchFirst();
 
         return result != null;
+    }
+
+    /**
+     * 로그인 아이디로 회원 조회
+     *
+     * @param loginId 로그인 아이디
+     * @return 회원 (임시)
+     */
+    public Member getMemberByLoginId(String loginId) {
+        return queryFactory
+                .select(member)
+                .from(member)
+                .where(member.loginId.eq(loginId))
+                .fetchOne();
     }
 }
