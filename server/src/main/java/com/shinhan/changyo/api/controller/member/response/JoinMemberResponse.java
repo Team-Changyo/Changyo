@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.member.controller.response;
+package com.shinhan.changyo.api.controller.member.response;
 
 import com.shinhan.changyo.domain.member.Member;
 import lombok.Builder;

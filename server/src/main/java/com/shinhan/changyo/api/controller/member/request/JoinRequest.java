@@ -1,6 +1,7 @@
-package com.shinhan.changyo.api.member.controller.request;
+package com.shinhan.changyo.api.controller.member.request;
 
-import com.shinhan.changyo.api.member.service.dto.JoinMemberDto;
+import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,7 @@ public class JoinRequest {
     @NotBlank
     private String phoneNumber;
 
+    @Builder
     public JoinRequest(String loginId, String password, String name, String phoneNumber) {
         this.loginId = loginId;
         this.password = password;

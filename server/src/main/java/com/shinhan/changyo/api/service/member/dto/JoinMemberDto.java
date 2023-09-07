@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.member.service.dto;
+package com.shinhan.changyo.api.service.member.dto;
 
 import com.shinhan.changyo.domain.member.Member;
 import lombok.Builder;

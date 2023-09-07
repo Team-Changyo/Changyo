@@ -1,9 +1,9 @@
-package com.shinhan.changyo.api.member.controller;
+package com.shinhan.changyo.api.controller.member;
 
 import com.shinhan.changyo.api.ApiResponse;
-import com.shinhan.changyo.api.member.controller.request.JoinRequest;
-import com.shinhan.changyo.api.member.controller.response.JoinMemberResponse;
-import com.shinhan.changyo.api.member.service.MemberService;
+import com.shinhan.changyo.api.controller.member.request.JoinRequest;
+import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
+import com.shinhan.changyo.api.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

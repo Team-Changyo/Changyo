@@ -1,24 +1,16 @@
 package com.shinhan.changyo.docs.member;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.changyo.api.member.controller.MemberController;
-import com.shinhan.changyo.api.member.controller.request.JoinRequest;
-import com.shinhan.changyo.api.member.controller.response.JoinMemberResponse;
-import com.shinhan.changyo.api.member.service.MemberService;
-import com.shinhan.changyo.api.member.service.dto.JoinMemberDto;
+import com.shinhan.changyo.api.controller.member.MemberController;
+import com.shinhan.changyo.api.controller.member.request.JoinRequest;
+import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
+import com.shinhan.changyo.api.service.member.MemberService;
+import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
