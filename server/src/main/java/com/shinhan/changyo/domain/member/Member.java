@@ -46,4 +46,9 @@ public class Member extends TimeBaseEntity {
         this.phoneNumber = phoneNumber;
         this.active = active;
     }
+
+    // == Business Logics ==//
+    public void deActive() {
+        this.active = false;
+    }
 }

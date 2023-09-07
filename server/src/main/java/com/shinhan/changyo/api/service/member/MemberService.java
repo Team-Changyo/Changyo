@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 /**
  * 계정 관련 서비스
  *
@@ -26,7 +28,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberQueryRepository memberQueryRepository;
-    private final PasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 회원 가입
@@ -44,13 +46,32 @@ public class MemberService {
     }
 
     /**
+     * 회원탈퇴
+     *
+     * @param loginId 탈퇴할 회원 로그인 아이디
+     * @param password 탈퇴할 회원 비밀번호
+     * @return 탈퇴 여부
+     */
+    public Boolean withdrawal(String loginId, String password) {
+        // TODO: 2023-09-08 최영환 회원탈퇴 로직 논의
+        existCheckByLoginId(loginId);
+
+        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+        if (isMatchPassword(password, member.getEncryptedPwd())) {
+            member.deActive();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 회원 엔티티 생성 및 DB 저장
-     * 
+     *
      * @param dto 회원 정보
      * @return 가입된 회원 엔티티
      */
     private Member createMember(JoinMemberDto dto) {
-        String encryptedPwd = bCryptPasswordEncoder.encode(dto.getPassword());
+        String encryptedPwd = passwordEncoder.encode(dto.getPassword());
         Member member = dto.toEntity(encryptedPwd);
         return memberRepository.save(member);
     }
@@ -79,5 +100,29 @@ public class MemberService {
         if (checkPhoneNumber) {
             throw new DuplicateException("이미 사용중인 전화번호입니다.");
         }
+    }
+
+    /**
+     * 회원 존재여부 체크
+     *
+     * @param loginId 조회할 로그인 아이디
+     * @throws NoSuchElementException 존재하지 않는 회원인 경우
+     */
+    private void existCheckByLoginId(String loginId) {
+        boolean checkLoginId = memberQueryRepository.existLoginId(loginId);
+        if (!checkLoginId) {
+            throw new NoSuchElementException("존재하지 않는 회원입니다.");
+        }
+    }
+
+    /**
+     * 비밀번호 일치 여부
+     *
+     * @param password 입력받은 비밀번호
+     * @param encryptedPwd 저장된 비밀번호
+     * @return 비밀번호 일치 여부
+     */
+    private boolean isMatchPassword(String password, String encryptedPwd) {
+        return passwordEncoder.matches(password, encryptedPwd);
     }
 }
