@@ -3,4 +3,5 @@ export interface IAccount {
 	alias: string;
 	accountNumber: string;
 	bankCode: string;
+	accountHolder: string;
 }

@@ -19,6 +19,7 @@ function CreateQRPage() {
 			alias: '항상 가난한 내 신한',
 			bankCode: '088',
 			accountNumber: '12345615496',
+			accountHolder: '전인혁',
 		},
 	];
 
