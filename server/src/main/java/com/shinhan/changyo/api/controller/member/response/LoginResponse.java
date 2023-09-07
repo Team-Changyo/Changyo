@@ -7,19 +7,19 @@ import lombok.Data;
 @Data
 public class LoginResponse {
 
-    private Long memberId;
+    private String loginId;
 
     private String name;
 
     @Builder
-    public LoginResponse(Long memberId, String name) {
-        this.memberId = memberId;
+    public LoginResponse(String loginId, String name) {
+        this.loginId = loginId;
         this.name = name;
     }
 
     public static LoginResponse of(Member member) {
         return LoginResponse.builder()
-                .memberId(member.getId())
+                .loginId(member.getLoginId())
                 .name(member.getName())
                 .build();
     }
