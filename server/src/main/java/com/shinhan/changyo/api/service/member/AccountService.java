@@ -1,7 +1,6 @@
 package com.shinhan.changyo.api.service.member;
 
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
-import com.shinhan.changyo.api.service.member.exception.DuplicateException;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class AccountService {
      */
     public LoginResponse login(String loginId, String password) {
         // TODO: 2023-09-08 로그인 처리 논의 필요
-        duplicationCheckByLoginId(loginId);
+        existCheckByLoginId(loginId);
 
         Member member = memberQueryRepository.getMemberByLoginId(loginId);
 
@@ -50,12 +49,12 @@ public class AccountService {
      * 로그인 아이디 중복 체크
      *
      * @param loginId 중복 체크할 로그인 아이디
-     * @throws DuplicateException 이미 사용중인 로그인 아이디일 경우
+     * @throws NoSuchElementException 존재하지 않는 회원인 경우
      */
-    private void duplicationCheckByLoginId(String loginId) {
+    private void existCheckByLoginId(String loginId) {
         boolean checkLoginId = memberQueryRepository.existLoginId(loginId);
-        if (checkLoginId) {
-            throw new DuplicateException("이미 사용중인 아이디입니다.");
+        if (!checkLoginId) {
+            throw new NoSuchElementException("존재하지 않는 회원입니다.");
         }
     }
 
