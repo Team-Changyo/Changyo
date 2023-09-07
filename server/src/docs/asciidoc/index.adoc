@@ -12,4 +12,4 @@ endif::[]
 [[Member-API]]
 == Member API
 
-include::member/member.adoc[]
+include::api/member/member.adoc[]

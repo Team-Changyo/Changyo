@@ -3,6 +3,7 @@ package com.shinhan.changyo.docs.member;
 import com.shinhan.changyo.api.controller.member.MemberController;
 import com.shinhan.changyo.api.controller.member.request.JoinRequest;
 import com.shinhan.changyo.api.controller.member.request.LoginRequest;
+import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
 import com.shinhan.changyo.api.service.member.AccountService;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -105,7 +107,7 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                 .name("김싸피")
                 .build();
 
-        given(accountService.login(any(String.class), any(String.class)))
+        given(accountService.login(anyString(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -115,7 +117,7 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("member-login",
+                .andDo(document("login-member",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
@@ -138,6 +140,48 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.name").type(JsonFieldType.STRING)
                                         .description("이름")
                         )
-                        ));
+                ));
+    }
+
+    @DisplayName("회원탈퇴 API")
+    @Test
+    void withdrawal() throws Exception {
+        WithdrawalRequest request = WithdrawalRequest.builder()
+                .loginId("ssafy")
+                .password("ssafy1234")
+                .build();
+
+        Boolean result = true;
+
+        given(memberService.withdrawal(anyString(), anyString()))
+                .willReturn(result);
+
+        mockMvc.perform(
+                        post("/withdrawal")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andDo(document("remove-member",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("loginId").type(JsonFieldType.STRING)
+                                        .description("로그인 아이디"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("비밀번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("탈퇴 여부")
+                        )
+                ));
     }
 }

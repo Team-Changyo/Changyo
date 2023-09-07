@@ -67,6 +67,7 @@ public class MemberController {
     }
 
     @PostMapping("/withdrawal")
+    @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> withdrawal(@Valid @RequestBody WithdrawalRequest request) {
         log.debug("MemberController#withdrawal");
         log.debug("WithdrawalRequest={}",request);
