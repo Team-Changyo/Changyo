@@ -29,4 +29,12 @@ public class JoinRequest {
         this.phoneNumber = phoneNumber;
     }
 
+    public JoinMemberDto toJoinMemberDto() {
+        return JoinMemberDto.builder()
+                .loginId(this.loginId)
+                .password(this.password)
+                .name(this.name)
+                .phoneNumber(this.phoneNumber)
+                .build();
+    }
 }
