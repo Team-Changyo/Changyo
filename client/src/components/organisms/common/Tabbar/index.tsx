@@ -9,11 +9,16 @@ function Tabbar() {
 	const [isRender, setIsRender] = useState(true);
 
 	useEffect(() => {
-		if (TABBAR_RENDER_EXCEPTS.includes(location.pathname)) {
-			setIsRender(false);
-		} else {
-			setIsRender(true);
-		}
+		const isPathExcluded = TABBAR_RENDER_EXCEPTS.some((path) => {
+			if (typeof path === 'string') {
+				return path === location.pathname;
+			}
+			if (path instanceof RegExp) {
+				return path.test(location.pathname);
+			}
+			return false;
+		});
+		setIsRender(!isPathExcluded);
 	}, [location, isRender]);
 
 	if (isRender)
