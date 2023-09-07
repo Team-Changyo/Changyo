@@ -21,11 +21,16 @@ public class QRCodeController {
     private final QRCodeQueryService qrCodeQueryService;
     private final QRCodeService qrCodeService;
     /**
-     * QR코드 생성 요청
+     * 보증금 QR코드 생성 요청
      */
     @PostMapping()
-    public ApiResponse<QRCodeResponse> createQRCode(@RequestBody QRCodeRequest qrCodeRequest){
-        QRCodeResponse response = qrCodeService.createQRcode(qrCodeRequest);
-        return ApiResponse.ok(null);
+    public ApiResponse<QRCodeResponse> createQRCode(){ //@RequestBody QRCodeRequest qrCodeRequest
+        QRCodeResponse response = qrCodeService.createQRcode(null);
+        return ApiResponse.ok(response);
     }
+
+    /**
+     * 간편 송금 QR코드 생성 요청
+     */
+
 }
