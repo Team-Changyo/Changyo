@@ -2,7 +2,9 @@ package com.shinhan.changyo.api.controller.qrcode;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
+import com.shinhan.changyo.api.controller.qrcode.request.SimpleQrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +29,23 @@ public class QrCodeController {
      * @return 등록된 QR코드 식별키
      */
     @PostMapping()
-    public ApiResponse<Long> createQRCode(@RequestBody QrCodeRequest request){
+    public ApiResponse<Long> createQrCode(@RequestBody QrCodeRequest request){
         log.debug("QrCodeRequest={}", request);
-        Long saveId = qrCodeService.createQRcode(request.toQrCodeDto());
+        Long saveId = qrCodeService.createQrcode(request.toQrCodeDto());
         return ApiResponse.ok(saveId);
     }
 
     /**
-     * 간편 송금 QR코드 생성 요청
+     * 단순 송금 QR코드 생성 요청
+     *
+     * @param request 생성할 단순 송금 QR코드 정보
+     * @return 단숭 송금 QR 상세 정보
      */
+    @PostMapping("/simple")
+    public ApiResponse<SimpleQrCodeResponse> createSimpleQrCode(@RequestBody SimpleQrCodeRequest request){
+        log.debug("SimpleQrCodeRequest={}", request);
+        SimpleQrCodeResponse response = qrCodeService.createSimpleQrcode(request.toSimpleQrCodeDto());
+        return ApiResponse.ok(response);
+    }
 
 }

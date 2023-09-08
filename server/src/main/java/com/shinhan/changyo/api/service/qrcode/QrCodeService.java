@@ -8,7 +8,9 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
+import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
@@ -44,7 +46,7 @@ public class QrCodeService {
      * @return qr코드 정보
      */
 
-    public Long createQRcode(QrCodeDto dto) {
+    public Long createQrcode(QrCodeDto dto) {
         try{
             // QR코드 생성
             String qrCodeBase64 = createQR(dto.getUrl());
@@ -57,6 +59,30 @@ public class QrCodeService {
             qrCodeRepository.save(qrCode);
 
             return qrCode.getQrCodeId();
+        } catch (Exception e) {
+            log.debug(e.toString());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto) {
+        try{
+            // QR코드 생성
+            String qrCodeBase64 = createQR(dto.getUrl());
+
+            // entity 생성
+            Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+
+            SimpleQrCodeResponse response = SimpleQrCodeResponse.builder()
+                    .bankCode(findAccount.getBankCode())
+                    .accountNumber(findAccount.getAccountNumber())
+                    .customerName(findAccount.getCustomerName())
+                    .amount(dto.getAmount())
+                    .storeFileName(qrCodeBase64)
+                    .url(dto.getUrl())
+                    .build();
+
+            return response;
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
