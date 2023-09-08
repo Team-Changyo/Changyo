@@ -7,12 +7,19 @@ import java.util.List;
 
 @Data
 public class AccountResponse {
-    private int totalAccounts;
+    private int accountSize;
     private List<AccountDetailResponse> accountDetailResponses;
 
     @Builder
-    public AccountResponse(int totalAccounts, List<AccountDetailResponse> accountDetailResponses) {
-        this.totalAccounts = totalAccounts;
+    public AccountResponse(int accountSize, List<AccountDetailResponse> accountDetailResponses) {
+        this.accountSize = accountSize;
         this.accountDetailResponses = accountDetailResponses;
+    }
+
+    public static AccountResponse of(List<AccountDetailResponse> accounts, Integer accountSize) {
+        return AccountResponse.builder()
+                .accountSize(accountSize)
+                .accountDetailResponses(accounts)
+                .build();
     }
 }
