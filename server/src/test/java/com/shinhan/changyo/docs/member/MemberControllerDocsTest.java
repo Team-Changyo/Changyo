@@ -103,7 +103,7 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                 .build();
 
         LoginResponse response = LoginResponse.builder()
-                .loginId("ssafy")
+                .memberId(1L)
                 .name("김싸피")
                 .build();
 
@@ -135,8 +135,8 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답데이터"),
-                                fieldWithPath("data.loginId").type(JsonFieldType.STRING)
-                                        .description("로그인 아이디"),
+                                fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
+                                        .description("회원 식별키"),
                                 fieldWithPath("data.name").type(JsonFieldType.STRING)
                                         .description("이름")
                         )
