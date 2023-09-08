@@ -33,6 +33,13 @@ public class QrCode extends TimeBaseEntity {
     @Column(nullable = false)
     private boolean active;
 
+    // TODO: 2023-09-08 홍진식 : account entity 생성 시 주서 해제 
+//    @ManyToOne
+//    @JoinColumn(name = "account_id")
+//    private Account acount;
+
+
+    // TODO: 2023-09-08 홍진식 : accopunt 추가 필요 
     @Builder
     public QrCode(Long qrCodeId, String url, int amount, String title, String storeFileName, boolean active) {
         this.qrCodeId = qrCodeId;

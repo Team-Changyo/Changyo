@@ -8,6 +8,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import java.util.Map;
 @Transactional
 @Service
 public class QrCodeService {
-    public QrCodeResponse createQRcode(QrCodeRequest qrCodeRequest) {
+    public QrCodeResponse createQRcode(QrCodeDto dto) {
         try{
             String qrCodeBase64 = createQR();
             QrCodeResponse qrCodeResponse = QrCodeResponse.builder()
