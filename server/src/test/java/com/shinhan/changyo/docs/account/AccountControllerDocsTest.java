@@ -96,7 +96,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("계좌 전체 조회 API")
+    @DisplayName("회원별 계좌 전체 조회 API")
     @Test
     void getAccounts() throws Exception {
         Long memberId = 1L;
@@ -118,7 +118,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
         List<AccountDetailResponse> accounts = List.of(account1, account2);
 
         AccountResponse response = AccountResponse.builder()
-                .totalAccounts(accounts.size())
+                .accountSize(accounts.size())
                 .accountDetailResponses(accounts)
                 .build();
 
@@ -146,7 +146,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
-                                fieldWithPath("data.totalAccounts").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.accountSize").type(JsonFieldType.NUMBER)
                                         .description("전체 계좌 개수"),
                                 fieldWithPath("data.accountDetailResponses").type(JsonFieldType.ARRAY)
                                         .description("계좌 정보 데이터"),

@@ -26,7 +26,7 @@ public class AccountQueryRepository {
     }
 
     /**
-     * 계좌 전체 조회
+     * 회원별 계좌 전체 조회
      *
      * @param memberId 계좌 조회할 회원 식별키
      * @return 계좌 개수, 계좌 정보 목록
@@ -45,6 +45,12 @@ public class AccountQueryRepository {
                 .fetch();
     }
 
+    /**
+     * 회원별 전체 계좌 수 조회
+     *
+     * @param memberId 조회할 회원 식별키
+     * @return 해당 회원의 전체 계좌 개수
+     */
     public Integer getAccountSizeByMemberId(Long memberId) {
         return queryFactory
                 .select(account.count())

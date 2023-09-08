@@ -45,7 +45,7 @@ public class AccountController {
     }
 
     /**
-     * 계좌 전체 조회
+     * 회원별 계좌 전체 조회
      *
      * @param memberId 계좌 조회할 회원 식별키
      * @return 계좌 개수, 계좌 정보 목록

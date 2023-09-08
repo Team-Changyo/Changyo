@@ -10,7 +10,7 @@ include::{snippets}/create-account/http-response.adoc[]
 include::{snippets}/create-account/response-fields.adoc[]
 
 [[search-account]]
-=== 계좌 전체 조회
+=== 회원별 계좌 전체 조회
 
 ==== HTTP Request
 include::{snippets}/search-account/request-fields.adoc[]
