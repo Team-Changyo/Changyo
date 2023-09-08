@@ -5,3 +5,12 @@ export interface IAccount {
 	bankCode: string;
 	accountHolder: string;
 }
+
+export interface IHistory {
+	key: number;
+	title: string;
+	time: string;
+	type: string;
+	price: number;
+	balance: number;
+}
