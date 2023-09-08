@@ -1,15 +1,24 @@
 import React from 'react';
-import SmallSubText from 'components/atoms/common/SmallSubText';
 import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
+import { formatBankCode } from 'utils/common/formatBankCode';
 import { AccountSummaryContainer } from './style';
 
+interface IAccountSummaryProps {
+	bankCode: string;
+	accountNumber: string;
+	totalMoney: number;
+}
 /**
  * 계좌 총 개수, 토탈 금액 표기
  */
-function AccountSummary({ accountCnt, totalMoney }: { accountCnt: number; totalMoney: number }) {
+function AccountSummary({ bankCode, accountNumber, totalMoney }: IAccountSummaryProps) {
+	const bankName = formatBankCode(bankCode);
+
 	return (
 		<AccountSummaryContainer>
-			<SmallSubText text={`총 ${accountCnt}개의 계좌`} />
+			<p className="account-info">
+				{bankName} <span>{accountNumber}</span>
+			</p>
 			<LargeMoneyText money={totalMoney} />
 		</AccountSummaryContainer>
 	);
