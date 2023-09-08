@@ -3,7 +3,9 @@ package com.shinhan.changyo.api.service.account.dto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.member.Member;
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 public class CreateAccountDto {
     private Long memberId;
     private String customerName;
