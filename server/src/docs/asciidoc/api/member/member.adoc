@@ -1,0 +1,32 @@
+[[create-member]]
+=== 회원가입
+
+==== HTTP Request
+include::{snippets}/create-member/http-request.adoc[]
+include::{snippets}/create-member/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-member/http-response.adoc[]
+include::{snippets}/create-member/response-fields.adoc[]
+
+[[login-member]]
+=== 로그인
+
+==== HTTP Request
+include::{snippets}/login-member/http-request.adoc[]
+include::{snippets}/login-member/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/login-member/http-response.adoc[]
+include::{snippets}/login-member/response-fields.adoc[]
+
+[[remove-member]]
+=== 회원탈퇴
+
+==== HTTP Request
+include::{snippets}/remove-member/http-request.adoc[]
+include::{snippets}/remove-member/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/remove-member/http-response.adoc[]
+include::{snippets}/remove-member/response-fields.adoc[]
