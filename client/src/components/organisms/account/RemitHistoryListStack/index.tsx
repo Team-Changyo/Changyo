@@ -1,8 +1,8 @@
 import React from 'react';
-import { HistoryListStackContianer } from './style';
-import HistoryList from '../HistoryList';
+import { RemitHistoryListStackContianer } from './style';
+import HistoryList from '../RemitHistoryList';
 
-function HistoryListStack() {
+function RemitHistoryListStack() {
 	const history = [
 		{
 			date: '2023-09-04',
@@ -21,15 +21,15 @@ function HistoryListStack() {
 	];
 
 	return (
-		<HistoryListStackContianer>
+		<RemitHistoryListStackContianer>
 			{history.map((el) => (
 				<div key={el.date} className="history-list">
 					<div className="date">{el.date}</div>
 					<HistoryList histories={el.history} />
 				</div>
 			))}
-		</HistoryListStackContianer>
+		</RemitHistoryListStackContianer>
 	);
 }
 
-export default HistoryListStack;
+export default RemitHistoryListStack;

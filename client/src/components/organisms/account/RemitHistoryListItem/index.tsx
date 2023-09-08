@@ -2,15 +2,15 @@ import React from 'react';
 import { ReactComponent as Shinhan } from 'assets/icons/account/coin.svg';
 import { IHistory } from 'types/account';
 import { formatMoney } from 'utils/common/formatMoney';
-import { HistoryListItemContainer } from './style';
+import { RemitHistoryListItemContainer } from './style';
 
-interface HistoryListItemProps {
+interface RemitHistoryListItemProps {
 	history: IHistory;
 }
 
-function HistoryListItem({ history }: HistoryListItemProps) {
+function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
 	return (
-		<HistoryListItemContainer>
+		<RemitHistoryListItemContainer>
 			<div className="history-logo">
 				<Shinhan />
 			</div>
@@ -22,8 +22,8 @@ function HistoryListItem({ history }: HistoryListItemProps) {
 				<span className="price">{formatMoney(history.price)}원</span>
 				<span className="balance">{formatMoney(history.balance)}원</span>
 			</div>
-		</HistoryListItemContainer>
+		</RemitHistoryListItemContainer>
 	);
 }
 
-export default HistoryListItem;
+export default RemitHistoryListItem;

@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const HistoryListWrapper = styled.div`
+export const RemitHistoryListWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 10px;

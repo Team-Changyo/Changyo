@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import FilterListItem from 'components/atoms/common/FilterListItem';
-import { HistoryFilterListWrapper } from './style';
+import { RemitHistoryFilterListWrapper } from './style';
 
-interface HistoryFilterListProps {
+interface RemitHistoryFilterListProps {
 	selectedMenu: string;
 	setSelcetedMenu: Dispatch<SetStateAction<string>>;
 }
@@ -10,7 +10,7 @@ interface HistoryFilterListProps {
  * 계좌 필터(전체, 신한은행 등등)
  * @param setSelcetedMenu 필터 클릭 시 선택된 메뉴(selectedMenu) 변경
  */
-function HistoryFilterList({ selectedMenu, setSelcetedMenu }: HistoryFilterListProps) {
+function RemitHistoryFilterList({ selectedMenu, setSelcetedMenu }: RemitHistoryFilterListProps) {
 	// TODO : api 나오면 교체
 	const tmp = [
 		{ key: '1', content: '입금' },
@@ -18,7 +18,7 @@ function HistoryFilterList({ selectedMenu, setSelcetedMenu }: HistoryFilterListP
 	];
 
 	return (
-		<HistoryFilterListWrapper>
+		<RemitHistoryFilterListWrapper>
 			{/* 전체 */}
 			<FilterListItem key="0" value="0" $isActive={selectedMenu === '0'} text="전체" setSelected={setSelcetedMenu} />
 
@@ -32,8 +32,8 @@ function HistoryFilterList({ selectedMenu, setSelcetedMenu }: HistoryFilterListP
 					setSelected={setSelcetedMenu}
 				/>
 			))}
-		</HistoryFilterListWrapper>
+		</RemitHistoryFilterListWrapper>
 	);
 }
 
-export default HistoryFilterList;
+export default RemitHistoryFilterList;

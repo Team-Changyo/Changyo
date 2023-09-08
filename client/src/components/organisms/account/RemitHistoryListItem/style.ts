@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const HistoryListItemContainer = styled.div`
+export const RemitHistoryListItemContainer = styled.div`
 	height: 3rem;
 	max-height: 64px;
 	display: flex;

@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const HistoryListStackContianer = styled.div`
+export const RemitHistoryListStackContianer = styled.div`
 	.history-list {
 		margin: 2rem 0;
 
