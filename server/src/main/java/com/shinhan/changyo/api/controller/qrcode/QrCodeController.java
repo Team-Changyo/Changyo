@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -76,6 +78,40 @@ public class QrCodeController {
     }
 
 
+    /**
+     * QR코드 삭제
+     *
+     * @param qrCodeId QR코드 식별키
+     * @return 삭제 성공 여부(성공 : true, 실패 : false)
+     */
 
+    @DeleteMapping("/remove/{qrCodeId}")
+    public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
+        return null;
+    }
+
+    /**
+     * QR코드 목록 전체 조회
+     *
+     * @return QR코드 목록
+     */
+
+    // TODO: 2023-09-09 홍진식 : 회원 join해서 해당 회원의 모든 account 가져오고 조회해야함
+    @GetMapping()
+    public ApiResponse<List<QrCodeResponse>> getQrCodes(){
+        return null;
+    }
+
+    /**
+     * 보증금 QR코드 상세 조회
+     *
+     * @param qrCodeId QR코드 식별키
+     * @return QR코드 정보
+     */
+
+    @GetMapping("/detail/{qrCodeId}")
+    public ApiResponse<QrCodeResponse> getQrCode(@PathVariable Long qrCodeId){
+        return null;
+    }
 
 }
