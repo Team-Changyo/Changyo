@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactComponent as Left } from 'assets/icons/navigation/left.svg';
-import { ReactComponent as Right } from 'assets/icons/navigation/right.svg';
+import { ReactComponent as X } from 'assets/icons/navigation/x.svg';
 import NavbarLayout from 'layouts/common/NavbarLayout';
 import { useNavigate } from 'react-router-dom';
 import { SubTabNavbarContainer } from './style';
@@ -30,7 +30,7 @@ function SubTabNavbar({ text, type, closePath }: ISubTabNavbarProps) {
 					</button>
 				) : (
 					<button type="button" className="close-btn">
-						<Right onClick={handleLeftClick} />
+						<X onClick={handleLeftClick} />
 					</button>
 				)}
 
