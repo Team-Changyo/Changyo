@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class QRCodeResponse {
+public class QrCodeResponse {
 
     String qrCoded;
 
     @Builder
-    public QRCodeResponse(String qrCoded) {
+    public QrCodeResponse(String qrCoded) {
         this.qrCoded = qrCoded;
     }
 }
