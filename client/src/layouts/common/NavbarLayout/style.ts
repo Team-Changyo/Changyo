@@ -6,6 +6,7 @@ export const NavbarLayoutWrapper = styled.aside`
 	left: 0;
 	top: 0;
 	z-index: 20;
+	background-color: var(--white-color);
 `;
 
 export const NavbarLayoutContainer = styled.nav`
