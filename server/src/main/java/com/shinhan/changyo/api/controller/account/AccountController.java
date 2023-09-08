@@ -2,6 +2,8 @@ package com.shinhan.changyo.api.controller.account;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
+import com.shinhan.changyo.api.controller.account.response.AccountResponse;
+import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import javax.validation.Valid;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountQueryService accountQueryService;
 
     /**
      * 계좌 등록
@@ -39,5 +42,22 @@ public class AccountController {
         log.debug("saveId={}", saveId);
 
         return ApiResponse.created(saveId);
+    }
+
+    /**
+     * 계좌 전체 조회
+     *
+     * @param memberId 계좌 조회할 회원 식별키
+     * @return 계좌 개수, 계좌 정보 목록
+     */
+    @GetMapping()
+    public ApiResponse<AccountResponse> getAccounts(@RequestParam String memberId) {
+        log.debug("AccountController#getAccounts called");
+        log.debug("memberId={}", memberId);
+
+        AccountResponse response = accountQueryService.getAccounts(Long.parseLong(memberId));
+        log.debug("response={}", response);
+
+        return ApiResponse.ok(response);
     }
 }
