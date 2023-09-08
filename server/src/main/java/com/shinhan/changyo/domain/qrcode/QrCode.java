@@ -1,12 +1,19 @@
 package com.shinhan.changyo.domain.qrcode;
 
 import com.shinhan.changyo.domain.TimeBaseEntity;
+import com.shinhan.changyo.domain.account.Account;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+/**
+ * QR코드 Entity
+ *
+ * @author 홍진식
+ */
 
 @Entity
 @Getter
@@ -33,20 +40,19 @@ public class QrCode extends TimeBaseEntity {
     @Column(nullable = false)
     private boolean active;
 
-    // TODO: 2023-09-08 홍진식 : account entity 생성 시 주서 해제 
-//    @ManyToOne
-//    @JoinColumn(name = "account_id")
-//    private Account acount;
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 
 
-    // TODO: 2023-09-08 홍진식 : accopunt 추가 필요 
     @Builder
-    public QrCode(Long qrCodeId, String url, int amount, String title, String storeFileName, boolean active) {
+    public QrCode(Long qrCodeId, String url, int amount, String title, String storeFileName, boolean active, Account account) {
         this.qrCodeId = qrCodeId;
         this.url = url;
         this.amount = amount;
         this.title = title;
         this.storeFileName = storeFileName;
         this.active = active;
+        this.account = account;
     }
 }

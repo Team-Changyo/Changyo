@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.service.qrcode.dto;
 
+import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.qrcode.QrCode;
 import lombok.Builder;
 import lombok.Data;
@@ -25,15 +26,14 @@ public class QrCodeDto {
         this.title = title;
     }
 
-    // TODO: 2023-09-08 홍진식 : account 생성 시 추가 필요
-    public QrCode toEntity(String storeFileName){// Account account
+    public QrCode toEntity(String storeFileName, Account account){
         return QrCode.builder()
                 .url(this.url)
                 .amount(this.amount)
                 .title(this.title)
                 .storeFileName(storeFileName)
                 .active(true)
-//                .account(account)
+                .account(account)
                 .build();
 
     }

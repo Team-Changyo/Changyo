@@ -9,6 +9,12 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
+import com.shinhan.changyo.domain.account.Account;
+import com.shinhan.changyo.domain.account.repository.AccountRepository;
+import com.shinhan.changyo.domain.qrcode.QrCode;
+import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,31 +23,59 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * QR코드 서비스
+ *
+ * @author 홍진식
+ */
+
+@Slf4j
+@RequiredArgsConstructor
 @Transactional
 @Service
 public class QrCodeService {
-    public QrCodeResponse createQRcode(QrCodeDto dto) {
+    private final QrCodeRepository qrCodeRepository;
+    private final AccountRepository accountRepository;
+    /**
+     * QR코드 증록
+     *
+     * @param dto 등록할 qr코드 정보
+     * @return qr코드 정보
+     */
+
+    public Long createQRcode(QrCodeDto dto) {
         try{
-            String qrCodeBase64 = createQR();
-            QrCodeResponse qrCodeResponse = QrCodeResponse.builder()
-                    .qrCoded(qrCodeBase64)
-                    .build();
-            return qrCodeResponse;
+            // QR코드 생성
+            String qrCodeBase64 = createQR(dto.getUrl());
+
+            // entity 생성
+            Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+            QrCode qrCode = dto.toEntity(qrCodeBase64, findAccount);
+
+            // qr코드 등록
+            qrCodeRepository.save(qrCode);
+
+            return qrCode.getQrCodeId();
         } catch (Exception e) {
+            log.debug(e.toString());
             throw new RuntimeException(e);
         }
     }
 
 
-
-
-
-    public String createQR() throws Exception {
+    /**
+     *
+     * @param url : 계좌 url
+     * @return QR코드 base64
+     * @throws Exception
+     */
+    public String createQR(String url) throws Exception {
 
         BitMatrix bitMatrix=null;
         MatrixToImageConfig matrixToImageConfig=null;
         // QRCode에 담고 싶은 정보를 문자열로 표시한다. url이든 뭐든 가능하다.
-        String codeInformation = "https://www.notion.so/dev-jeon/f3b38c8174984bc7b85b35637c7e68b9?pvs=4";
+        String codeInformation = url;
 
         // 큐알코드 바코드 및 배경 색상값
         int onColor =   0xFF2e4e96; // 바코드 색

@@ -22,11 +22,15 @@ public class QrCodeController {
     private final QrCodeService qrCodeService;
     /**
      * 보증금 QR코드 생성 요청
+     *
+     * @param request 등록할 보증금 QR코드 정보
+     * @return 등록된 QR코드 식별키
      */
     @PostMapping()
-    public ApiResponse<QrCodeResponse> createQRCode(@RequestBody QrCodeRequest request){
-        QrCodeResponse response = qrCodeService.createQRcode(request.toQrCodeDto());
-        return ApiResponse.ok(response);
+    public ApiResponse<Long> createQRCode(@RequestBody QrCodeRequest request){
+        log.debug("QrCodeRequest={}", request);
+        Long saveId = qrCodeService.createQRcode(request.toQrCodeDto());
+        return ApiResponse.ok(saveId);
     }
 
     /**
