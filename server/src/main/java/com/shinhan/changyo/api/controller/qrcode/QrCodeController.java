@@ -63,6 +63,18 @@ public class QrCodeController {
         return null;
     }
 
+    /**
+     * 보증금 QR코드 title 변경
+     *
+     * @param qrCodeId, QR코드 식별키
+     * @param request 변경할 제목 정보
+     * @return 변경된 QR코드 정보
+     */
+    @PatchMapping("/title/{qrCodeId}")
+    public ApiResponse<QrCodeResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
+        return null;
+    }
+
 
 
 
