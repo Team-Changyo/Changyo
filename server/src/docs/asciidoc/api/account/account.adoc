@@ -1,0 +1,10 @@
+[[create-account]]
+=== 계좌등록
+
+==== HTTP Request
+include::{snippets}/create-account/http-request.adoc[]
+include::{snippets}/create-account/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-account/http-response.adoc[]
+include::{snippets}/create-account/response-fields.adoc[]
