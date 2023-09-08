@@ -1,0 +1,20 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 챙겨요 REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: higlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Member-API]]
+== Member API
+
+include::api/member/member.adoc[]
+
+[[Account-API]]
+== Account API
+
+include::api/account/account.adoc[]
