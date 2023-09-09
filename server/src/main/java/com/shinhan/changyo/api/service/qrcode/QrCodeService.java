@@ -6,11 +6,11 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
+import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
@@ -46,7 +46,7 @@ public class QrCodeService {
      * @return qr코드 정보
      */
 
-    public Long createQrcode(QrCodeDto dto) {
+    public QrCodeResponse createQrcode(QrCodeDto dto) {
         try{
             // QR코드 생성
             String qrCodeBase64 = createQR(dto.getUrl());
@@ -58,7 +58,17 @@ public class QrCodeService {
             // qr코드 등록
             qrCodeRepository.save(qrCode);
 
-            return qrCode.getQrCodeId();
+            QrCodeResponse response = QrCodeResponse.builder()
+                    .bankCode(findAccount.getBankCode())
+                    .accountNumber(findAccount.getAccountNumber())
+                    .title(qrCode.getTitle())
+                    .customerName(findAccount.getCustomerName())
+                    .amount(qrCode.getAmount())
+                    .base64QrCode(qrCode.getBase64QrCode())
+                    .url(qrCode.getUrl())
+                    .build();
+
+            return response;
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
@@ -78,7 +88,7 @@ public class QrCodeService {
                     .accountNumber(findAccount.getAccountNumber())
                     .customerName(findAccount.getCustomerName())
                     .amount(dto.getAmount())
-                    .storeFileName(qrCodeBase64)
+                    .base64QrCode(qrCodeBase64)
                     .url(dto.getUrl())
                     .build();
 
@@ -198,4 +208,9 @@ public class QrCodeService {
         return bitMatrix;
     }
 
+    public QrCodeResponse editAmount(EditAmountDto dto) {
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        findQrCode.editAmount(dto.getAmount());
+        return QrCodeResponse.of(findQrCode);
+    }
 }

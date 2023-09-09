@@ -32,10 +32,10 @@ public class QrCodeController {
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
     @PostMapping()
-    public ApiResponse<Long> createQrCode(@RequestBody QrCodeRequest request){
+    public ApiResponse<QrCodeResponse> createQrCode(@RequestBody QrCodeRequest request){
         log.debug("QrCodeRequest={}", request);
-        Long saveId = qrCodeService.createQrcode(request.toQrCodeDto());
-        return ApiResponse.ok(saveId);
+        QrCodeResponse response = qrCodeService.createQrcode(request.toQrCodeDto());
+        return ApiResponse.ok(response);
     }
 
     /**
@@ -62,7 +62,10 @@ public class QrCodeController {
      */
     @PatchMapping("/amount/{qrCodeId}")
     public ApiResponse<QrCodeResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
-        return null;
+        log.debug("qrCodeId={}", qrCodeId);
+        log.debug("AmountRequest={}", request);
+        QrCodeResponse response = qrCodeService.editAmount(request.toDto(qrCodeId));
+        return ApiResponse.ok(response);
     }
 
     /**
@@ -109,7 +112,7 @@ public class QrCodeController {
      * @return QR코드 정보
      */
 
-    @GetMapping("/detail/{qrCodeId}")
+    @GetMapping("/{qrCodeId}")
     public ApiResponse<QrCodeResponse> getQrCode(@PathVariable Long qrCodeId){
         return null;
     }

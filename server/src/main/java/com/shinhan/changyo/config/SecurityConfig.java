@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Web Security Config
+ *
  * @author 최영환
  */
 @Config
@@ -20,12 +21,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/**").permitAll()
-                    .anyRequest().permitAll()
-                    .and()
+                .antMatchers("/**").permitAll()
+                .anyRequest().permitAll()
+                .and()
                 .cors().disable()
                 .csrf().disable()
                 .logout().permitAll();
+        http.headers().frameOptions().disable();
     }
 
     @Bean
