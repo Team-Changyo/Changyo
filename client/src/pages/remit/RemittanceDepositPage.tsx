@@ -1,21 +1,21 @@
 import React from 'react';
+import GuideText from 'components/atoms/common/GuideText';
+import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
+import OptionTitleText from 'components/atoms/common/OptionTitleText';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import PageLayout from 'layouts/common/PageLayout';
-import RemittancePageLayout from 'layouts/page/RemittancePageLayout';
-import OptionTitleText from 'components/atoms/common/OptionTitleText';
-import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
-import GuideText from 'components/atoms/common/GuideText';
+import RemittancePageLayout from 'layouts/page/remit/RemittancePageLayout';
 import Button from 'components/organisms/common/Button';
+import RemittanceInfo from 'components/organisms/remittance/RemittanceInfo';
 import ToAccountInfo from 'components/organisms/remittance/ToAccountInfo';
 import FromAccountInfo from 'components/organisms/remittance/FromAccountInfo';
-import RemittanceInfo from 'components/organisms/remittance/RemittanceInfo';
 
-function RemittanceNormalPage() {
+function RemittanceDepositPage() {
 	return (
 		<PageLayout>
 			<RemittancePageLayout
 				Navbar={<SubTabNavbar text="간편 송금" closePath="/" type="close" />}
-				RemittanceInfo={<RemittanceInfo isDepositRequest={false} />}
+				RemittanceInfo={<RemittanceInfo isDepositRequest depositTitle="럭셔리 글램핑 객실이용" />}
 				ToAccountInfoTitle={<OptionTitleText text="입금할 계좌" />}
 				ToAccountInfo={<ToAccountInfo />}
 				FromAccountInfoTitle={<OptionTitleText text="출금할 내 계좌" />}
@@ -29,4 +29,4 @@ function RemittanceNormalPage() {
 	);
 }
 
-export default RemittanceNormalPage;
+export default RemittanceDepositPage;

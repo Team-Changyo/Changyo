@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PageLayout from 'layouts/common/PageLayout';
-import AccountPageLayout from 'layouts/page/AccountPageLayout';
+import AccountPageLayout from 'layouts/page/account/AccountPageLayout';
 import AccountTotalSummary from 'components/organisms/account/AccountTotalSummary';
 import AccountFilterList from 'components/organisms/account/AccountFilterList';
 import AccountList from 'components/organisms/account/AccountList';

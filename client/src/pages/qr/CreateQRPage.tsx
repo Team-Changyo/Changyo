@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ReactComponent as QR } from 'assets/icons/qr/qr-default-icon.svg';
-import CreateQRPageLayout from 'layouts/page/CreateQRPageLayout';
+import CreateQRPageLayout from 'layouts/page/qr/CreateQRPageLayout';
 import PageLayout from 'layouts/common/PageLayout';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import OptionTitleText from 'components/atoms/common/OptionTitleText';

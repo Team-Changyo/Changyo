@@ -4,7 +4,7 @@ import RemitHistoryFilterList from 'components/organisms/account/RemitHistoryFil
 import RemitHistoryListStack from 'components/organisms/account/RemitHistoryListStack';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import PageLayout from 'layouts/common/PageLayout';
-import AccountDetailPageLayout from 'layouts/page/AccountDetailPageLayout';
+import AccountDetailPageLayout from 'layouts/page/account/AccountDetailPageLayout';
 
 function AccountDetailPage() {
 	const [selectedMenu, setSelcetedMenu] = useState('0');

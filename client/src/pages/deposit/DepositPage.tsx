@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
 import PageLayout from 'layouts/common/PageLayout';
-import DepositPageLayout from 'layouts/page/DepositPageLayout';
+import DepositPageLayout from 'layouts/page/deposit/DepositPageLayout';
 import SelectTabTypeList from 'components/organisms/common/SelectTabTypeList';
 import RemitHistoryListStack from 'components/organisms/deposit/DepositHistoryListStack';
 import SettlementList from 'components/organisms/deposit/SettlementList';
@@ -33,7 +33,7 @@ function DepositPage() {
 			<DepositPageLayout
 				Navbar={<MainTabNavbar tabName="보증금 관리" />}
 				SelectSubTab={<SelectTabTypeList tabTypes={tabTypes} />}
-				SubTab={tabType ? <RemitHistoryListStack /> : <SettlementList settlements={settlements} />}
+				SubTab={tabType ? <SettlementList settlements={settlements} /> : <RemitHistoryListStack />}
 			/>
 		</PageLayout>
 	);

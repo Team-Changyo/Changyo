@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactComponent as QR } from 'assets/icons/qr/qr-default-icon.svg';
 import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
-import QRPageLayout from 'layouts/page/QRPageLayout';
+import QRPageLayout from 'layouts/page/qr/QRPageLayout';
 import PageLayout from 'layouts/common/PageLayout';
 import Button from 'components/organisms/common/Button';
 import { useNavigate } from 'react-router-dom';

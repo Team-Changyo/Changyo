@@ -2,11 +2,11 @@ import Register from 'components/organisms/auth/Register';
 import RegisterSuccess from 'components/organisms/auth/RegisterSuccess';
 import TermsOfService from 'components/organisms/auth/TermsOfService';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
-import RegisterPageLayout from 'layouts/page/RegisterPageLayout';
+import RegisterPageLayout from 'layouts/page/auth/RegisterPageLayout';
 import React, { useEffect, useState } from 'react';
 
 function RegisterPage() {
-	const [step, setStep] = useState(2);
+	const [step, setStep] = useState(0);
 	const [navText, setNavText] = useState('');
 	const [stepView, setStepView] = useState(<div />);
 

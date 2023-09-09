@@ -5,18 +5,18 @@ import { useRecoilState } from 'recoil';
 import { GlobalFonts } from 'styles/GlobalFonts';
 import Tabbar from 'components/organisms/common/Tabbar';
 import AppLayout from 'layouts/common/AppLayout';
-import AccountPage from 'pages/AccountPage';
-import QRPage from 'pages/QRPage';
-import DepositPage from 'pages/DepositPage';
-import CreateQRPage from 'pages/CreateQRPage';
-import ViewQRPageNormal from 'pages/ViewNormalQRPage';
-import ViewQRPageDeposit from 'pages/ViewDepositQRPage';
-import RemittanceNormalPage from 'pages/RemittanceNormalPage';
-import RemittanceDepositPage from 'pages/RemittanceDepositPage';
-import AccountDetailPage from 'pages/AccountDetailPage';
-import LoadingPage from 'pages/LoadingPage';
-import LoginPage from 'pages/LoginPage';
-import RegisterPage from 'pages/RegisterPage';
+import AccountPage from 'pages/account/AccountPage';
+import QRPage from 'pages/qr/QRPage';
+import DepositPage from 'pages/deposit/DepositPage';
+import CreateQRPage from 'pages/qr/CreateQRPage';
+import ViewQRPageNormal from 'pages/qr/ViewNormalQRPage';
+import ViewQRPageDeposit from 'pages/qr/ViewDepositQRPage';
+import RemittanceNormalPage from 'pages/remit/RemittanceNormalPage';
+import RemittanceDepositPage from 'pages/remit/RemittanceDepositPage';
+import AccountDetailPage from 'pages/account/AccountDetailPage';
+import LoadingPage from 'pages/etc/LoadingPage';
+import LoginPage from 'pages/auth/LoginPage';
+import RegisterPage from 'pages/auth/RegisterPage';
 import userState from 'store/user';
 import { GlobalKeyFrames } from 'styles/GlobalKeyFrames';
 import PrivateRoute from './PrivateRoute';
@@ -34,7 +34,7 @@ function AppRouter() {
 	const fetchUserData = () => {
 		// TODO API 나오면 로직 추가
 		setUser({ memberId: 1, name: '전인혁' });
-		setUser(null);
+		// setUser(null);
 	};
 
 	useEffect(() => {
