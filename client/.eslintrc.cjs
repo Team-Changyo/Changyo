@@ -20,6 +20,9 @@ module.exports = {
 		'import/prefer-default-export': 'off',
 		"react/require-default-props": "off",
 		"react-hooks/exhaustive-deps": "off",
-		"react/jsx-no-useless-fragment":"off"
+		"react/jsx-no-useless-fragment": "off",
+		"react/jsx-props-no-spreading": "off",
+		"no-restricted-syntax": "off",
+		"no-await-in-loop":"off"
  	},
 };
