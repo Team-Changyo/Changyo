@@ -26,10 +26,11 @@ public class CreateAccountDto {
         this.mainAccount = mainAccount;
     }
 
-    public Account toEntity(Member member) {
+    public Account toEntity(Member member, int balance) {
         return Account.builder()
                 .bankCode(this.bankCode)
                 .accountNumber(this.accountNumber)
+                .balance(balance)
                 .productName(this.productName)
                 .customerName(this.customerName)
                 .title(this.title)
