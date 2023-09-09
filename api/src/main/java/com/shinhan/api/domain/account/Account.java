@@ -25,11 +25,25 @@ public class Account extends TimeBaseEntity {
     private String bankCode;
 
     @Builder
-    public Account(String accountNumber, int balance, String productName, String customerName, String bankCode) {
+    private Account(String accountNumber, int balance, String productName, String customerName, String bankCode) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.productName = productName;
         this.customerName = customerName;
         this.bankCode = bankCode;
+    }
+
+    //== 비즈니스 로직 ==//
+    public int withdrawal(int amount) {
+        int result = this.balance - amount;
+        if (result < 0) {
+            throw new IllegalArgumentException("계좌 잔액이 부족합니다.");
+        }
+        this.balance = result;
+        return result;
+    }
+
+    public void deposit(int amount) {
+        this.balance += amount;
     }
 }

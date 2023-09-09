@@ -26,8 +26,7 @@ public class TradeQueryRepository {
     public List<TradeDetailResponse> getTradeHistory(String accountNumber) {
         return queryFactory
                 .select(Projections.constructor(TradeDetailResponse.class,
-                        trade.tradeDate,
-                        trade.tradeTime,
+                        trade.tradeDateTime,
                         trade.summary,
                         trade.withdrawalAmount,
                         trade.depositAmount,
@@ -39,7 +38,7 @@ public class TradeQueryRepository {
                 .from(trade)
                 .join(trade.account, account)
                 .where(trade.account.accountNumber.eq(accountNumber))
-                .orderBy(trade.createdDate.desc())
+                .orderBy(trade.tradeDateTime.desc())
                 .fetch();
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -22,9 +24,14 @@ public class TransferController {
     private final TransferQueryService transferQueryService;
 
     @PostMapping("/v1/transfer/krw")
-    public ApiResponse<TransferResponse> transfer(@RequestBody TransferRequest request) {
+    public ApiResponse<TransferResponse> transfer(@Valid @RequestBody TransferRequest request) {
+        log.debug("call TransferController#transfer");
+        log.debug("TransferRequest={}", request);
+
         TransferDto dto = request.toTransferDto();
         TransferResponse response = transferQueryService.transfer(dto);
+        log.debug("response={}", response);
+
         return ApiResponse.ok(response);
     }
 

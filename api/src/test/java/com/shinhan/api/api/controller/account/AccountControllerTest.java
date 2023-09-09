@@ -1,14 +1,15 @@
 package com.shinhan.api.api.controller.account;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.api.ControllerTestSupport;
 import com.shinhan.api.api.controller.account.request.AccountRequest;
 import com.shinhan.api.api.controller.account.request.CustomerNameRequest;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
 import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
+import com.shinhan.api.api.controller.trade.TradeController;
 import com.shinhan.api.api.service.account.AccountQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(controllers = {AccountController.class})
 class AccountControllerTest extends ControllerTestSupport {
 
     @MockBean

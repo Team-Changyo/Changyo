@@ -49,7 +49,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
             .depositAmount(1404)
             .content("12.17~03.17")
             .balance(331551)
-            .status("1")
+            .status(1)
             .dealershipName("영업부")
             .build();
 
