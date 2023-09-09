@@ -49,7 +49,7 @@ public class Trade extends TimeBaseEntity {
     private QrCode qrCode;
 
     @Builder
-    public Trade(String summary, int withdrawalAmount, int depositAmount, String content, int balance, int status, String dealershipName, Account account, QrCode qrCode) {
+    private Trade(String summary, int withdrawalAmount, int depositAmount, String content, int balance, int status, String dealershipName, Account account, QrCode qrCode) {
         this.summary = summary;
         this.withdrawalAmount = withdrawalAmount;
         this.depositAmount = depositAmount;
