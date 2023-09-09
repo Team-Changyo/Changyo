@@ -2,6 +2,7 @@ package com.shinhan.api.domain.account.repository;
 
 import com.shinhan.api.IntegrationTestSupport;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
+import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.domain.account.Account;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,19 @@ class AccountQueryRepositoryTest extends IntegrationTestSupport {
 
         //then
         assertThat(response.getBalance()).isEqualTo(331551);
+    }
+
+    @DisplayName("은행 코드와 계좌 번호로 예금주 실명을 조회한다.")
+    @Test
+    void getCustomerName() {
+        //given
+        Account account = createAccount();
+
+        //when
+        CustomerNameResponse response = accountQueryRepository.getCustomerName(account.getBankCode(), account.getAccountNumber());
+
+        //then
+        assertThat(response.getCustomerName()).isEqualTo("김신한");
     }
 
     private Account createAccount() {

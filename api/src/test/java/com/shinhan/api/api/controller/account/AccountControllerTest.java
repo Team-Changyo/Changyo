@@ -1,8 +1,11 @@
 package com.shinhan.api.api.controller.account;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.api.ControllerTestSupport;
 import com.shinhan.api.api.controller.account.request.AccountRequest;
+import com.shinhan.api.api.controller.account.request.CustomerNameRequest;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
+import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.api.service.account.AccountQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,4 +75,79 @@ class AccountControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data").isNotEmpty());
     }
 
+    @DisplayName("예금주 실명을 조회할 때 은행 코드는 필수값이다.")
+    @Test
+    void getCustomerNameWithoutBankCode() throws Exception {
+        //given
+        CustomerNameRequest request = CustomerNameRequest.builder()
+            .accountNumber("110184999999")
+            .build();
+
+        //when //then
+        mockMvc.perform(
+                post("/v1/search/name")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+            .andExpect(jsonPath("$.message").value("은행 코드는 필수입니다."))
+            .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("예금주 실명을 조회할 때 계좌 번호는 필수값이다.")
+    @Test
+    void getCustomerNameWithoutAccountNumber() throws Exception {
+        //given
+        CustomerNameRequest request = CustomerNameRequest.builder()
+            .bankCode("088")
+            .build();
+
+        //when //then
+        mockMvc.perform(
+                post("/v1/search/name")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+            .andExpect(jsonPath("$.message").value("계좌 번호는 필수입니다."))
+            .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("예금주 실명을 조회한다.")
+    @Test
+    void getCustomerName() throws Exception {
+        //given
+        CustomerNameRequest request = CustomerNameRequest.builder()
+            .bankCode("088")
+            .accountNumber("110184999999")
+            .build();
+
+        CustomerNameResponse response = CustomerNameResponse.builder()
+            .bankCode("088")
+            .accountNumber("110184999999")
+            .customerName("김신한")
+            .build();
+
+        given(accountQueryService.getCustomerName(anyString(), anyString()))
+            .willReturn(response);
+
+        //when //then
+        mockMvc.perform(
+                post("/v1/search/name")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value("200"))
+            .andExpect(jsonPath("$.status").value("OK"))
+            .andExpect(jsonPath("$.message").value("SUCCESS"))
+            .andExpect(jsonPath("$.data").isNotEmpty());
+    }
 }

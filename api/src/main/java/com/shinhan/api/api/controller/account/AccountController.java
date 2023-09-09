@@ -39,8 +39,13 @@ public class AccountController {
      * 예금주 실명조회
      */
     @PostMapping("/v1/search/name")
-    public ApiResponse<CustomerNameResponse> getCustomerName(@RequestBody CustomerNameRequest request) {
+    public ApiResponse<CustomerNameResponse> getCustomerName(@Valid @RequestBody CustomerNameRequest request) {
+        log.debug("call AccountController#getCustomerName");
+        log.debug("accountNumber={}", request.getAccountNumber());
+
         CustomerNameResponse response = accountQueryService.getCustomerName(request.getBankCode(), request.getAccountNumber());
+        log.debug("response={}", response);
+
         return ApiResponse.ok(response);
     }
 }

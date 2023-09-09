@@ -2,9 +2,9 @@ package com.shinhan.api.api.service.account;
 
 import com.shinhan.api.IntegrationTestSupport;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
+import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.domain.account.Account;
 import com.shinhan.api.domain.account.repository.AccountRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,19 @@ class AccountQueryServiceTest extends IntegrationTestSupport {
 
         //then
         assertThat(response.getBalance()).isEqualTo(331551);
+    }
+
+    @DisplayName("은행 코드와 계좌 번로를 받아 예금주 실명을 조회한다.")
+    @Test
+    void getCustomerName() {
+        //given
+        Account account = createAccount();
+
+        //when
+        CustomerNameResponse response = accountQueryService.getCustomerName(account.getBankCode(), account.getAccountNumber());
+
+        //then
+        assertThat(response.getCustomerName()).isEqualTo("김신한");
     }
 
     private Account createAccount() {
