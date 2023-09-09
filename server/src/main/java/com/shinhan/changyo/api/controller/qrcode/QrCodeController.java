@@ -64,7 +64,7 @@ public class QrCodeController {
     public ApiResponse<QrCodeResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("AmountRequest={}", request);
-        QrCodeResponse response = qrCodeService.editAmount(request.toDto(qrCodeId));
+        QrCodeResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
         return ApiResponse.ok(response);
     }
 
@@ -77,7 +77,10 @@ public class QrCodeController {
      */
     @PatchMapping("/title/{qrCodeId}")
     public ApiResponse<QrCodeResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
-        return null;
+        log.debug("qrCodeId={}", qrCodeId);
+        log.debug("EditTitleRequest={}", request);
+        QrCodeResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
+        return ApiResponse.ok(response);
     }
 
 

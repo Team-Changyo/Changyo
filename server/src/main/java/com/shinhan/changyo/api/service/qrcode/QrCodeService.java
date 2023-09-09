@@ -8,6 +8,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
+import com.shinhan.changyo.api.service.qrcode.dto.EditTitleDto;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
@@ -211,6 +212,12 @@ public class QrCodeService {
     public QrCodeResponse editAmount(EditAmountDto dto) {
         QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
         findQrCode.editAmount(dto.getAmount());
+        return QrCodeResponse.of(findQrCode);
+    }
+
+    public QrCodeResponse editTitle(EditTitleDto dto) {
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        findQrCode.editTitle(dto.getTitle());
         return QrCodeResponse.of(findQrCode);
     }
 }

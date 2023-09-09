@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @NoArgsConstructor
 public class EditAmountRequest {
 
+    @NotBlank
     private int amount;
 
     @Builder
@@ -16,9 +19,9 @@ public class EditAmountRequest {
         this.amount = amount;
     }
 
-    public EditAmountDto toDto(Long qrCodeId) {
+    public EditAmountDto toEditAmountDto(Long qrCodeId) {
         return EditAmountDto.builder()
-                .amount(amount)
+                .amount(this.amount)
                 .qrCodeId(qrCodeId)
                 .build();
     }
