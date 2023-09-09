@@ -1,38 +1,78 @@
-import React from 'react';
-import { ReactComponent as Right } from 'assets/icons/navigation/right.svg';
-import { ISettlement } from 'types/deposit';
-import { formatMoney } from 'utils/common/formatMoney';
+import React, { Dispatch, SetStateAction } from 'react';
+import { ReactComponent as Check } from 'assets/icons/check.svg';
+import { ReactComponent as Coin } from 'assets/icons/account/coin.svg';
+import { ISettlement, ISettlementGroup } from 'types/deposit';
 import { SettlementListItemContainer } from './style';
+import DepositReturnModal from '../DepositReturnModal';
 
 interface ISettlementListItemProps {
 	settlement: ISettlement;
+	multiReturnMode: boolean;
+	selectedSettlement: Array<ISettlement>;
+	setSelectedSettlement: Dispatch<SetStateAction<ISettlement[]>>;
+	settlementGroup: ISettlementGroup;
 }
 
-function SettlementListItem({ settlement }: ISettlementListItemProps) {
-	const formattedMoneyUnit = formatMoney(settlement.moneyUnit);
-	const formattedTotalMoney = formatMoney(settlement.cntBeforeReturn * settlement.moneyUnit);
+function SettlementListItem({
+	settlement,
+	multiReturnMode,
+	selectedSettlement,
+	setSelectedSettlement,
+	settlementGroup,
+}: ISettlementListItemProps) {
+	const isSelected = () => {
+		const idx = selectedSettlement.findIndex((el) => el.key === settlement.key);
+		if (idx === -1) return false;
+		return true;
+	};
 
+	const handleReturnBtnClick = () => {
+		DepositReturnModal({ depositorName: settlement.depositorName, onAction: () => {}, params: { settlementGroup } });
+	};
+
+	const handleCheckBtnClick = () => {
+		const idx = selectedSettlement.findIndex((el) => el.key === settlement.key);
+		if (idx === -1) {
+			selectedSettlement.push(settlement);
+			setSelectedSettlement([...selectedSettlement]);
+		} else {
+			selectedSettlement.splice(idx, 1);
+			setSelectedSettlement([...selectedSettlement]);
+		}
+	};
 	return (
-		<SettlementListItemContainer>
-			<div className="left">
-				<div>
-					<span className="title">{settlement.title}</span> 건
+		<SettlementListItemContainer $isReturned={settlement.isReturned}>
+			<div className="settlement-logo">
+				<Coin />
+			</div>
+			<div className="settlement-info">
+				<div className="depositor-name">
+					입금자명 <span>{settlement.depositorName}</span>
 				</div>
-				<div className="money-unit-row">
-					입금단위 <span>{formattedMoneyUnit}원</span>
-				</div>
-				<div className="before-return-total-row">
-					반환 전 합계 <span className="return-datetime">{formattedTotalMoney}원</span>
+				<div className="return-datetime">
+					입금일시 <span>{settlement.dateTime}</span>
 				</div>
 			</div>
-			<div className="right">
-				{settlement.cntBeforeReturn ? (
-					<span className="before-return">반환 전 {settlement.cntBeforeReturn}건</span>
+			<div className="return-btn">
+				{/* 반환된 건이면 완료 버튼 (비활성화 버튼) */}
+				{settlement.isReturned ? (
+					<button type="button" className="returned" disabled>
+						완료
+					</button>
 				) : (
-					<span className="after-return">반환완료</span>
+					// 반환되지 않은 건이면, 반환 버튼 or 체크 버튼
+					<>
+						{multiReturnMode ? (
+							// 여러건 반환 모드일 때, 체크 버튼으로 전환
+							<Check fill={isSelected() ? 'var(--main-color)' : 'var(--gray-400)'} onClick={handleCheckBtnClick} />
+						) : (
+							// 단일건 반환 모드일 때, 반환 버튼으로 전환
+							<button type="button" className="before-return" onClick={handleReturnBtnClick}>
+								반환
+							</button>
+						)}
+					</>
 				)}
-
-				<Right />
 			</div>
 		</SettlementListItemContainer>
 	);
