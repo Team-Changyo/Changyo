@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class QrCodeDetailResponse {
+    private Long qrCodeId;
 
     private String bankCode;
 
@@ -22,7 +23,8 @@ public class QrCodeDetailResponse {
     private String url;
 
     @Builder
-    public QrCodeDetailResponse(String bankCode, String accountNumber, String title, String customerName, int amount, String base64QrCode, String url) {
+    public QrCodeDetailResponse(Long qrCodeId, String bankCode, String accountNumber, String title, String customerName, int amount, String base64QrCode, String url) {
+        this.qrCodeId = qrCodeId;
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
         this.title = title;
@@ -34,6 +36,7 @@ public class QrCodeDetailResponse {
 
     public static QrCodeDetailResponse of(QrCode qrCode){
         return QrCodeDetailResponse.builder()
+                .qrCodeId(qrCode.getQrCodeId())
                 .bankCode(qrCode.getAccount().getBankCode())
                 .accountNumber(qrCode.getAccount().getAccountNumber())
                 .title(qrCode.getTitle())
