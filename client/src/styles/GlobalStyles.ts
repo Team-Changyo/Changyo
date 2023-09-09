@@ -58,6 +58,7 @@ export const GlobalStyles = createGlobalStyle`
         list-style: none;
     }
     button {
+        font-family: 'Pretendard';
         border: 0;
         background: transparent;
         cursor: pointer;
