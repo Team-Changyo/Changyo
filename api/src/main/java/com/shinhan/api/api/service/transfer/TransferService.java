@@ -8,7 +8,6 @@ import com.shinhan.api.domain.account.Account;
 import com.shinhan.api.domain.account.repository.AccountRepository;
 import com.shinhan.api.domain.trade.Trade;
 import com.shinhan.api.domain.trade.repository.TradeRepository;
-import com.shinhan.api.domain.transfer.repository.TransferQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class TransferQueryService {
+public class TransferService {
 
     private final AccountRepository accountRepository;
     private final TradeRepository tradeRepository;

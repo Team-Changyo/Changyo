@@ -5,7 +5,7 @@ import com.shinhan.api.api.controller.transfer.request.OneTransferRequest;
 import com.shinhan.api.api.controller.transfer.request.TransferRequest;
 import com.shinhan.api.api.controller.transfer.response.OneTransferResponse;
 import com.shinhan.api.api.controller.transfer.response.TransferResponse;
-import com.shinhan.api.api.service.transfer.TransferQueryService;
+import com.shinhan.api.api.service.transfer.TransferService;
 import com.shinhan.api.api.service.transfer.dto.OneTransferDto;
 import com.shinhan.api.api.service.transfer.dto.TransferDto;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TransferController {
 
-    private final TransferQueryService transferQueryService;
+    private final TransferService transferService;
 
     @PostMapping("/v1/transfer/krw")
     public ApiResponse<TransferResponse> transfer(@Valid @RequestBody TransferRequest request) {
@@ -30,7 +30,7 @@ public class TransferController {
         log.debug("TransferRequest={}", request);
 
         TransferDto dto = request.toTransferDto();
-        TransferResponse response = transferQueryService.transfer(dto, LocalDateTime.now());
+        TransferResponse response = transferService.transfer(dto, LocalDateTime.now());
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);
@@ -42,7 +42,7 @@ public class TransferController {
         log.debug("OneTransferRequest={}", request);
 
         OneTransferDto dto = request.toOneTransferDto();
-        OneTransferResponse response = transferQueryService.oneTransfer(dto, LocalDateTime.now());
+        OneTransferResponse response = transferService.oneTransfer(dto, LocalDateTime.now());
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);
