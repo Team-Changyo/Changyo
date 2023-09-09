@@ -5,3 +5,10 @@ export interface IDepositHistory {
 	moneyUnit: number;
 	returnDateTime: string;
 }
+
+export interface ISettlement {
+	key: number;
+	title: string;
+	moneyUnit: number;
+	cntBeforeReturn: number;
+}
