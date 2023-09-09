@@ -5,7 +5,9 @@ import com.shinhan.changyo.api.controller.qrcode.request.EditAmountRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.EditTitleRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.SimpleQrCodeRequest;
-import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponses;
+import com.shinhan.changyo.api.service.qrcode.dto.QrCodeResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
@@ -32,9 +34,9 @@ public class QrCodeController {
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
     @PostMapping()
-    public ApiResponse<QrCodeResponse> createQrCode(@RequestBody QrCodeRequest request){
+    public ApiResponse<QrCodeDetailResponse> createQrCode(@RequestBody QrCodeRequest request){
         log.debug("QrCodeRequest={}", request);
-        QrCodeResponse response = qrCodeService.createQrcode(request.toQrCodeDto());
+        QrCodeDetailResponse response = qrCodeService.createQrcode(request.toQrCodeDto());
         return ApiResponse.ok(response);
     }
 
@@ -61,10 +63,10 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/amount/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
+    public ApiResponse<QrCodeDetailResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("AmountRequest={}", request);
-        QrCodeResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
+        QrCodeDetailResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
         return ApiResponse.ok(response);
     }
 
@@ -76,10 +78,10 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/title/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
+    public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("EditTitleRequest={}", request);
-        QrCodeResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
+        QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
         return ApiResponse.ok(response);
     }
 
@@ -106,8 +108,10 @@ public class QrCodeController {
 
     // TODO: 2023-09-09 홍진식 : 회원 join해서 해당 회원의 모든 account 가져오고 조회해야함
     @GetMapping()
-    public ApiResponse<List<QrCodeResponse>> getQrCodes(){
-        return null;
+    public ApiResponse<QrCodeResponses> getQrCodes(@RequestHeader("memberId") Long memberId){
+        log.debug("memberId={}", memberId);
+        QrCodeResponses responses = qrCodeQueryService.getQrCodes(memberId);
+        return ApiResponse.ok(responses);
     }
 
     /**
@@ -118,9 +122,9 @@ public class QrCodeController {
      */
 
     @GetMapping("/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> getQrCode(@PathVariable Long qrCodeId){
+    public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId){
         log.debug("qrCodeId={}", qrCodeId);
-        QrCodeResponse response = qrCodeService.getQrCode(qrCodeId);
+        QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId);
         return ApiResponse.ok(response);
     }
 

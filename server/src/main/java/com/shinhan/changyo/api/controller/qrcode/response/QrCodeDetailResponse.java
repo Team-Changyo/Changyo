@@ -1,12 +1,11 @@
 package com.shinhan.changyo.api.controller.qrcode.response;
 
-import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.qrcode.QrCode;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class QrCodeResponse {
+public class QrCodeDetailResponse {
 
     private String bankCode;
 
@@ -23,7 +22,7 @@ public class QrCodeResponse {
     private String url;
 
     @Builder
-    public QrCodeResponse(String bankCode, String accountNumber, String title, String customerName, int amount, String base64QrCode, String url) {
+    public QrCodeDetailResponse(String bankCode, String accountNumber, String title, String customerName, int amount, String base64QrCode, String url) {
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
         this.title = title;
@@ -33,8 +32,8 @@ public class QrCodeResponse {
         this.url = url;
     }
 
-    public static QrCodeResponse of(QrCode qrCode){
-        return QrCodeResponse.builder()
+    public static QrCodeDetailResponse of(QrCode qrCode){
+        return QrCodeDetailResponse.builder()
                 .bankCode(qrCode.getAccount().getBankCode())
                 .accountNumber(qrCode.getAccount().getAccountNumber())
                 .title(qrCode.getTitle())

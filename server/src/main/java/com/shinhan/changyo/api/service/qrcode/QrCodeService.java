@@ -6,7 +6,7 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.dto.EditTitleDto;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
@@ -47,7 +47,7 @@ public class QrCodeService {
      * @return qr코드 정보
      */
 
-    public QrCodeResponse createQrcode(QrCodeDto dto) {
+    public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
         try{
             // QR코드 생성
             String qrCodeBase64 = createQR(dto.getUrl());
@@ -59,7 +59,7 @@ public class QrCodeService {
             // qr코드 등록
             qrCodeRepository.save(qrCode);
 
-            QrCodeResponse response = QrCodeResponse.builder()
+            QrCodeDetailResponse response = QrCodeDetailResponse.builder()
                     .bankCode(findAccount.getBankCode())
                     .accountNumber(findAccount.getAccountNumber())
                     .title(qrCode.getTitle())
@@ -209,16 +209,16 @@ public class QrCodeService {
         return bitMatrix;
     }
 
-    public QrCodeResponse editAmount(EditAmountDto dto) {
+    public QrCodeDetailResponse editAmount(EditAmountDto dto) {
         QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
         findQrCode.editAmount(dto.getAmount());
-        return QrCodeResponse.of(findQrCode);
+        return QrCodeDetailResponse.of(findQrCode);
     }
 
-    public QrCodeResponse editTitle(EditTitleDto dto) {
+    public QrCodeDetailResponse editTitle(EditTitleDto dto) {
         QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
         findQrCode.editTitle(dto.getTitle());
-        return QrCodeResponse.of(findQrCode);
+        return QrCodeDetailResponse.of(findQrCode);
     }
 
     public Boolean removeQrCode(Long qrCodeId) {
@@ -227,8 +227,8 @@ public class QrCodeService {
         return true;
     }
 
-    public QrCodeResponse getQrCode(Long qrCodeId) {
+    public QrCodeDetailResponse getQrCode(Long qrCodeId) {
         QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
-        return QrCodeResponse.of(findQrCode);
+        return QrCodeDetailResponse.of(findQrCode);
     }
 }
