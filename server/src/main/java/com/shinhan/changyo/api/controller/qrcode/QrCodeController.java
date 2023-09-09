@@ -93,6 +93,7 @@ public class QrCodeController {
 
     @DeleteMapping("/remove/{qrCodeId}")
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
+        log.debug("qrCodeId={}", qrCodeId);
         Boolean result = qrCodeService.removeQrCode(qrCodeId);
         return ApiResponse.ok(result);
     }
@@ -118,7 +119,9 @@ public class QrCodeController {
 
     @GetMapping("/{qrCodeId}")
     public ApiResponse<QrCodeResponse> getQrCode(@PathVariable Long qrCodeId){
-        return null;
+        log.debug("qrCodeId={}", qrCodeId);
+        QrCodeResponse response = qrCodeService.getQrCode(qrCodeId);
+        return ApiResponse.ok(response);
     }
 
 }

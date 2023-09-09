@@ -226,4 +226,9 @@ public class QrCodeService {
         findQrCode.remove();
         return true;
     }
+
+    public QrCodeResponse getQrCode(Long qrCodeId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        return QrCodeResponse.of(findQrCode);
+    }
 }
