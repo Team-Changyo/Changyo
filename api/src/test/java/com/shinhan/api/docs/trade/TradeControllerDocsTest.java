@@ -114,7 +114,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         .description("내용"),
                     fieldWithPath("data.trades[].balance").type(JsonFieldType.NUMBER)
                         .description("잔액"),
-                    fieldWithPath("data.trades[].status").type(JsonFieldType.STRING)
+                    fieldWithPath("data.trades[].status").type(JsonFieldType.NUMBER)
                         .description("입지구분"),
                     fieldWithPath("data.trades[].dealershipName").type(JsonFieldType.STRING)
                         .description("거래점명")
