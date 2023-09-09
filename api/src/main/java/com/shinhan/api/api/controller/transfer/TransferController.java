@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -29,7 +30,7 @@ public class TransferController {
         log.debug("TransferRequest={}", request);
 
         TransferDto dto = request.toTransferDto();
-        TransferResponse response = transferQueryService.transfer(dto);
+        TransferResponse response = transferQueryService.transfer(dto, LocalDateTime.now());
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);
@@ -41,7 +42,7 @@ public class TransferController {
         log.debug("OneTransferRequest={}", request);
 
         OneTransferDto dto = request.toOneTransferDto();
-        OneTransferResponse response = transferQueryService.oneTransfer(dto);
+        OneTransferResponse response = transferQueryService.oneTransfer(dto, LocalDateTime.now());
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);

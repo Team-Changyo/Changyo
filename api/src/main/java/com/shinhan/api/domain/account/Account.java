@@ -40,10 +40,11 @@ public class Account extends TimeBaseEntity {
             throw new IllegalArgumentException("계좌 잔액이 부족합니다.");
         }
         this.balance = result;
-        return result;
+        return this.balance;
     }
 
-    public void deposit(int amount) {
+    public int deposit(int amount) {
         this.balance += amount;
+        return this.balance;
     }
 }
