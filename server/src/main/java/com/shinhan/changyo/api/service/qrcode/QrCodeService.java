@@ -220,4 +220,10 @@ public class QrCodeService {
         findQrCode.editTitle(dto.getTitle());
         return QrCodeResponse.of(findQrCode);
     }
+
+    public Boolean removeQrCode(Long qrCodeId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        findQrCode.remove();
+        return true;
+    }
 }

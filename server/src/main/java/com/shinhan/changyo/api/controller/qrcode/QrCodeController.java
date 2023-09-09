@@ -93,7 +93,8 @@ public class QrCodeController {
 
     @DeleteMapping("/remove/{qrCodeId}")
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
-        return null;
+        Boolean result = qrCodeService.removeQrCode(qrCodeId);
+        return ApiResponse.ok(result);
     }
 
     /**

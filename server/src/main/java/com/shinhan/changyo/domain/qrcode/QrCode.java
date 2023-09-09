@@ -65,4 +65,8 @@ public class QrCode extends TimeBaseEntity {
     public void editTitle(String title){
         this.title = title;
     }
+
+    public void remove() {
+        this.active = false;
+    }
 }
