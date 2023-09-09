@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,8 +43,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
             .build();
 
         TradeDetailResponse tradeDetailResponse = TradeDetailResponse.builder()
-            .tradeDate("20230318")
-            .tradeTime("154602")
+            .tradeDateTime(LocalDateTime.now())
             .summary("이자")
             .withdrawalAmount(0)
             .depositAmount(1404)

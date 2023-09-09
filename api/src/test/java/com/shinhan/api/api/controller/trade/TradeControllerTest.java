@@ -1,19 +1,17 @@
 package com.shinhan.api.api.controller.trade;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.api.ControllerTestSupport;
-import com.shinhan.api.api.controller.account.AccountController;
 import com.shinhan.api.api.controller.trade.request.TradeRequest;
 import com.shinhan.api.api.controller.trade.response.TradeDetailResponse;
 import com.shinhan.api.api.controller.trade.response.TradeResponse;
 import com.shinhan.api.api.service.trade.TradeQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -59,8 +57,7 @@ class TradeControllerTest extends ControllerTestSupport {
             .build();
 
         TradeDetailResponse detailResponse = TradeDetailResponse.builder()
-            .tradeDate("20230205")
-            .tradeTime("222828")
+            .tradeDateTime(LocalDateTime.now())
             .summary("신한체크")
             .withdrawalAmount(4700)
             .depositAmount(0)
