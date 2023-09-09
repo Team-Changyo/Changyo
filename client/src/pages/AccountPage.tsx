@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PageLayout from 'layouts/common/PageLayout';
 import AccountPageLayout from 'layouts/page/AccountPageLayout';
-import AccountSummary from 'components/organisms/account/AccountSummary';
+import AccountTotalSummary from 'components/organisms/account/AccountTotalSummary';
 import AccountFilterList from 'components/organisms/account/AccountFilterList';
 import AccountList from 'components/organisms/account/AccountList';
 import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
@@ -14,7 +14,7 @@ function AccountPage() {
 		<PageLayout>
 			<AccountPageLayout
 				Navbar={<MainTabNavbar tabName="내 계좌" />}
-				AccountSummary={<AccountSummary accountCnt={2} totalMoney={200501} />}
+				AccountSummary={<AccountTotalSummary accountCnt={2} totalMoney={200501} />}
 				AccountFilterList={
 					<AccountFilterList bankCodes={[]} selectedCode={selectedCode} setSelectedCode={setSelectedCode} />
 				}

@@ -5,7 +5,7 @@ export const TabbarItemWrapper = styled.div<{ $isActive: boolean }>`
 	justify-content: center;
 	align-items: center;
 	width: calc(50% - 2.8rem);
-	background-color: #fff;
+	background-color: var(--white-color);
 	z-index: 30;
 
 	&:hover {

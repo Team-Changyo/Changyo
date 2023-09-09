@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReactComponent as Shinhan } from 'assets/icons/banklogo/088.svg';
 import { formatMoney } from 'utils/common/formatMoney';
+import { useNavigate } from 'react-router-dom';
 import { AccountListItemContainer } from './style';
 
 interface AccountListItemProps {
@@ -8,9 +9,11 @@ interface AccountListItemProps {
 }
 
 function AccountListItem({ isMainAccount }: AccountListItemProps) {
+	const navigate = useNavigate();
 	const balance = formatMoney(20000);
+
 	return (
-		<AccountListItemContainer>
+		<AccountListItemContainer onClick={() => navigate('/account/1')}>
 			<div className="bank-logo">
 				<Shinhan />
 			</div>

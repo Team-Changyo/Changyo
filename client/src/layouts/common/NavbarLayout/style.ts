@@ -15,4 +15,5 @@ export const NavbarLayoutContainer = styled.nav`
 	max-width: 500px;
 	height: 3rem;
 	margin: 0 auto;
+	background-color: var(--white-color);
 `;

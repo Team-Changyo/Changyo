@@ -28,14 +28,14 @@ export const TabBackground = styled.div`
 	#box {
 		width: 40px;
 		height: 40px;
-		background-color: #fff;
+		background-color: var(--white-color);
 		z-index: 10;
 	}
 
 	&::before {
 		content: '';
 		display: inline-block;
-		background: #fff;
+		background: var(--white-color);
 		width: 50%;
 		height: 56px;
 		box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.16);
@@ -45,7 +45,7 @@ export const TabBackground = styled.div`
 	&::after {
 		content: '';
 		display: inline-block;
-		background: #fff;
+		background: var(--white-color);
 		width: 50%;
 		height: 56px;
 		box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.16);
