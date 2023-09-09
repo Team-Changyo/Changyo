@@ -14,12 +14,26 @@ function DepositPage() {
 		{ idx: 1, title: '정산 현황', handleClick: () => setTabType(1), selected: tabType },
 	];
 
+	const settlements = [
+		{
+			key: 1,
+			title: '럭셔리 글램핑 객실이용',
+			moneyUnit: 20000,
+			cntBeforeReturn: 3,
+		},
+		{
+			key: 2,
+			title: '럭셔리 2호점 글램핑 객실이용',
+			moneyUnit: 20000,
+			cntBeforeReturn: 0,
+		},
+	];
 	return (
 		<PageLayout>
 			<DepositPageLayout
 				Navbar={<MainTabNavbar tabName="보증금 관리" />}
 				SelectSubTab={<SelectTabTypeList tabTypes={tabTypes} />}
-				SubTab={tabType ? <RemitHistoryListStack /> : <SettlementList />}
+				SubTab={tabType ? <RemitHistoryListStack /> : <SettlementList settlements={settlements} />}
 			/>
 		</PageLayout>
 	);
