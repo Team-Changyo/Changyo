@@ -10,7 +10,6 @@ export interface IHistory {
 	key: number;
 	title: string;
 	time: string;
-	type: string;
 	price: number;
 	balance: number;
 }
