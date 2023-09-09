@@ -34,7 +34,7 @@ public class QrCode extends TimeBaseEntity {
     private String title;
 
     // TODO: 2023-09-08 홍진식 : 변수명 체크 필요
-    @Column(nullable = false, name = "base64_qr_code")
+    @Column(nullable = false, length = 10000, name = "base64_qr_code")
     private String base64QrCode;
 
     @Column(nullable = false)

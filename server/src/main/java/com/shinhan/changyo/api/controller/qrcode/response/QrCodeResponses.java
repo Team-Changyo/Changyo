@@ -10,18 +10,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class QrCodeResponses {
-    private int qrCodesize;
+    private int qrCodeSize;
     private List<QrCodeResponse> qrCodeResponses;
 
     @Builder
-    public QrCodeResponses(int qrCodesize, List<QrCodeResponse> qrCodeResponses) {
-        this.qrCodesize = qrCodesize;
+    public QrCodeResponses(int qrCodeSize, List<QrCodeResponse> qrCodeResponses) {
+        this.qrCodeSize = qrCodeSize;
         this.qrCodeResponses = qrCodeResponses;
     }
 
     public static QrCodeResponses of(List<QrCodeResponse> qrCodes){
         return QrCodeResponses.builder()
-                .qrCodesize(qrCodes.size())
+                .qrCodeSize(qrCodes.size())
                 .qrCodeResponses(qrCodes)
                 .build();
     }

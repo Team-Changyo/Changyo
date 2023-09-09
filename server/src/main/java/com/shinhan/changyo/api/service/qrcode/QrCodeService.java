@@ -59,17 +59,7 @@ public class QrCodeService {
             // qr코드 등록
             qrCodeRepository.save(qrCode);
 
-            QrCodeDetailResponse response = QrCodeDetailResponse.builder()
-                    .bankCode(findAccount.getBankCode())
-                    .accountNumber(findAccount.getAccountNumber())
-                    .title(qrCode.getTitle())
-                    .customerName(findAccount.getCustomerName())
-                    .amount(qrCode.getAmount())
-                    .base64QrCode(qrCode.getBase64QrCode())
-                    .url(qrCode.getUrl())
-                    .build();
-
-            return response;
+            return QrCodeDetailResponse.of(qrCode);
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
@@ -139,8 +129,8 @@ public class QrCodeService {
 
         // QRCode 전체 크기
         // 단위는 fixel
-        int width=1000;
-        int height=1000;
+        int width=200;
+        int height=200;
 
         // 내부에 빈 공간만들 빈 공간 -> oncolor로 만들어진다.
         //int regionWidth=100;
