@@ -6,6 +6,7 @@ import com.shinhan.changyo.api.service.account.dto.BalanceResponse;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.domain.account.Account;
+import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberRepository;
@@ -28,6 +29,7 @@ import java.util.NoSuchElementException;
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final AccountQueryRepository accountQueryRepository;
     private final MemberRepository memberRepository;
     private final ShinHanApiClient shinHanApiClient;
 
@@ -66,8 +68,25 @@ public class AccountService {
      */
     private Account saveAccount(CreateAccountDto dto, Member member) {
         int balance = getBalance(dto.getAccountNumber());
+
         Account account = dto.toEntity(member, balance);
+
+        if (checkIsFirstAccount(member.getId())) {
+            account.setMainAccount();
+        }
+
         return accountRepository.save(account);
+    }
+
+    /**
+     * 첫 등록 계좌 여부 확인
+     *
+     * @param memberId 회원 식별키
+     * @return true: 첫 등록 계좌인 경우. false: 첫 등록 계좌가 아닌 경우
+     */
+    private Boolean checkIsFirstAccount(Long memberId) {
+        Integer accountSize = accountQueryRepository.getAccountSizeByMemberId(memberId);
+        return accountSize == null || accountSize == 0;
     }
 
     /**
