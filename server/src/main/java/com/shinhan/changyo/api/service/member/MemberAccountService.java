@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class AccountService {
+public class MemberAccountService {
 
     private final MemberQueryRepository memberQueryRepository;
     private final PasswordEncoder bCryptPasswordEncoder;

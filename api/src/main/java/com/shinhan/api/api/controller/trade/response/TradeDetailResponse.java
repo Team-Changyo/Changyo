@@ -3,6 +3,9 @@ package com.shinhan.api.api.controller.trade.response;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Data
 public class TradeDetailResponse {
 
@@ -13,13 +16,13 @@ public class TradeDetailResponse {
     private int depositAmount;
     private String content;
     private int balance;
-    private String status;
+    private int status;
     private String dealershipName;
 
     @Builder
-    public TradeDetailResponse(String tradeDate, String tradeTime, String summary, int withdrawalAmount, int depositAmount, String content, int balance, String status, String dealershipName) {
-        this.tradeDate = tradeDate;
-        this.tradeTime = tradeTime;
+    public TradeDetailResponse(LocalDateTime tradeDateTime, String summary, int withdrawalAmount, int depositAmount, String content, int balance, int status, String dealershipName) {
+        this.tradeDate = tradeDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        this.tradeTime = tradeDateTime.format(DateTimeFormatter.ofPattern("hhmmss"));
         this.summary = summary;
         this.withdrawalAmount = withdrawalAmount;
         this.depositAmount = depositAmount;

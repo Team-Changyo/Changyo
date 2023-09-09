@@ -17,7 +17,7 @@ public class TransferRequest {
     private String withdrawalMemo;
 
     @Builder
-    public TransferRequest(String withdrawalAccountNumber, String depositBankCode, String depositAccountNumber, int amount, String depositMemo, String withdrawalMemo) {
+    private TransferRequest(String withdrawalAccountNumber, String depositBankCode, String depositAccountNumber, int amount, String depositMemo, String withdrawalMemo) {
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.depositBankCode = depositBankCode;
         this.depositAccountNumber = depositAccountNumber;

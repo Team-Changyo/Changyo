@@ -13,3 +13,8 @@ endif::[]
 == Member API
 
 include::api/member/member.adoc[]
+
+[[Account-API]]
+== Account API
+
+include::api/account/account.adoc[]

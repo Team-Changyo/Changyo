@@ -6,7 +6,7 @@ import com.shinhan.changyo.api.controller.member.request.LoginRequest;
 import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
-import com.shinhan.changyo.api.service.member.AccountService;
+import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
 import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
@@ -29,11 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MemberControllerDocsTest extends RestDocsSupport {
 
     private final MemberService memberService = mock(MemberService.class);
-    private final AccountService accountService = mock(AccountService.class);
+    private final MemberAccountService memberAccountService = mock(MemberAccountService.class);
 
     @Override
     protected Object initController() {
-        return new MemberController(memberService, accountService);
+        return new MemberController(memberService, memberAccountService);
     }
 
     @DisplayName("회원 가입 API")
@@ -107,7 +107,7 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                 .name("김싸피")
                 .build();
 
-        given(accountService.login(anyString(), anyString()))
+        given(memberAccountService.login(anyString(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(

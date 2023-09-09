@@ -5,7 +5,7 @@ import com.shinhan.api.api.controller.transfer.request.OneTransferRequest;
 import com.shinhan.api.api.controller.transfer.request.TransferRequest;
 import com.shinhan.api.api.controller.transfer.response.OneTransferResponse;
 import com.shinhan.api.api.controller.transfer.response.TransferResponse;
-import com.shinhan.api.api.service.transfer.TransferQueryService;
+import com.shinhan.api.api.service.transfer.TransferService;
 import com.shinhan.api.api.service.transfer.dto.OneTransferDto;
 import com.shinhan.api.api.service.transfer.dto.TransferDto;
 import com.shinhan.api.docs.RestDocsSupport;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -28,11 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TransferControllerDocsTest extends RestDocsSupport {
 
-    private final TransferQueryService transferQueryService = mock(TransferQueryService.class);
+    private final TransferService transferService = mock(TransferService.class);
 
     @Override
     protected Object initController() {
-        return new TransferController(transferQueryService);
+        return new TransferController(transferService);
     }
 
     @DisplayName("이체(원화) API")
@@ -57,7 +59,7 @@ public class TransferControllerDocsTest extends RestDocsSupport {
             .result(3542000)
             .build();
 
-        given(transferQueryService.transfer(any(TransferDto.class)))
+        given(transferService.transfer(any(TransferDto.class), any(LocalDateTime.class)))
             .willReturn(response);
 
         mockMvc.perform(
@@ -125,7 +127,7 @@ public class TransferControllerDocsTest extends RestDocsSupport {
             .accountNumber("110222999999")
             .build();
 
-        given(transferQueryService.oneTransfer(any(OneTransferDto.class)))
+        given(transferService.oneTransfer(any(OneTransferDto.class), any(LocalDateTime.class)))
             .willReturn(response);
 
         mockMvc.perform(

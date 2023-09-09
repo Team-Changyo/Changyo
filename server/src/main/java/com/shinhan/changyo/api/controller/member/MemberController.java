@@ -6,7 +6,7 @@ import com.shinhan.changyo.api.controller.member.request.LoginRequest;
 import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
-import com.shinhan.changyo.api.service.member.AccountService;
+import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    private final AccountService accountService;
+    private final MemberAccountService memberAccountService;
 
     /**
      * 회원 가입 API
@@ -60,7 +60,7 @@ public class MemberController {
         log.debug("MemberController#login");
         log.debug("LoginRequest={}", request);
 
-        LoginResponse response = accountService.login(request.getLoginId(), request.getPassword());
+        LoginResponse response = memberAccountService.login(request.getLoginId(), request.getPassword());
         log.debug("LoginResponse={}", response);
 
         return ApiResponse.ok(response);

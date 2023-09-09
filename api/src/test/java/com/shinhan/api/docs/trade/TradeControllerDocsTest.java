@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,14 +43,13 @@ public class TradeControllerDocsTest extends RestDocsSupport {
             .build();
 
         TradeDetailResponse tradeDetailResponse = TradeDetailResponse.builder()
-            .tradeDate("20230318")
-            .tradeTime("154602")
+            .tradeDateTime(LocalDateTime.now())
             .summary("이자")
             .withdrawalAmount(0)
             .depositAmount(1404)
             .content("12.17~03.17")
             .balance(331551)
-            .status("1")
+            .status(1)
             .dealershipName("영업부")
             .build();
 
@@ -114,7 +114,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         .description("내용"),
                     fieldWithPath("data.trades[].balance").type(JsonFieldType.NUMBER)
                         .description("잔액"),
-                    fieldWithPath("data.trades[].status").type(JsonFieldType.STRING)
+                    fieldWithPath("data.trades[].status").type(JsonFieldType.NUMBER)
                         .description("입지구분"),
                     fieldWithPath("data.trades[].dealershipName").type(JsonFieldType.STRING)
                         .description("거래점명")

@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+spring:
+  # database setting
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  # h2 setting
+  h2:
+    console:
+      enabled: true
+  # jpa setting
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+    open-in-view: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: never
+
+# log setting
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.shinhan.api: debug

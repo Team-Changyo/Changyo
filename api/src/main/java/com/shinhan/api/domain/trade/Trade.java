@@ -20,15 +20,13 @@ public class Trade extends TimeBaseEntity {
     @Column(name = "trade_id")
     private Long id;
 
-    private LocalDateTime tradeDate;
-    private LocalDateTime tradeTime;
+    private LocalDateTime tradeDateTime;
     private String summary;
-
     private int withdrawalAmount;
     private int depositAmount;
     private String content;
     private int balance;
-    private String status;
+    private int status;
     private String dealershipName;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,9 +34,8 @@ public class Trade extends TimeBaseEntity {
     private Account account;
 
     @Builder
-    private Trade(LocalDateTime tradeDate, LocalDateTime tradeTime, String summary, int withdrawalAmount, int depositAmount, String content, int balance, String status, String dealershipName) {
-        this.tradeDate = tradeDate;
-        this.tradeTime = tradeTime;
+    private Trade(LocalDateTime tradeDateTime, String summary, int withdrawalAmount, int depositAmount, String content, int balance, int status, String dealershipName, Account account) {
+        this.tradeDateTime = tradeDateTime;
         this.summary = summary;
         this.withdrawalAmount = withdrawalAmount;
         this.depositAmount = depositAmount;
@@ -46,5 +43,6 @@ public class Trade extends TimeBaseEntity {
         this.balance = balance;
         this.status = status;
         this.dealershipName = dealershipName;
+        this.account = account;
     }
 }
