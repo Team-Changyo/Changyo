@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 /**
  * 게좌 Entity
- * 
+ *
  * @author 최영환
  */
 @Getter
@@ -55,5 +55,21 @@ public class Account extends TimeBaseEntity {
         this.mainAccount = mainAccount;
         this.active = active;
         this.member = member;
+    }
+
+    // == Business Logics ==//
+
+    /**
+     * 주계좌 설정
+     */
+    public void setMainAccount() {
+        this.mainAccount = true;
+    }
+
+    /**
+     * 주계좌 설정 해제
+     */
+    public void setSubAccount() {
+        this.mainAccount = false;
     }
 }
