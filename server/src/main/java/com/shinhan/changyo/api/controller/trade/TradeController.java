@@ -2,15 +2,15 @@ package com.shinhan.changyo.api.controller.trade;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
+import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 보증금 거래내역 관련 API 컨트롤러
@@ -24,6 +24,7 @@ import javax.validation.Valid;
 public class TradeController {
 
     private final TradeService tradeService;
+    private final TradeQueryService tradeQueryService;
 
     /**
      * 보증금 송금 API
@@ -40,5 +41,21 @@ public class TradeController {
         log.debug("saveId={}", saveId);
 
         return ApiResponse.ok(saveId);
+    }
+
+    /**
+     * 송금내역 목록 조회 API
+     * @param memberId 회원 식별키
+     * @return 해당 회원의 송금내역 목록
+     */
+    @GetMapping()
+    public ApiResponse<List<WithdrawalResponse>> getWithdrawalTrades(@RequestParam Long memberId) {
+        log.debug("TradeController#getWithdrawalTrades call");
+        log.debug("memberId={}", memberId);
+
+        List<WithdrawalResponse> responses = tradeQueryService.getWithdrawalTrades(memberId);
+        log.debug("responses={}", responses);
+
+        return ApiResponse.ok(responses);
     }
 }
