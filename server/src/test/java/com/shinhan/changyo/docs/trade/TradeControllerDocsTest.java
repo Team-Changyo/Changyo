@@ -49,7 +49,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andDo(document("create-trade",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),

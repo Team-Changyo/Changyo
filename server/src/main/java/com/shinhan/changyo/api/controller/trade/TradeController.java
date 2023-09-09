@@ -5,8 +5,10 @@ import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -30,7 +32,6 @@ public class TradeController {
      * @return 보증금 거래내역 식별키
      */
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Long> createTrade(@Valid @RequestBody CreateTradeRequest request) {
         log.debug("TradeController#createTrade call");
         log.debug("CreateTradeRequest={}", request);
@@ -38,6 +39,6 @@ public class TradeController {
         Long saveId = tradeService.createTrade(request.toCreateTradeDto());
         log.debug("saveId={}", saveId);
 
-        return ApiResponse.created(saveId);
+        return ApiResponse.ok(saveId);
     }
 }
