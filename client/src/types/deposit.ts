@@ -6,9 +6,16 @@ export interface IDepositHistory {
 	returnDateTime: string;
 }
 
-export interface ISettlement {
+export interface ISettlementGroup {
 	key: number;
 	title: string;
 	moneyUnit: number;
 	cntBeforeReturn: number;
+}
+
+export interface ISettlement {
+	key: number;
+	depositorName: string;
+	dateTime: string;
+	isReturned: boolean;
 }
