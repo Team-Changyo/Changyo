@@ -22,12 +22,12 @@ function SettlementListItem({ settlement }: ISettlementListItemProps) {
 					입금단위 <span>{formattedMoneyUnit}원</span>
 				</div>
 				<div className="before-return-total-row">
-					미반환 합계 <span className="return-datetime">{formattedTotalMoney}원</span>
+					반환 전 합계 <span className="return-datetime">{formattedTotalMoney}원</span>
 				</div>
 			</div>
 			<div className="right">
 				{settlement.cntBeforeReturn ? (
-					<span className="before-return">미반환 {settlement.cntBeforeReturn}건</span>
+					<span className="before-return">반환 전 {settlement.cntBeforeReturn}건</span>
 				) : (
 					<span className="after-return">반환완료</span>
 				)}
