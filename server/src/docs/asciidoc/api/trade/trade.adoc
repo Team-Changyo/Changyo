@@ -1,0 +1,10 @@
+[[create-trade]]
+=== 보증금 송금
+
+==== HTTP Request
+include::{snippets}/create-trade/http-request.adoc[]
+include::{snippets}/create-trade/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-trade/http-response.adoc[]
+include::{snippets}/create-trade/response-fields.adoc[]
