@@ -36,9 +36,14 @@ public class TransferController {
     }
 
     @PostMapping("/v1/auth/1transfer")
-    public ApiResponse<OneTransferResponse> oneTransfer(@RequestBody OneTransferRequest request) {
+    public ApiResponse<OneTransferResponse> oneTransfer(@Valid @RequestBody OneTransferRequest request) {
+        log.debug("call TransferController#oneTransfer");
+        log.debug("OneTransferRequest={}", request);
+
         OneTransferDto dto = request.toOneTransferDto();
         OneTransferResponse response = transferQueryService.oneTransfer(dto);
+        log.debug("response={}", response);
+
         return ApiResponse.ok(response);
     }
 }

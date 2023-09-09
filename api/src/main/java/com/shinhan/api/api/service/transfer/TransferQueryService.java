@@ -45,8 +45,11 @@ public class TransferQueryService {
     }
 
     public OneTransferResponse oneTransfer(OneTransferDto dto) {
-        // TODO: 2023-09-05 거래 로직 구현
-        return null;
+        Account depositAccount = accountRepository.findByAccountNumber(dto.getAccountNumber())
+            .orElseThrow(NoSuchElementException::new);
+        depositAccount.deposit(1);
+
+        return OneTransferResponse.of(depositAccount);
     }
 }
 
