@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -23,8 +25,13 @@ public class AccountController {
      * 계좌잔액조회
      */
     @PostMapping("/v1/account/balance/detail")
-    public ApiResponse<AccountResponse> getAccountBalance(@RequestBody AccountRequest request) {
+    public ApiResponse<AccountResponse> getAccountBalance(@Valid @RequestBody AccountRequest request) {
+        log.debug("call AccountController#getAccountBalance");
+        log.debug("accountNumber={}", request.getAccountNumber());
+
         AccountResponse response = accountQueryService.getAccountBalance(request.getAccountNumber());
+        log.debug("response={}", response);
+
         return ApiResponse.ok(response);
     }
 
