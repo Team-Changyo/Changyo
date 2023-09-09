@@ -19,6 +19,7 @@ import LoginPage from 'pages/auth/LoginPage';
 import RegisterPage from 'pages/auth/RegisterPage';
 import userState from 'store/user';
 import { GlobalKeyFrames } from 'styles/GlobalKeyFrames';
+import SettlementDetail from 'pages/deposit/SettlementDetail';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
@@ -67,6 +68,7 @@ function AppRouter() {
 									<Route path="/qr/deposit/:qid" element={<ViewQRPageDeposit />} />
 									<Route path="/qr/create" element={<CreateQRPage />} />
 									<Route path="/deposit" element={<DepositPage />} />
+									<Route path="/deposit/settlement/:sid" element={<SettlementDetail />} />
 									<Route path="/remittance/normal" element={<RemittanceNormalPage />} />
 									<Route path="/remittance/deposit" element={<RemittanceDepositPage />} />
 								</Route>
