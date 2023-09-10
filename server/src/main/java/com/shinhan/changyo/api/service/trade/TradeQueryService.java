@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * 보증금 거래내역 조회 서비스
  *
@@ -28,7 +26,7 @@ public class TradeQueryService {
      * @param memberId 조회할 회원 식별키
      * @return 해당 회원의 송금내역 목록
      */
-    public List<WithdrawalResponse> getWithdrawalTrades(Long memberId) {
+    public WithdrawalResponse getWithdrawalTrades(Long memberId) {
         return null;
     }
 }
