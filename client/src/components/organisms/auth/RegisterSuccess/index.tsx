@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'components/organisms/common/Button';
 import { useNavigate } from 'react-router-dom';
-import CompleteLottie from 'components/atoms/lottie/CompleteLottie/CompleteLottie';
+import CompleteLottie from 'components/atoms/lottie/CompleteLottie';
 import { RegisterSuccessContainer } from './style';
 
 function RegisterSuccess() {
