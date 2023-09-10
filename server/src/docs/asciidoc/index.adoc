@@ -18,3 +18,8 @@ include::api/member/member.adoc[]
 == Account API
 
 include::api/account/account.adoc[]
+
+[[QrCode-API]]
+== QrCode API
+
+include::api/account/qrcode.adoc[]

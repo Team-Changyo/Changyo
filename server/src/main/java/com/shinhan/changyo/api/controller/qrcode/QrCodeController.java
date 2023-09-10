@@ -65,6 +65,7 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/amount/{qrCodeId}")
+    @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<QrCodeDetailResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("AmountRequest={}", request);
@@ -80,6 +81,7 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/title/{qrCodeId}")
+    @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("EditTitleRequest={}", request);
@@ -96,6 +98,7 @@ public class QrCodeController {
      */
 
     @DeleteMapping("/remove/{qrCodeId}")
+    @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
         log.debug("qrCodeId={}", qrCodeId);
         Boolean result = qrCodeService.removeQrCode(qrCodeId);
@@ -110,6 +113,7 @@ public class QrCodeController {
 
     // TODO: 2023-09-09 홍진식 : 회원 join해서 해당 회원의 모든 account 가져오고 조회해야함
     @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<QrCodeResponses> getQrCodes(@RequestHeader("memberId") Long memberId){
         log.debug("memberId={}", memberId);
         QrCodeResponses responses = qrCodeQueryService.getQrCodes(memberId);
@@ -124,6 +128,7 @@ public class QrCodeController {
      */
 
     @GetMapping("/{qrCodeId}")
+    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId){
         log.debug("qrCodeId={}", qrCodeId);
         QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId);
