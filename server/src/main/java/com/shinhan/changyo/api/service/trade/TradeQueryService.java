@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.service.trade;
 
+import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,22 @@ public class TradeQueryService {
     private final TradeQueryRepository tradeQueryRepository;
 
     /**
-     * 송금내역 목록 조회
+     * 보증금 송금내역 목록 조회
      *
      * @param memberId 조회할 회원 식별키
-     * @return 해당 회원의 송금내역 목록
+     * @return 해당 회원의 보증금 송금내역 목록
      */
     public WithdrawalResponse getWithdrawalTrades(Long memberId) {
+        return null;
+    }
+
+    /**
+     * 보증금 입금내역 목록 조회
+     *
+     * @param memberId 조회할 회원 식별키
+     * @return 해당 회원의 보증금 입금내역 목록
+     */
+    public DepositResponse getDepositTrades(Long memberId) {
         return null;
     }
 }
