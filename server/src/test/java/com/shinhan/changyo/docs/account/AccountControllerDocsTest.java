@@ -180,7 +180,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/account/1")
+                        patch("/account/title/1")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -192,6 +192,50 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("title").type(JsonFieldType.STRING)
                                         .description("변경할 별칭")
                         ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌번호"),
+                                fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
+                                        .description("잔액"),
+                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행코드"),
+                                fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                        .description("별칭"),
+                                fieldWithPath("data.mainAccount").type(JsonFieldType.BOOLEAN)
+                                        .description("주계좌여부")
+
+                        )
+                ));
+    }
+
+    @DisplayName("주 계좌 변경 API")
+    @Test
+    void editAccountMainAccount() throws Exception {
+
+        AccountEditResponse response = AccountEditResponse.builder()
+                .accountNumber("123456123")
+                .balance(800000)
+                .bankCode("088")
+                .title("주계좌가 될 양반.")
+                .mainAccount(true)
+                .build();
+
+        given(accountService.editMainAccount(anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        patch("/account/main-account/1")
+                )
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andDo(document("edit-account-main",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
