@@ -45,17 +45,18 @@ public class TradeController {
 
     /**
      * 송금내역 목록 조회 API
+     *
      * @param memberId 회원 식별키
      * @return 해당 회원의 송금내역 목록
      */
     @GetMapping
-    public ApiResponse<List<WithdrawalResponse>> getWithdrawalTrades(@RequestHeader(name = "memberId") Long memberId) {
+    public ApiResponse<WithdrawalResponse> getWithdrawalTrades(@RequestHeader(name = "memberId") Long memberId) {
         log.debug("TradeController#getWithdrawalTrades call");
         log.debug("memberId={}", memberId);
 
-        List<WithdrawalResponse> responses = tradeQueryService.getWithdrawalTrades(memberId);
-        log.debug("responses={}", responses);
+        WithdrawalResponse response = tradeQueryService.getWithdrawalTrades(memberId);
+        log.debug("response={}", response);
 
-        return ApiResponse.ok(responses);
+        return ApiResponse.ok(response);
     }
 }

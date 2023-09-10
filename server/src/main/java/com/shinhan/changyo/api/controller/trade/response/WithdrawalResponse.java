@@ -10,12 +10,14 @@ public class WithdrawalResponse {
 
     private int remainCount;
     private int finishCount;
-    private List<WithdrawalDetailResponse> withdrawalDetailResponses;
+    private List<WithdrawalDetailResponse> waitWithdrawals;
+    private List<WithdrawalDetailResponse> doneWithdrawals;
 
     @Builder
-    public WithdrawalResponse(int remainCount, int finishCount, List<WithdrawalDetailResponse> withdrawalDetailResponses) {
+    public WithdrawalResponse(int remainCount, int finishCount, List<WithdrawalDetailResponse> waitWithdrawals, List<WithdrawalDetailResponse> doneWithdrawals) {
         this.remainCount = remainCount;
         this.finishCount = finishCount;
-        this.withdrawalDetailResponses = withdrawalDetailResponses;
+        this.waitWithdrawals = waitWithdrawals;
+        this.doneWithdrawals = doneWithdrawals;
     }
 }
