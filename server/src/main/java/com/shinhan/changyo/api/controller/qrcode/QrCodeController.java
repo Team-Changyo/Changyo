@@ -13,6 +13,7 @@ import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,10 +35,11 @@ public class QrCodeController {
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<QrCodeDetailResponse> createQrCode(@RequestBody QrCodeRequest request){
         log.debug("QrCodeRequest={}", request);
         QrCodeDetailResponse response = qrCodeService.createQrcode(request.toQrCodeDto());
-        return ApiResponse.ok(response);
+        return ApiResponse.created(response);
     }
 
     /**
@@ -67,7 +69,7 @@ public class QrCodeController {
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("AmountRequest={}", request);
         QrCodeDetailResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
-        return ApiResponse.ok(response);
+        return ApiResponse.found(response);
     }
 
     /**
@@ -82,7 +84,7 @@ public class QrCodeController {
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("EditTitleRequest={}", request);
         QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
-        return ApiResponse.ok(response);
+        return ApiResponse.found(response);
     }
 
 
