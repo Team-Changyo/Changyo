@@ -46,6 +46,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .accountId(1L)
                 .withdrawalAccountNumber("1102008999999")
                 .qrCodeId(1L)
+                .qrCodeTitle("럭셔리 글램핑 객실이용")
                 .depositAccountNumber("110054999999")
                 .amount(20000)
                 .content("최영환")
@@ -72,6 +73,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("출금 계좌 번호"),
                                 fieldWithPath("qrCodeId").type(JsonFieldType.NUMBER)
                                         .description("보증금 QR 코드 식별키"),
+                                fieldWithPath("qrCodeTitle").type(JsonFieldType.STRING)
+                                        .description("보증금 QR 코드 이름"),
                                 fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
                                         .description("입금 계좌 번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)

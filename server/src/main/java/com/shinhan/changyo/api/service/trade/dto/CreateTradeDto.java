@@ -12,15 +12,17 @@ public class CreateTradeDto {
     private Long accountId;
     private String withdrawalAccountNumber;
     private Long qrCodeId;
+    private String qrCodeTitle;
     private String depositAccountNumber;
     private int amount;
     private String content;
 
     @Builder
-    public CreateTradeDto(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String depositAccountNumber, int amount, String content) {
+    public CreateTradeDto(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String qrCodeTitle, String depositAccountNumber, int amount, String content) {
         this.accountId = accountId;
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.qrCodeId = qrCodeId;
+        this.qrCodeTitle = qrCodeTitle;
         this.depositAccountNumber = depositAccountNumber;
         this.amount = amount;
         this.content = content;
