@@ -8,6 +8,7 @@ import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
+import com.shinhan.changyo.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class TradeController {
     private final TradeService tradeService;
     private final TradeQueryService tradeQueryService;
 
+
     /**
      * 보증금 송금 API
      *
@@ -48,34 +50,34 @@ public class TradeController {
     }
 
     /**
-     * 보증금 송금내역 목록 조회 API
+     * 보증금 송금관리 조회 API
      *
-     * @param memberId 회원 식별키
-     * @return 해당 회원의 보증금 송금내역 목록
+     * @return 해당 회원의 보증금 송금 거래내역 목록
      */
     @GetMapping("/withdrawal")
-    public ApiResponse<WithdrawalResponse> getWithdrawalTrades(@RequestHeader(name = "memberId") Long memberId) {
+    public ApiResponse<WithdrawalResponse> getWithdrawalTrades() {
         log.debug("TradeController#getWithdrawalTrades call");
-        log.debug("memberId={}", memberId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
 
-        WithdrawalResponse response = tradeQueryService.getWithdrawalTrades(memberId);
+        WithdrawalResponse response = tradeQueryService.getWithdrawalTrades(loginId);
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);
     }
 
     /**
-     * 보증금 정산관리 목록 조회 API
+     * 보증금 정산관리 조회 API
      *
-     * @param memberId 회원 식별키
      * @return 해당 회원의 보증금 정산관리 목록
      */
     @GetMapping("/deposit")
-    public ApiResponse<DepositResponse> getDepositTrades(@RequestHeader(name = "memberId") Long memberId) {
+    public ApiResponse<DepositResponse> getDepositTrades() {
         log.debug("TradeController#getDepositTrades call");
-        log.debug("memberId={}", memberId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
 
-        DepositResponse response = tradeQueryService.getDepositTrades(memberId);
+        DepositResponse response = tradeQueryService.getDepositTrades(loginId);
         log.debug("DepositResponse={}", response);
 
         return ApiResponse.ok(response);

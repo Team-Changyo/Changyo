@@ -1,38 +1,76 @@
 import { styled } from 'styled-components';
 
-export const DepositRetrunModalWrapper = styled.div`
-	width: 100%;
+export const DepositReturnModalContainer = styled.div`
+	border-radius: var(--radius-m);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90vw;
+	max-width: 470px;
+	height: 80vh;
+	background-color: var(--white-color);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
-	.deposit-return-modal-container {
-		width: 90vw;
-		max-width: 470px;
-		height: 70vh;
-		padding: 20px 30px;
-		background: var(--white-color);
-		border-radius: var(--radius-m);
+	.content {
+		margin-top: 3rem;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		gap: 2rem;
 
-		.content {
-			margin-top: 3rem;
+		h2 {
+			font-size: 1.5rem;
 
-			h2 {
-				font-size: 1.4rem;
-
-				span {
-					font-size: 1.4rem;
-					color: var(--main-color);
-				}
+			b {
+				color: var(--main-color);
 			}
-			display: flex;
-			flex-direction: column;
-			gap: 2rem;
 		}
-		.done-btn {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
+	}
+
+	.money-unit {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+
+		span {
+			font-size: 0.9rem;
+			color: var(--gray-400);
 		}
+	}
+
+	.option {
+		* {
+			font-family: 'Pretendard' !important;
+		}
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+
+		h3 {
+			color: var(--gray-500);
+			font-size: 1.3rem;
+		}
+		.reason {
+			b {
+				color: var(--danger-color);
+			}
+		}
+
+		.success {
+			color: var(--success-color);
+		}
+
+		input {
+			height: 40px;
+		}
+	}
+
+	.btn-group {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 	}
 `;

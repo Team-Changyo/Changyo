@@ -8,6 +8,7 @@ export const GlobalStyles = createGlobalStyle`
         /* color */
         --main-color : #2449FF;
         --sub-color : #6B6B6F;
+        --success-color : #138636;
         --danger-color : #ff2449;
         --white-color : #ffffff;
 
@@ -31,11 +32,6 @@ export const GlobalStyles = createGlobalStyle`
         font-family: 'Pretendard';
         padding: 0;
         margin: 0;
-
-        .react-confirm-alert-overlay{
-            background: rgba(0, 0, 0, 0.4);
-            animation-duration: 0.1s;
-        }
     };
 
     // 스크롤 바

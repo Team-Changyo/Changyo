@@ -9,7 +9,7 @@ include::{snippets}/create-trade/request-fields.adoc[]
 include::{snippets}/create-trade/http-response.adoc[]
 include::{snippets}/create-trade/response-fields.adoc[]
 
-=== 보증금 송금내역 목록 조회
+=== 보증금 송금관리 조회
 
 ==== HTTP Request
 include::{snippets}/search-withdrawals/http-request.adoc[]

@@ -23,6 +23,7 @@ module.exports = {
 		"react/jsx-no-useless-fragment": "off",
 		"react/jsx-props-no-spreading": "off",
 		"no-restricted-syntax": "off",
-		"no-await-in-loop":"off"
+		"no-await-in-loop": "off",
+		"react/no-array-index-key" : "off"
  	},
 };

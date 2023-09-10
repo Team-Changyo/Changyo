@@ -5,14 +5,19 @@ import com.shinhan.changyo.api.controller.qrcode.request.EditAmountRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.EditTitleRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.SimpleQrCodeRequest;
-import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponses;
+import com.shinhan.changyo.api.service.qrcode.dto.QrCodeResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
+import com.shinhan.changyo.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,10 +37,16 @@ public class QrCodeController {
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
     @PostMapping()
-    public ApiResponse<Long> createQrCode(@RequestBody QrCodeRequest request){
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<QrCodeDetailResponse> createQrCode(@RequestBody QrCodeRequest request) {
         log.debug("QrCodeRequest={}", request);
-        Long saveId = qrCodeService.createQrcode(request.toQrCodeDto());
-        return ApiResponse.ok(saveId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+//        if(loginId.equals("anonymousUser")){ // 로그인 안할경우 에러 처리
+//
+//        }
+        QrCodeDetailResponse response = qrCodeService.createQrcode(request.toQrCodeDto(loginId));
+        return ApiResponse.created(response);
     }
 
     /**
@@ -61,8 +72,12 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/amount/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
-        return null;
+    @ResponseStatus(HttpStatus.FOUND)
+    public ApiResponse<QrCodeDetailResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
+        log.debug("qrCodeId={}", qrCodeId);
+        log.debug("AmountRequest={}", request);
+        QrCodeDetailResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
+        return ApiResponse.found(response);
     }
 
     /**
@@ -73,8 +88,12 @@ public class QrCodeController {
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/title/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
-        return null;
+    @ResponseStatus(HttpStatus.FOUND)
+    public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
+        log.debug("qrCodeId={}", qrCodeId);
+        log.debug("EditTitleRequest={}", request);
+        QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
+        return ApiResponse.found(response);
     }
 
 
@@ -86,8 +105,11 @@ public class QrCodeController {
      */
 
     @DeleteMapping("/remove/{qrCodeId}")
+    @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
-        return null;
+        log.debug("qrCodeId={}", qrCodeId);
+        Boolean result = qrCodeService.removeQrCode(qrCodeId);
+        return ApiResponse.found(result);
     }
 
     /**
@@ -96,10 +118,13 @@ public class QrCodeController {
      * @return QR코드 목록
      */
 
-    // TODO: 2023-09-09 홍진식 : 회원 join해서 해당 회원의 모든 account 가져오고 조회해야함
     @GetMapping()
-    public ApiResponse<List<QrCodeResponse>> getQrCodes(){
-        return null;
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<QrCodeResponses> getQrCodes(){
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        QrCodeResponses responses = qrCodeQueryService.getQrCodes(loginId);
+        return ApiResponse.ok(responses);
     }
 
     /**
@@ -109,9 +134,12 @@ public class QrCodeController {
      * @return QR코드 정보
      */
 
-    @GetMapping("/detail/{qrCodeId}")
-    public ApiResponse<QrCodeResponse> getQrCode(@PathVariable Long qrCodeId){
-        return null;
+    @GetMapping("/{qrCodeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId){
+        log.debug("qrCodeId={}", qrCodeId);
+        QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId);
+        return ApiResponse.ok(response);
     }
 
 }

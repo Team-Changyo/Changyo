@@ -1,8 +1,8 @@
 package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.ApiResponse;
-import com.shinhan.changyo.api.service.account.dto.BalanceRequest;
-import com.shinhan.changyo.api.service.account.dto.BalanceResponse;
+import com.shinhan.changyo.client.BalanceRequest;
+import com.shinhan.changyo.client.BalanceResponse;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.domain.account.Account;

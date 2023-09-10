@@ -1,110 +1,102 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { ISettlement, ISettlementGroup } from 'types/deposit';
 import ListTotalText from 'components/atoms/common/ListTotalText';
-import Button from 'components/organisms/common/Button';
-import { MultiReturnMenuWrapper, SettlementListContainer } from './style';
+import { SettlementListContainer } from './style';
 import SettlementListItem from '../SettlementListItem';
+import SettlementMultiReturnMenu from '../SettlementMultiReturnMenu';
 import DepositReturnModal from '../DepositReturnModal';
 
-function MultiReturnMenu({
-	selectedSettlement,
-	setMultiReturnMode,
-}: {
-	selectedSettlement: Array<ISettlement>;
-	setMultiReturnMode: Dispatch<SetStateAction<boolean>>;
-}) {
-	async function processSettlements(settlements: ISettlement[]) {
-		for (const settlement of settlements) {
-			await new Promise<void>((resolve) => {
-				DepositReturnModal({
-					depositorName: settlement.depositorName,
-					onAction: () => {
-						// 여기에 모달 닫는 로직을 추가할 수 있습니다.
-						resolve();
-					},
-					params: {},
-				});
-			});
-		}
-	}
-
-	const handleReturnClick = async () => {
-		await processSettlements(selectedSettlement);
-	};
-
-	return (
-		<MultiReturnMenuWrapper>
-			<div className="multi-return-menu-container">
-				<Button handleClick={handleReturnClick} text={`선택된 ${selectedSettlement.length}건 반환하기`} type="Danger" />
-				<Button
-					handleClick={() => {
-						setMultiReturnMode(false);
-					}}
-					text="한건씩 반환하기"
-					type="Normal"
-				/>
-			</div>
-		</MultiReturnMenuWrapper>
-	);
+interface ISettlementListProps {
+	settlements: ISettlement[];
+	settlementGroup: ISettlementGroup;
+	isReturned: boolean;
 }
 
-function SettlementList({
-	settlements,
-	isReturned,
-	settlementGroup,
-}: {
-	settlements: ISettlement[];
-	isReturned: boolean;
-	settlementGroup: ISettlementGroup;
-}) {
-	const [multiReturnMode, setMultiReturnMode] = useState(false);
-	const [multiReturnMenuOpen, setMultiReturnMenuOpen] = useState(false);
-	const [selectedSettlement, setSelectedSettlement] = useState<ISettlement[]>([]);
+function SettlementList({ settlements, isReturned, settlementGroup }: ISettlementListProps) {
+	const [isMultiReturnMode, setIsMultiReturnMode] = useState(false);
+	const [activeMultiReturnMenu, setActiveMultiReturnMenu] = useState(false);
+	const [toBeReturned, setToBeReturned] = useState<ISettlement[]>([]);
+	const [modalOpen, setModalOpen] = useState(false);
+
+	const addToBeReturned = (settlement: ISettlement) => {
+		const idx = toBeReturned.findIndex((el) => el.key === settlement.key);
+		if (idx === -1) {
+			toBeReturned.push(settlement);
+			setToBeReturned([...toBeReturned]);
+		} else {
+			toBeReturned.splice(idx, 1);
+			setToBeReturned([...toBeReturned]);
+		}
+	};
+
+	// 최종 반환 함수
+	const returnDeposit = (returnMoney: number, reason: string, reasonDetail: string) => {
+		// TODO : 반환 API 나오면 처리할 것.
+
+		console.log(toBeReturned);
+		console.log(returnMoney);
+		console.log(reason);
+		console.log(reasonDetail);
+
+		setIsMultiReturnMode(false);
+	};
+
+	// 전체 선택 버튼 클릭 시
+	const selectAll = () => {
+		toBeReturned.length = 0;
+		settlements.map((el) => toBeReturned.push(el));
+		setToBeReturned([...toBeReturned]);
+	};
+
+	// 여러건 선택 버튼 클릭 시
+	const multiReturn = () => {
+		toBeReturned.length = 0;
+		setIsMultiReturnMode(true);
+		setActiveMultiReturnMenu(true);
+	};
+
+	// 반환 모달 열기/닫기
+	const openReturnModal = () => {
+		setModalOpen(true);
+	};
+
+	const closeReturnModal = () => {
+		setModalOpen(false);
+	};
 
 	useEffect(() => {
-		if (multiReturnMode) {
-			setMultiReturnMenuOpen(true);
+		if (isMultiReturnMode) {
+			setActiveMultiReturnMenu(true);
 		} else {
-			setMultiReturnMenuOpen(false);
+			setActiveMultiReturnMenu(false);
 		}
-	}, [multiReturnMode]);
+	}, [isMultiReturnMode]);
+
 	return (
 		<SettlementListContainer>
 			<div className="top">
-				<ListTotalText text={isReturned ? '반환 완료' : '반환 전'} totalCnt={settlements.length} />
-
-				{/* 반환 전/ 반환 완료 탭에 따라 '여러건 선택' 버튼 출력 */}
-				{isReturned ? (
-					// 반환 완료 탭의 경우
-					<div />
-				) : (
-					// 반환 전 탭의 경우
+				<ListTotalText text={!isReturned ? '반환 전' : '반환 완료'} totalCnt={settlements.length} />
+				{/* 반환 전/반환 완료 탭에 따라 버튼 메뉴 출력 */}
+				{!isReturned ? (
+					// '반환 전' 탭
 					<div className="multi-return-btn">
-						{multiReturnMode ? (
-							<span
-								onClick={() => {
-									selectedSettlement.length = 0;
-									settlements.map((el) => selectedSettlement.push(el));
-									setSelectedSettlement([...selectedSettlement]);
-								}}
-								role="presentation"
-							>
-								전체선택
-							</span>
-						) : (
-							<div
-								onClick={() => {
-									setMultiReturnMode(true);
-									setMultiReturnMenuOpen(true);
-								}}
-								role="presentation"
-							>
+						{/* 단일건 반환 모드일 경우, 여러건 반환 버튼  */}
+						{!isMultiReturnMode ? (
+							<div onClick={multiReturn} role="presentation">
 								<Check />
 								<span>여러건 반환</span>
 							</div>
+						) : (
+							// 여러건 반환 모드일 경우, 전체선택 버튼
+							<span onClick={selectAll} role="presentation">
+								전체선택
+							</span>
 						)}
 					</div>
+				) : (
+					// '반환 완료' 탭
+					<div />
 				)}
 			</div>
 
@@ -112,20 +104,33 @@ function SettlementList({
 			{settlements.map((el) => (
 				<SettlementListItem
 					key={el.key}
+					addToBeReturned={addToBeReturned}
+					isMultiReturnMode={isMultiReturnMode}
+					openReturnModal={openReturnModal}
 					settlement={el}
-					multiReturnMode={multiReturnMode}
-					selectedSettlement={selectedSettlement}
-					setSelectedSettlement={setSelectedSettlement}
-					settlementGroup={settlementGroup}
+					toBeReturned={toBeReturned}
 				/>
 			))}
 
 			{/* 여러건 반환 하단 메뉴 */}
-			{multiReturnMenuOpen ? (
-				<MultiReturnMenu setMultiReturnMode={setMultiReturnMode} selectedSettlement={selectedSettlement} />
+			{activeMultiReturnMenu ? (
+				<SettlementMultiReturnMenu
+					setIsMultiReturnMode={setIsMultiReturnMode}
+					toBeReturned={toBeReturned}
+					openReturnModal={openReturnModal}
+				/>
 			) : (
 				<div />
 			)}
+
+			{/* 반환 모달 */}
+			<DepositReturnModal
+				open={modalOpen}
+				handleClose={closeReturnModal}
+				toBeReturned={toBeReturned}
+				settlementGroup={settlementGroup}
+				returnDeposit={returnDeposit}
+			/>
 		</SettlementListContainer>
 	);
 }

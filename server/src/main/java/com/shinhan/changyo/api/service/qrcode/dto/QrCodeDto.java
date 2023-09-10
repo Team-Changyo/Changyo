@@ -18,20 +18,22 @@ public class QrCodeDto {
 
     private String title;
 
+    private String loginId;
     @Builder
-    public QrCodeDto(String url, Long accountId, int amount, String title) {
+    public QrCodeDto(String url, Long accountId, int amount, String title, String loginId) {
         this.url = url;
         this.accountId = accountId;
         this.amount = amount;
         this.title = title;
+        this.loginId = loginId;
     }
 
-    public QrCode toEntity(String storeFileName, Account account){
+    public QrCode toEntity(String base64QrCode, Account account){
         return QrCode.builder()
                 .url(this.url)
                 .amount(this.amount)
                 .title(this.title)
-                .storeFileName(storeFileName)
+                .base64QrCode(base64QrCode)
                 .active(true)
                 .account(account)
                 .build();

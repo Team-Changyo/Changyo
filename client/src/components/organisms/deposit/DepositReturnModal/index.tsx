@@ -1,80 +1,115 @@
-import React from 'react';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import { confirmAlert } from 'react-confirm-alert';
-import Button from 'components/organisms/common/Button';
+import { Input, Modal } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { ISettlement, ISettlementGroup } from 'types/deposit';
 import UnderLineInput from 'components/atoms/common/UnderLineInput';
-import { DepositRetrunModalWrapper } from './style';
+import Button from 'components/organisms/common/Button';
+import { formatMoney } from 'utils/common/formatMoney';
+import ReasonSelect from 'components/organisms/deposit/ReasonSelect';
+import { DEPOSIT_VALUE_SELECT_OPTION_LIST } from 'constants/select';
+import { DepositReturnModalContainer } from './style';
 
 interface IDepositReturnModalProps {
-	depositorName: string;
-	params: object;
-	onAction: (params: object) => void;
+	open: boolean;
+	handleClose: () => void;
+	toBeReturned: ISettlement[];
+	settlementGroup: ISettlementGroup;
+	returnDeposit: (returnMoney: number, reason: string, reasonDetail: string) => void;
 }
 
 function DepositReturnModal(props: IDepositReturnModalProps) {
-	const { depositorName, params, onAction } = props;
-	// 제목, 내용, 버튼 내용, 인자, confirm 함수, close 함수
-	return confirmAlert({
-		customUI: ({ onClose }) => (
-			<DepositRetrunModalWrapper>
-				<div className="deposit-return-modal-container">
-					<div className="content">
-						<h2>보증금을 반환합니다</h2>
-						<h2>
-							<span>{depositorName}</span>님에게
-							<br />
-							얼마를 반환할까요?
-						</h2>
-						<UnderLineInput width="150px" placeholder="" unitText="원" />
-					</div>
+	const { open, handleClose, toBeReturned, settlementGroup, returnDeposit } = props;
+	const { moneyUnit } = settlementGroup;
+	const [reason, setReason] = useState('선택');
+	const [reasonDetail, setReasonDetail] = useState('');
+	const [returnMoney, setReturnMoney] = useState(moneyUnit);
+	const [showReasonOption, setShowReasonOption] = useState(false);
+	const name = `${toBeReturned[0]?.depositorName}`;
+	const others = toBeReturned.length >= 2 ? ` 외 ${toBeReturned.length - 1}명` : '';
+	const formattedMoneyUnit = formatMoney(moneyUnit);
 
-					<div className="done-btn">
-						<Button
-							handleClick={() => {
-								onAction(params);
-								onClose();
-							}}
-							text="반환완료"
-							type="Primary"
+	const returnComplete = () => {
+		returnDeposit(returnMoney, reason, reasonDetail);
+		setReturnMoney(moneyUnit);
+		setReason('선택');
+		handleClose();
+	};
+
+	const returnCancel = () => {
+		// TODO : 토스트로 교체하기
+		alert('그러세요 네');
+		setReturnMoney(moneyUnit);
+		setReason('선택');
+		handleClose();
+	};
+
+	useEffect(() => {
+		if (returnMoney < moneyUnit) {
+			setShowReasonOption(true);
+		} else {
+			setShowReasonOption(false);
+		}
+	}, [returnMoney]);
+
+	return (
+		<Modal open={open} onClose={returnCancel}>
+			<DepositReturnModalContainer>
+				<div className="content">
+					<h2>
+						<b>{settlementGroup.title}</b> 건<br />
+						보증금을 반환합니다
+					</h2>
+					<h2>
+						<b>{name}</b>님<b>{others}</b>에게
+						<br />
+						얼마를 반환할까요?
+					</h2>
+					<div className="money-unit">
+						<UnderLineInput
+							type="number"
+							value={returnMoney}
+							setValue={setReturnMoney}
+							width="150px"
+							unitText="원"
+							placeholder=""
 						/>
-						<Button
-							handleClick={() => {
-								onAction(params);
-								onClose();
-							}}
-							text="반환취소"
-							type="Normal"
-						/>
+						<span>입금단위 {formattedMoneyUnit}원</span>
+					</div>
+					<div className="option">
+						{showReasonOption ? (
+							<>
+								<h3 className="reason">
+									<b>{moneyUnit - returnMoney}원이 차감된 이유</b>를
+									<br />
+									선택해주세요
+								</h3>
+								<ReasonSelect
+									reason={reason}
+									setReason={setReason}
+									SELECT_OPTION_LIST={DEPOSIT_VALUE_SELECT_OPTION_LIST}
+								/>
+								{reason === '기타' ? (
+									<Input
+										type="text"
+										placeholder="상세사유 입력"
+										value={reasonDetail}
+										onChange={(e) => setReasonDetail(e.target.value)}
+									/>
+								) : (
+									<div />
+								)}
+							</>
+						) : (
+							<h3 className="success">전액을 반환합니다</h3>
+						)}
 					</div>
 				</div>
-			</DepositRetrunModalWrapper>
-		),
-	});
+				<div className="btn-group">
+					<Button handleClick={returnComplete} text="반환 완료" type="Primary" />
+					<Button handleClick={returnCancel} text="나중에 반환" type="Normal" />
+				</div>
+			</DepositReturnModalContainer>
+		</Modal>
+	);
 }
 
 export default DepositReturnModal;
-
-/*
-
-<DepositRetrunModalContainer>
-				<div className="popup-overlay">
-					<h1>{title}</h1>
-					<p>{desc}</p>
-					<div className="btn-group">
-						<button type="button" onClick={onClose} className="btn-cancel">
-							<span className="txt-wrap">취소</span>
-						</button>
-						<button
-							type="button"
-							onClick={() => {
-								onAction(params);
-								onClose();
-							}}
-							className="btn-confirm"
-						>
-							<span className="txt-wrap">{btnTitle}</span>
-						</button>
-					</div>
-				</div>
-			</DepositRetrunModalContainer>
-*/

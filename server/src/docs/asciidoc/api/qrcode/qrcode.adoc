@@ -1,0 +1,73 @@
+[[create-qrCode]]
+=== QR코드 생성
+
+==== HTTP Request
+include::{snippets}/create-qrCode/http-request.adoc[]
+include::{snippets}/create-qrCode/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-qrCode/http-response.adoc[]
+include::{snippets}/create-qrCode/response-fields.adoc[]
+
+[[create-simpleQrCode]]
+=== 단순 송금 QR코드 생성
+
+==== HTTP Request
+include::{snippets}/create-simpleQrCode/http-request.adoc[]
+include::{snippets}/create-simpleQrCode/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-simpleQrCode/http-response.adoc[]
+include::{snippets}/create-simpleQrCode/response-fields.adoc[]
+
+[[edit-amount-qrcode]]
+=== 보증금 QR코드 금액 변경
+
+==== HTTP Request
+include::{snippets}/edit-amount-qrcode/http-request.adoc[]
+include::{snippets}/edit-amount-qrcode/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/edit-amount-qrcode/http-response.adoc[]
+include::{snippets}/edit-amount-qrcode/response-fields.adoc[]
+
+[[edit-title-qrcode]]
+=== 보증금 QR코드 제목 변경
+
+==== HTTP Request
+include::{snippets}/edit-title-qrcode/http-request.adoc[]
+include::{snippets}/edit-title-qrcode/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/edit-title-qrcode/http-response.adoc[]
+include::{snippets}/edit-title-qrcode/response-fields.adoc[]
+
+[[remove-qrcode]]
+=== 보증금 QR코드 삭제
+
+==== HTTP Request
+include::{snippets}/remove-qrcode/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/remove-qrcode/http-response.adoc[]
+include::{snippets}/remove-qrcode/response-fields.adoc[]
+
+[[get-qrCode]]
+=== 보증금 QR코드 상세 조회
+
+==== HTTP Request
+include::{snippets}/get-qrCode/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/get-qrCode/http-response.adoc[]
+include::{snippets}/get-qrCode/response-fields.adoc[]
+
+[[get-qrCodes]]
+=== 보증금 QR코드 목록 조회
+
+==== HTTP Request
+include::{snippets}/get-qrCodes/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/get-qrCodes/http-response.adoc[]
+include::{snippets}/get-qrCodes/response-fields.adoc[]
