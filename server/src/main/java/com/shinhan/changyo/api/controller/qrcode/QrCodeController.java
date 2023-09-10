@@ -99,7 +99,7 @@ public class QrCodeController {
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
         log.debug("qrCodeId={}", qrCodeId);
         Boolean result = qrCodeService.removeQrCode(qrCodeId);
-        return ApiResponse.ok(result);
+        return ApiResponse.found(result);
     }
 
     /**
