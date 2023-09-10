@@ -8,6 +8,7 @@ import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
 import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
+import com.shinhan.changyo.security.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -56,14 +57,14 @@ public class MemberController {
      * @return 로그인한 회원 정보
      */
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ApiResponse<TokenInfo> login(@Valid @RequestBody LoginRequest request) {
         log.debug("MemberController#login");
         log.debug("LoginRequest={}", request);
 
-        LoginResponse response = memberAccountService.login(request.getLoginId(), request.getPassword());
-        log.debug("LoginResponse={}", response);
+        TokenInfo tokenInfo = memberAccountService.login(request.getLoginId(), request.getPassword());
+        log.debug("TokenInfo={}", tokenInfo);
 
-        return ApiResponse.ok(response);
+        return ApiResponse.ok(tokenInfo);
     }
 
     /**

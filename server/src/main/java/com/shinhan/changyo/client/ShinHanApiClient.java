@@ -15,4 +15,7 @@ public interface ShinHanApiClient {
 
     @PostMapping(produces = "application/json", value = "/v1/account/balance/detail")
     ApiResponse<BalanceResponse> getAccountBalance(@RequestBody BalanceRequest request);
+
+    @PostMapping(produces = "application/json", value = "/v1/auth/1transfer")
+    ApiResponse<OneTransferResponse> oneTransfer(@RequestBody OneTransferRequest request);
 }
