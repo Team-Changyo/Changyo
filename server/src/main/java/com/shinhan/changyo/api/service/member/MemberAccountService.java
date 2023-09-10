@@ -3,8 +3,13 @@ package com.shinhan.changyo.api.service.member;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
+import com.shinhan.changyo.security.JwtTokenProvider;
+import com.shinhan.changyo.security.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,8 @@ import java.util.NoSuchElementException;
 public class MemberAccountService {
 
     private final MemberQueryRepository memberQueryRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder bCryptPasswordEncoder;
 
     /**
@@ -32,17 +39,18 @@ public class MemberAccountService {
      * @param password 로그인 할 비밀번호
      * @return 로그인한 회원 정보
      */
-    public LoginResponse login(String loginId, String password) {
+    public TokenInfo login(String loginId, String password) {
         // TODO: 2023-09-08 로그인 처리 논의 필요
-        existCheckByLoginId(loginId);
-
-        Member member = memberQueryRepository.getMemberByLoginId(loginId);
-
-        checkActive(member.getActive());
-
-        checkEqualPassword(password, member.getEncryptedPwd());
-
-        return LoginResponse.of(member);
+//        existCheckByLoginId(loginId);
+//
+//        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+//
+//        checkActive(member.getActive());
+//
+//        checkEqualPassword(password, member.getEncryptedPwd());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+        Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        return jwtTokenProvider.generateToken(authenticate);
     }
 
     /**
@@ -78,7 +86,7 @@ public class MemberAccountService {
      * @throws IllegalArgumentException 비밀번호가 서로 다를 경우
      */
     private void checkEqualPassword(String password, String savedPwd) {
-        if (bCryptPasswordEncoder.matches(password, savedPwd)) {
+        if (!bCryptPasswordEncoder.matches(password, savedPwd)) {
             throw new IllegalArgumentException("비밀번호를 확인해주세요.");
         }
     }

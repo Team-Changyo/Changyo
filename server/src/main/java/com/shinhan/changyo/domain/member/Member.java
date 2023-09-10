@@ -51,12 +51,13 @@ public class Member extends TimeBaseEntity implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    private Member(String loginId, String encryptedPwd, String name, String phoneNumber, Boolean active) {
+    private Member(String loginId, String encryptedPwd, String name, String phoneNumber, Boolean active, List<String> roles) {
         this.loginId = loginId;
         this.encryptedPwd = encryptedPwd;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.active = active;
+        this.roles = roles;
     }
 
     // == Business Logics ==//
