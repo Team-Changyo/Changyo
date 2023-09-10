@@ -2,6 +2,7 @@ package com.shinhan.changyo.api.controller.trade;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
@@ -43,18 +44,35 @@ public class TradeController {
     }
 
     /**
-     * 송금내역 목록 조회 API
+     * 보증금 송금내역 목록 조회 API
      *
      * @param memberId 회원 식별키
-     * @return 해당 회원의 송금내역 목록
+     * @return 해당 회원의 보증금 송금내역 목록
      */
-    @GetMapping
+    @GetMapping("/withdrawal")
     public ApiResponse<WithdrawalResponse> getWithdrawalTrades(@RequestHeader(name = "memberId") Long memberId) {
         log.debug("TradeController#getWithdrawalTrades call");
         log.debug("memberId={}", memberId);
 
         WithdrawalResponse response = tradeQueryService.getWithdrawalTrades(memberId);
         log.debug("response={}", response);
+
+        return ApiResponse.ok(response);
+    }
+
+    /**
+     * 보증금 입금내역 목록 조회 API
+     *
+     * @param memberId 회원 식별키
+     * @return 해당 회원의 보증금 입금내역 목록
+     */
+    @GetMapping("/deposit")
+    public ApiResponse<DepositResponse> getDepositTrades(@RequestHeader(name = "memberId") Long memberId) {
+        log.debug("TradeController#getDepositTrades call");
+        log.debug("memberId={}", memberId);
+
+        DepositResponse response = tradeQueryService.getDepositTrades(memberId);
+        log.debug("DepositResponse={}", response);
 
         return ApiResponse.ok(response);
     }
