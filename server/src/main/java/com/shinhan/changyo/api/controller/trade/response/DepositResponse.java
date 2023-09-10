@@ -16,4 +16,11 @@ public class DepositResponse {
         this.totalCount = totalCount;
         this.depositOverviews = depositOverviews;
     }
+
+    public static DepositResponse of(int totalCount, List<DepositOverviewResponse> overviews) {
+        return DepositResponse.builder()
+                .totalCount(totalCount)
+                .depositOverviews(overviews)
+                .build();
+    }
 }
