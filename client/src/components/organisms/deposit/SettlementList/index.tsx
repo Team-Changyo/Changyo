@@ -33,10 +33,13 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 	// 최종 반환 함수
 	const returnDeposit = (returnMoney: number, reason: string, reasonDetail: string) => {
 		// TODO : 반환 API 나오면 처리할 것.
+
 		console.log(toBeReturned);
 		console.log(returnMoney);
 		console.log(reason);
 		console.log(reasonDetail);
+
+		setIsMultiReturnMode(false);
 	};
 
 	// 전체 선택 버튼 클릭 시
