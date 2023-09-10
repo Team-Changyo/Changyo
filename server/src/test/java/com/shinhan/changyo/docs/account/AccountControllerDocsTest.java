@@ -230,7 +230,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/account/main-account/1")
+                        patch("/account/main-account/{accountId}", 1L)
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
