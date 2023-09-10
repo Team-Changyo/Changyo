@@ -20,4 +20,13 @@ public class WithdrawalResponse {
         this.waitWithdrawals = waitWithdrawals;
         this.doneWithdrawals = doneWithdrawals;
     }
+
+    public static WithdrawalResponse of (List<WithdrawalDetailResponse> waitWithdrawals, List<WithdrawalDetailResponse> doneWithdrawals) {
+        return WithdrawalResponse.builder()
+                .waitCount(waitWithdrawals.size())
+                .doneCount(doneWithdrawals.size())
+                .waitWithdrawals(waitWithdrawals)
+                .doneWithdrawals(doneWithdrawals)
+                .build();
+    }
 }
