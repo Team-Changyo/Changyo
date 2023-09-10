@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.service.account.dto;
+package com.shinhan.changyo.client;
 
 import lombok.Builder;
 import lombok.Data;
