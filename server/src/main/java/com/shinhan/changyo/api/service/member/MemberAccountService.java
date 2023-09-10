@@ -1,7 +1,5 @@
 package com.shinhan.changyo.api.service.member;
 
-import com.shinhan.changyo.api.controller.member.response.LoginResponse;
-import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.security.JwtTokenProvider;
 import com.shinhan.changyo.security.TokenInfo;
@@ -40,14 +38,6 @@ public class MemberAccountService {
      * @return 로그인한 회원 정보
      */
     public TokenInfo login(String loginId, String password) {
-        // TODO: 2023-09-08 로그인 처리 논의 필요
-//        existCheckByLoginId(loginId);
-//
-//        Member member = memberQueryRepository.getMemberByLoginId(loginId);
-//
-//        checkActive(member.getActive());
-//
-//        checkEqualPassword(password, member.getEncryptedPwd());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         return jwtTokenProvider.generateToken(authenticate);
