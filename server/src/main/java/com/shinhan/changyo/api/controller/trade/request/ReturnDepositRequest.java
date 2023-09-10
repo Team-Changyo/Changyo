@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -16,7 +15,6 @@ public class ReturnDepositRequest {
     private Long tradeId;
     private int amount;
     private int fee;
-    @NotBlank
     private String reason;
     private String description;
 
