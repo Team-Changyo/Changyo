@@ -2,6 +2,7 @@ package com.shinhan.changyo.api.controller.trade;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
 import com.shinhan.changyo.api.controller.trade.response.DepositDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 보증금 거래내역 관련 API 컨트롤러
@@ -95,5 +98,26 @@ public class TradeController {
         DepositDetailResponse response = tradeQueryService.getDepositDetails(qrCodeId, status);
 
         return ApiResponse.ok(response);
+    }
+
+    /**
+     * 보증금 반환 API (단건 / 다건 통합)
+     *
+     * @param requests 보증금 반환 요청 객체 리스트
+     * @return 반환 여부 (true: 성공 / false: 실패)
+     */
+    @PostMapping("/deposit")
+    public ApiResponse<Boolean> returnDeposit(@Valid @RequestBody List<ReturnDepositRequest> requests) {
+        log.debug("TradeController#returnDeposit call");
+        log.debug("ReturnDepositRequest={}", requests);
+
+        Boolean result = tradeService.returnDeposit(
+                requests.stream()
+                        .map(ReturnDepositRequest::toReturnDepositDto)
+                        .collect(Collectors.toList())
+        );
+        log.debug("result={}", result);
+
+        return ApiResponse.ok(result);
     }
 }
