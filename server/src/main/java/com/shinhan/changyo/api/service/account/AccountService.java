@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -153,5 +154,17 @@ public class AccountService {
         Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new IllegalArgumentException("계좌 정보가 없습니다."));
         findAccount.editTitle(dto.getTitle());
         return AccountEditResponse.of(findAccount);
+    }
+
+    public AccountEditResponse editMainAccount(Long accountId) {
+        List<Account> findAccounts = accountQueryRepository.getAccountsByMainAccountOrId(accountId);
+//        if(findAccounts.size() == 0){
+//            throw new IllegalAccessException("이미 주계좌로 등록되어있습니다.");
+//        }
+
+        for (Account findAccount: findAccounts) {
+            findAccount.editMainAccount();
+        }
+        return AccountEditResponse.of(findAccounts.get(1));
     }
 }

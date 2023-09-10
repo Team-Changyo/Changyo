@@ -65,12 +65,21 @@ public class AccountController {
         return ApiResponse.ok(response);
     }
 
-    @PatchMapping("/{accountId}")
+    @PatchMapping("/title/{accountId}")
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<AccountEditResponse> editTitle(@PathVariable Long accountId, @RequestBody EditAccountTitleRequest request){
         log.debug("request={}",request);
         log.debug("accountId={}", accountId);
         AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId));
+        return ApiResponse.found(response);
+    }
+
+
+    @PatchMapping("/main-account/{accountId}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public ApiResponse<AccountEditResponse> editMainAccount(@PathVariable Long accountId){
+        log.debug("accountId={}", accountId);
+        AccountEditResponse response = accountService.editMainAccount(accountId);
         return ApiResponse.found(response);
     }
 }

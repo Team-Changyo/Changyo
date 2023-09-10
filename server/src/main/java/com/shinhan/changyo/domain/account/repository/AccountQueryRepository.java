@@ -1,8 +1,10 @@
 package com.shinhan.changyo.domain.account.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
+import com.shinhan.changyo.domain.account.Account;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -58,5 +60,16 @@ public class AccountQueryRepository {
                 .join(account.member, member)
                 .where(account.member.id.eq(memberId))
                 .fetchFirst().intValue();
+    }
+
+    public List<Account> getAccountsByMainAccountOrId(Long accountId) {
+        BooleanExpression condition = account.mainAccount.eq(true)
+                .or(account.id.eq(accountId));
+
+        return queryFactory
+                .select(account)
+                .where(condition)
+                .orderBy(account.mainAccount.desc())
+                .fetch();
     }
 }
