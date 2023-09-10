@@ -2,6 +2,7 @@ package com.shinhan.changyo.api.controller.trade;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.response.DepositDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
@@ -73,6 +74,25 @@ public class TradeController {
 
         DepositResponse response = tradeQueryService.getDepositTrades(memberId);
         log.debug("DepositResponse={}", response);
+
+        return ApiResponse.ok(response);
+    }
+
+    /**
+     * 보증금 입금내역 상세 조회 API
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @param status   거래 상태
+     * @return 보증금 입금내역 상세 목록
+     */
+    @GetMapping("/deposit/detail")
+    public ApiResponse<DepositDetailResponse> getDepositDetails(@RequestParam Long qrCodeId,
+                                                                @RequestParam String status) {
+        log.debug("TradeController#getDepositTradesDetail call");
+        log.debug("qrCodeId={}", qrCodeId);
+        log.debug("status={}", status);
+
+        DepositDetailResponse response = tradeQueryService.getDepositDetails(qrCodeId, status);
 
         return ApiResponse.ok(response);
     }
