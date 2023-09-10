@@ -14,13 +14,14 @@ import com.shinhan.changyo.api.service.qrcode.dto.*;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(QrCodeControllerDocsTest.class)
 public class QrCodeControllerDocsTest extends RestDocsSupport {
     private final QrCodeService qrCodeService = mock(QrCodeService.class);
     private final QrCodeQueryService qrCodeQueryService = mock(QrCodeQueryService.class);
@@ -385,6 +387,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 목록 조회")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getQrs() throws Exception{
 
         QrCodeResponse response1 = QrCodeResponse.builder()
@@ -404,14 +407,11 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
         List<QrCodeResponse> qrCodeLst = List.of(response1, response2);
         QrCodeResponses response = QrCodeResponses.of(qrCodeLst);
 
-        given(qrCodeQueryService.getQrCodes(anyLong()))
+        given(qrCodeQueryService.getQrCodes(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/api/qrcode-management/qrcode")
-                                .header("memberId", 1)
-                                .contentType(MediaType.APPLICATION_JSON)
-
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
