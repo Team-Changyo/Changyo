@@ -6,18 +6,18 @@ import com.shinhan.changyo.api.controller.qrcode.request.EditTitleRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.SimpleQrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
+import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponses;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
-import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
-import com.shinhan.changyo.api.service.qrcode.dto.EditTitleDto;
-import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
-import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
+import com.shinhan.changyo.api.service.qrcode.dto.*;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -344,6 +344,58 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                         .description("QR코드 base64"),
                                 fieldWithPath("url").type(JsonFieldType.STRING)
                                         .description("결제 페이지 URL")
+                        )
+                ));
+    }
+
+
+    @DisplayName("보증금 QR코드 목록 조회")
+    @Test
+    void getQrs() throws Exception{
+
+        QrCodeResponse response1 = QrCodeResponse.builder()
+                .qrCodeId(1L)
+                .accountNumber("11345678915")
+                .title("프라이빗 객실")
+                .amount(20000)
+                .build();
+
+        QrCodeResponse response2 = QrCodeResponse.builder()
+                .qrCodeId(2L)
+                .accountNumber("321561235")
+                .title("일반 객실")
+                .amount(10000)
+                .build();
+
+        List<QrCodeResponse> qrCodeLst = List.of(response1, response2);
+        QrCodeResponses response = QrCodeResponses.of(qrCodeLst);
+
+        given(qrCodeQueryService.getQrCodes(anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        get("/api/qrcode-management/qrcode")
+                                .header("memberId", 1)
+                                .contentType(MediaType.APPLICATION_JSON)
+
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("get-qrCodeS",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("qrCodeSize").type(JsonFieldType.STRING)
+                                                .description("QR코드 개수"),
+                                fieldWithPath("data.qrCodeResponses.qrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("QR코드 식별 키"),
+                                fieldWithPath("data.qrCodeResponses.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행 코드"),
+                                fieldWithPath("data.qrCodeResponses.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌 번호"),
+                                fieldWithPath("data.qrCodeResponses.title").type(JsonFieldType.STRING)
+                                        .description("QR코드 제목"),
+                                fieldWithPath("data.qrCodeResponses.amount").type(JsonFieldType.NUMBER)
+                                        .description("금액")
                         )
                 ));
     }
