@@ -22,17 +22,17 @@ public class SimpleQrCodeResponse {
 
     private int amount;
 
-    private String storeFileName;
+    private String base64QrCode;
 
     private String url;
 
     @Builder
-    public SimpleQrCodeResponse(String bankCode, String accountNumber, String customerName, int amount, String storeFileName, String url) {
+    public SimpleQrCodeResponse(String bankCode, String accountNumber, String customerName, int amount, String base64QrCode, String url) {
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
         this.customerName = customerName;
         this.amount = amount;
-        this.storeFileName = storeFileName;
+        this.base64QrCode = base64QrCode;
         this.url = url;
     }
 }
