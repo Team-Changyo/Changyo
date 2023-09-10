@@ -26,3 +26,13 @@ include::{snippets}/search-deposits/http-request.adoc[]
 ==== HTTP Response
 include::{snippets}/search-deposits/http-response.adoc[]
 include::{snippets}/search-deposits/response-fields.adoc[]
+
+=== 보증금 정산관리 상세 조회
+
+==== HTTP Request
+include::{snippets}/search-deposit-details/http-request.adoc[]
+include::{snippets}/search-deposit-details/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-deposit-details/http-response.adoc[]
+include::{snippets}/search-deposit-details/response-fields.adoc[]
