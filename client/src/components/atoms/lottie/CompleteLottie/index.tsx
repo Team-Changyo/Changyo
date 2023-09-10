@@ -1,6 +1,6 @@
 import React from 'react';
 import Lottie, { Options } from 'react-lottie';
-import CompleteAnimation from './CompleteLottie.json';
+import CompleteAnimation from './lottie.json';
 
 function CompleteLottie() {
 	const defaultOptions: Options = {
