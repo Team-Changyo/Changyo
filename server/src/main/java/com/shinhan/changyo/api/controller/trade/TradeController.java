@@ -48,8 +48,8 @@ public class TradeController {
      * @param memberId 회원 식별키
      * @return 해당 회원의 송금내역 목록
      */
-    @GetMapping()
-    public ApiResponse<List<WithdrawalResponse>> getWithdrawalTrades(@RequestParam Long memberId) {
+    @GetMapping
+    public ApiResponse<List<WithdrawalResponse>> getWithdrawalTrades(@RequestHeader(name = "memberId") Long memberId) {
         log.debug("TradeController#getWithdrawalTrades call");
         log.debug("memberId={}", memberId);
 
