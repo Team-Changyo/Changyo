@@ -24,3 +24,6 @@ logging:
     org.hibernate.SQL: debug
     com.shinhan.changyo: debug
 
+jwt:
+  secret: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
