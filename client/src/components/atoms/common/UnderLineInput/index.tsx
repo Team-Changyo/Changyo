@@ -9,9 +9,10 @@ interface IUnderLineInputProps<T> {
 	placeholder: string;
 	width: string;
 	unitText?: string;
+	disabled?: boolean;
 }
 function UnderLineInput<T>(props: IUnderLineInputProps<T>) {
-	const { type, value, setValue, placeholder, unitText, width } = props;
+	const { type, value, setValue, placeholder, unitText, width, disabled } = props;
 	const [displayValue, setDisplayValue] = useState(value);
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +23,8 @@ function UnderLineInput<T>(props: IUnderLineInputProps<T>) {
 	console.log(type);
 	return (
 		<UnderLineInputWrapper $width={width}>
-			<Input type="" value={displayValue} onChange={handleChange} placeholder={placeholder} /> {unitText}
+			<Input type="" value={displayValue} onChange={handleChange} placeholder={placeholder} disabled={disabled} />{' '}
+			{unitText}
 		</UnderLineInputWrapper>
 	);
 }
