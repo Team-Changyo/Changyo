@@ -2,9 +2,13 @@ package com.shinhan.changyo.api.controller.account;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
+import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
+import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
+import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
+import com.shinhan.changyo.domain.account.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -59,5 +63,14 @@ public class AccountController {
         log.debug("response={}", response);
 
         return ApiResponse.ok(response);
+    }
+
+    @PatchMapping("/{accountId}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public ApiResponse<AccountEditResponse> editTitle(@PathVariable Long accountId, @RequestBody EditAccountTitleRequest request){
+        log.debug("request={}",request);
+        log.debug("accountId={}", accountId);
+        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId));
+        return ApiResponse.found(response);
     }
 }
