@@ -62,10 +62,10 @@ public class TradeController {
     }
 
     /**
-     * 보증금 입금내역 목록 조회 API
+     * 보증금 정산관리 목록 조회 API
      *
      * @param memberId 회원 식별키
-     * @return 해당 회원의 보증금 입금내역 목록
+     * @return 해당 회원의 보증금 정산관리 목록
      */
     @GetMapping("/deposit")
     public ApiResponse<DepositResponse> getDepositTrades(@RequestHeader(name = "memberId") Long memberId) {
@@ -79,11 +79,11 @@ public class TradeController {
     }
 
     /**
-     * 보증금 입금내역 상세 조회 API
+     * 보증금 정산관리 상세조회 API
      *
      * @param qrCodeId QR 코드 식별키
      * @param status   거래 상태
-     * @return 보증금 입금내역 상세 목록
+     * @return 보증금 정산관리 상세조회 목록
      */
     @GetMapping("/deposit/detail")
     public ApiResponse<DepositDetailResponse> getDepositDetails(@RequestParam Long qrCodeId,

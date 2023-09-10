@@ -23,10 +23,10 @@ public class TradeQueryService {
     private final TradeQueryRepository tradeQueryRepository;
 
     /**
-     * 보증금 송금내역 목록 조회
+     * 보증금 정산관리 목록 조회 API
      *
-     * @param memberId 조회할 회원 식별키
-     * @return 해당 회원의 보증금 송금내역 목록
+     * @param memberId 회원 식별키
+     * @return 해당 회원의 보증금 정산관리 목록
      */
     public WithdrawalResponse getWithdrawalTrades(Long memberId) {
         return null;
