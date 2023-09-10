@@ -22,8 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -127,16 +125,12 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/account")
-                                .param("memberId", String.valueOf(memberId))
+                                .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-account",
                         preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("memberId")
-                                        .description("회원 식별키")
-                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
