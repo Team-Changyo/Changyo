@@ -5,4 +5,6 @@ export const TABBAR_RENDER_EXCEPTS = [
 	/\/qr\/deposit\/\d+/,
 	/\/remittance/,
 	'/account/register',
+	'/success',
+	'/fail',
 ];

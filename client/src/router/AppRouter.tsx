@@ -21,6 +21,8 @@ import userState from 'store/user';
 import { GlobalKeyFrames } from 'styles/GlobalKeyFrames';
 import SettlementDetail from 'pages/deposit/SettlementDetail';
 import AccountRegisterPage from 'pages/account/AccountRegisterPage';
+import SuccessPage from 'pages/etc/SuccessPage';
+import FailPage from 'pages/etc/FailPage';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
@@ -73,6 +75,9 @@ function AppRouter() {
 									<Route path="/deposit/settlement/:sid" element={<SettlementDetail />} />
 									<Route path="/remittance/normal" element={<RemittanceNormalPage />} />
 									<Route path="/remittance/deposit" element={<RemittanceDepositPage />} />
+
+									<Route path="/success" element={<SuccessPage />} />
+									<Route path="/fail" element={<FailPage />} />
 								</Route>
 							</Routes>
 							<Tabbar />
