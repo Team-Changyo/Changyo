@@ -20,7 +20,7 @@ public class QrCodeQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<QrCodeResponse> getQrCodes(Long memberId) {
+    public List<QrCodeResponse> getQrCodes(String loginId) {
         return queryFactory
                 .select(Projections.constructor(QrCodeResponse.class,
                         qrCode.qrCodeId,
@@ -30,7 +30,7 @@ public class QrCodeQueryRepository {
                         ))
                 .from(qrCode)
                 .join(qrCode.account, account)
-                .where(account.member.id.eq(memberId))
+                .where(account.member.loginId.eq(loginId))
                 .fetch();
     }
 }

@@ -56,6 +56,12 @@ public class QrCodeService {
             Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
             QrCode qrCode = dto.toEntity(qrCodeBase64, findAccount);
 
+            // loginID와 계좌번호를 등록한 loginId가 같지 않을 경우
+            if(!findAccount.getMember().getLoginId().equals(dto.getLoginId())){
+                throw new IllegalAccessException("잘못된 접근입니다.");
+            }
+
+
             // qr코드 등록
             qrCodeRepository.save(qrCode);
 

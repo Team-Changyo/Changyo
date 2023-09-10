@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public class QrCodeQueryService {
     private final QrCodeQueryRepository qrCodeQueryRepository;
-    public QrCodeResponses getQrCodes(Long memberId) {
-        List<QrCodeResponse> responses = qrCodeQueryRepository.getQrCodes(memberId);
+    public QrCodeResponses getQrCodes(String loginId) {
+        List<QrCodeResponse> responses = qrCodeQueryRepository.getQrCodes(loginId);
 
         return QrCodeResponses.of(responses);
     }

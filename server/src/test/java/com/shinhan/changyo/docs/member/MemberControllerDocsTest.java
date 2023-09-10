@@ -10,6 +10,7 @@ import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
 import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
+import com.shinhan.changyo.security.TokenInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -107,8 +108,15 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                 .name("김싸피")
                 .build();
 
+        TokenInfo token = TokenInfo.builder()
+                .grantType("Bearer")
+                .accessToken("accessToken")
+                .refreshToken("refreshToken")
+                .build();
+
+
         given(memberAccountService.login(anyString(), anyString()))
-                .willReturn(response);
+                .willReturn(token);
 
         mockMvc.perform(
                         post("/login")
@@ -135,10 +143,12 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답데이터"),
-                                fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
-                                        .description("회원 식별키"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
-                                        .description("이름")
+                                fieldWithPath("data.grantType").type(JsonFieldType.STRING)
+                                        .description("grantType"),
+                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                                        .description("accessToken"),
+                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                                        .description("refreshToken")
                         )
                 ));
     }

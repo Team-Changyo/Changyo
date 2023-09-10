@@ -36,12 +36,13 @@ public class QrCodeRequest {
         this.title = title;
     }
 
-    public QrCodeDto toQrCodeDto(){
+    public QrCodeDto toQrCodeDto(String loginId){
         return QrCodeDto.builder()
                 .url(url)
                 .accountId(accountId)
                 .amount(amount)
                 .title(title)
+                .loginId(loginId)
                 .build();
     }
 }
