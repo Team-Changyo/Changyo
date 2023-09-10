@@ -67,6 +67,12 @@ public class MemberController {
         return ApiResponse.ok(tokenInfo);
     }
 
+    /**
+     * 회원탈퇴 API
+     *
+     * @param request 탈퇴할 아이디, 비밀번호
+     * @return 탈퇴 성공 여부
+     */
     @PostMapping("/withdrawal")
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> withdrawal(@Valid @RequestBody WithdrawalRequest request) {

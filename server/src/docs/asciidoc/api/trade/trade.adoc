@@ -1,0 +1,48 @@
+[[create-trade]]
+=== 보증금 송금
+
+==== HTTP Request
+include::{snippets}/create-trade/http-request.adoc[]
+include::{snippets}/create-trade/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-trade/http-response.adoc[]
+include::{snippets}/create-trade/response-fields.adoc[]
+
+=== 보증금 송금내역 목록 조회
+
+==== HTTP Request
+include::{snippets}/search-withdrawals/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-withdrawals/http-response.adoc[]
+include::{snippets}/search-withdrawals/response-fields.adoc[]
+
+=== 보증금 정산관리 목록 조회
+
+==== HTTP Request
+include::{snippets}/search-deposits/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-deposits/http-response.adoc[]
+include::{snippets}/search-deposits/response-fields.adoc[]
+
+=== 보증금 정산관리 상세 조회
+
+==== HTTP Request
+include::{snippets}/search-deposit-details/http-request.adoc[]
+include::{snippets}/search-deposit-details/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-deposit-details/http-response.adoc[]
+include::{snippets}/search-deposit-details/response-fields.adoc[]
+
+=== 보증금 반환
+
+==== HTTP Request
+include::{snippets}/return-deposit/http-request.adoc[]
+include::{snippets}/return-deposit/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/return-deposit/http-response.adoc[]
+include::{snippets}/return-deposit/response-fields.adoc[]
