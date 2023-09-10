@@ -47,7 +47,6 @@ include::{snippets}/edit-title-qrcode/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/remove-qrcode/http-request.adoc[]
-include::{snippets}/remove-qrcode/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/remove-qrcode/http-response.adoc[]
@@ -58,7 +57,6 @@ include::{snippets}/remove-qrcode/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/get-qrCode/http-request.adoc[]
-include::{snippets}/get-qrCode/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/get-qrCode/http-response.adoc[]
@@ -69,7 +67,6 @@ include::{snippets}/get-qrCode/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/get-qrCodes/http-request.adoc[]
-include::{snippets}/get-qrCodes/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/get-qrCodes/http-response.adoc[]

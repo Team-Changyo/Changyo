@@ -27,4 +27,4 @@ include::api/trade/trade.adoc[]
 [[QrCode-API]]
 == QrCode API
 
-include::api/account/qrcode.adoc[]
+include::api/qrcode/qrcode.adoc[]
