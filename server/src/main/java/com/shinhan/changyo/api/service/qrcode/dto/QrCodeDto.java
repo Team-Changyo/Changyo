@@ -26,12 +26,12 @@ public class QrCodeDto {
         this.title = title;
     }
 
-    public QrCode toEntity(String storeFileName, Account account){
+    public QrCode toEntity(String base64QrCode, Account account){
         return QrCode.builder()
                 .url(this.url)
                 .amount(this.amount)
                 .title(this.title)
-                .storeFileName(storeFileName)
+                .base64QrCode(base64QrCode)
                 .active(true)
                 .account(account)
                 .build();

@@ -1,8 +1,6 @@
 package com.shinhan.changyo.client;
 
 import com.shinhan.changyo.api.ApiResponse;
-import com.shinhan.changyo.api.service.account.dto.BalanceRequest;
-import com.shinhan.changyo.api.service.account.dto.BalanceResponse;
 import com.shinhan.changyo.config.FeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -18,4 +16,7 @@ public interface ShinHanApiClient {
 
     @PostMapping(produces = "application/json", value = "/v1/auth/1transfer")
     ApiResponse<OneTransferResponse> oneTransfer(@RequestBody OneTransferRequest request);
+
+    @PostMapping(produces = "application/json", value = "/v1/transfer/krw")
+    ApiResponse<TransferResponse> transfer(@RequestBody TransferRequest request);
 }
