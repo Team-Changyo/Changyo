@@ -186,8 +186,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 정산관리 목록 조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getDepositTrades() throws Exception {
-        Long memberId = 1L;
 
         DepositOverviewResponse overview1 = DepositOverviewResponse.builder()
                 .qrCodeId(1L)
@@ -211,12 +211,11 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .depositOverviews(overviews)
                 .build();
 
-        given(tradeQueryService.getDepositTrades(anyLong()))
+        given(tradeQueryService.getDepositTrades(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit")
-                                .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
