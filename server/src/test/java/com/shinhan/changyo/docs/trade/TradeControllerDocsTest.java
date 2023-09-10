@@ -11,9 +11,12 @@ import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(TradeControllerDocsTest.class)
 public class TradeControllerDocsTest extends RestDocsSupport {
 
     private final TradeService tradeService = mock(TradeService.class);
@@ -97,38 +101,39 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 송금내역 목록 조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getWithdrawalTrades() throws Exception {
-        Long memberId = 1L;
 
         WithdrawalDetailResponse waitDetail1 = WithdrawalDetailResponse.builder()
                 .tradeId(1L)
                 .qrCodeTitle("럭셔리 글램핑 객실이용")
-                .depositName("전인혁")
-                .amount(20000)
-                .tradeDate(TradeStatus.WAIT.getText())
+                .memberName("전인혁")
+                .withdrawalAmount(20000)
+                .status(TradeStatus.WAIT)
+                .tradeDate(LocalDateTime.of(2023, 3, 8, 19, 30))
                 .build();
         WithdrawalDetailResponse doneDetail1 = WithdrawalDetailResponse.builder()
                 .tradeId(1L)
                 .qrCodeTitle("럭셔리 글램핑 2호점 객실이용")
-                .depositName("전인혁")
-                .amount(30000)
-                .tradeDate("2023-03-08 19:30")
+                .memberName("전인혁")
+                .withdrawalAmount(30000)
+                .status(TradeStatus.DONE)
+                .tradeDate(LocalDateTime.of(2023, 3, 8, 19, 30))
                 .build();
         List<WithdrawalDetailResponse> waitDetails = List.of(waitDetail1);
         List<WithdrawalDetailResponse> doneDetails = List.of(doneDetail1);
         WithdrawalResponse response = WithdrawalResponse.builder()
-                .remainCount(1)
-                .finishCount(1)
+                .waitCount(1)
+                .doneCount(1)
                 .waitWithdrawals(waitDetails)
                 .doneWithdrawals(doneDetails)
                 .build();
 
-        given(tradeQueryService.getWithdrawalTrades(anyLong()))
+        given(tradeQueryService.getWithdrawalTrades(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/withdrawal")
-                                .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -143,9 +148,9 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
-                                fieldWithPath("data.remainCount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.waitCount").type(JsonFieldType.NUMBER)
                                         .description("반환대기 건수"),
-                                fieldWithPath("data.finishCount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.doneCount").type(JsonFieldType.NUMBER)
                                         .description("반환완료 건수"),
                                 fieldWithPath("data.waitWithdrawals").type(JsonFieldType.ARRAY)
                                         .description("반환대기 거래내역리스트"),
@@ -153,10 +158,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("거래내역 식별키"),
                                 fieldWithPath("data.waitWithdrawals[].qrCodeTitle").type(JsonFieldType.STRING)
                                         .description("QR 코드 이름"),
-                                fieldWithPath("data.waitWithdrawals[].depositName").type(JsonFieldType.STRING)
+                                fieldWithPath("data.waitWithdrawals[].memberName").type(JsonFieldType.STRING)
                                         .description("송금처"),
-                                fieldWithPath("data.waitWithdrawals[].amount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.waitWithdrawals[].withdrawalAmount").type(JsonFieldType.NUMBER)
                                         .description("송금 금액"),
+                                fieldWithPath("data.waitWithdrawals[].status").type(JsonFieldType.STRING)
+                                        .description("거래 상태"),
                                 fieldWithPath("data.waitWithdrawals[].tradeDate").type(JsonFieldType.STRING)
                                         .description("반환일시"),
                                 fieldWithPath("data.doneWithdrawals").type(JsonFieldType.ARRAY)
@@ -165,10 +172,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("거래내역 식별키"),
                                 fieldWithPath("data.doneWithdrawals[].qrCodeTitle").type(JsonFieldType.STRING)
                                         .description("QR 코드 이름"),
-                                fieldWithPath("data.doneWithdrawals[].depositName").type(JsonFieldType.STRING)
+                                fieldWithPath("data.doneWithdrawals[].memberName").type(JsonFieldType.STRING)
                                         .description("송금처"),
-                                fieldWithPath("data.doneWithdrawals[].amount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.doneWithdrawals[].withdrawalAmount").type(JsonFieldType.NUMBER)
                                         .description("송금 금액"),
+                                fieldWithPath("data.doneWithdrawals[].status").type(JsonFieldType.STRING)
+                                        .description("거래 상태"),
                                 fieldWithPath("data.doneWithdrawals[].tradeDate").type(JsonFieldType.STRING)
                                         .description("반환일시")
                         )
