@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.service.trade;
 
+import com.shinhan.changyo.api.controller.trade.response.DepositDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
@@ -38,6 +39,17 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 입금내역 목록
      */
     public DepositResponse getDepositTrades(Long memberId) {
+        return null;
+    }
+
+    /**
+     * 보증금 정산관리 상세조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @param status   거래 상태
+     * @return 보증금 정산관리 상세조회 목록
+     */
+    public DepositDetailResponse getDepositDetails(Long qrCodeId, String status) {
         return null;
     }
 }
