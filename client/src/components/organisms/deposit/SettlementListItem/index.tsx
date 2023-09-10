@@ -1,38 +1,68 @@
 import React from 'react';
-import { ReactComponent as Right } from 'assets/icons/navigation/right.svg';
+import { ReactComponent as Check } from 'assets/icons/check.svg';
+import { ReactComponent as Coin } from 'assets/icons/account/coin.svg';
 import { ISettlement } from 'types/deposit';
-import { formatMoney } from 'utils/common/formatMoney';
 import { SettlementListItemContainer } from './style';
 
 interface ISettlementListItemProps {
+	addToBeReturned: (settlement: ISettlement) => void;
+	isMultiReturnMode: boolean;
+	openReturnModal: () => void;
 	settlement: ISettlement;
+	toBeReturned: Array<ISettlement>;
 }
 
-function SettlementListItem({ settlement }: ISettlementListItemProps) {
-	const formattedMoneyUnit = formatMoney(settlement.moneyUnit);
-	const formattedTotalMoney = formatMoney(settlement.cntBeforeReturn * settlement.moneyUnit);
+function SettlementListItem(props: ISettlementListItemProps) {
+	const { addToBeReturned, isMultiReturnMode, openReturnModal, settlement, toBeReturned } = props;
+
+	const handleReturn = () => {
+		toBeReturned.length = 0;
+		addToBeReturned(settlement);
+		openReturnModal();
+	};
+
+	const isSelected = () => {
+		const idx = toBeReturned.findIndex((el) => el.key === settlement.key);
+		if (idx === -1) return false;
+		return true;
+	};
 
 	return (
-		<SettlementListItemContainer>
-			<div className="left">
-				<div>
-					<span className="title">{settlement.title}</span> 건
+		<SettlementListItemContainer $isReturned={settlement.isReturned}>
+			<div className="settlement-logo">
+				<Coin />
+			</div>
+			<div className="settlement-info">
+				<div className="depositor-name">
+					입금자명 <span>{settlement.depositorName}</span>
 				</div>
-				<div className="money-unit-row">
-					입금단위 <span>{formattedMoneyUnit}원</span>
-				</div>
-				<div className="before-return-total-row">
-					미반환 합계 <span className="return-datetime">{formattedTotalMoney}원</span>
+				<div className="return-datetime">
+					입금일시 <span>{settlement.dateTime}</span>
 				</div>
 			</div>
-			<div className="right">
-				{settlement.cntBeforeReturn ? (
-					<span className="before-return">미반환 {settlement.cntBeforeReturn}건</span>
+			<div className="return-btn">
+				{/* 반환된 건이면 완료 버튼 (비활성화 버튼) */}
+				{settlement.isReturned ? (
+					<button type="button" className="returned" disabled>
+						완료
+					</button>
 				) : (
-					<span className="after-return">반환완료</span>
+					// 반환되지 않은 건이면, 반환 버튼 or 체크 버튼
+					<>
+						{isMultiReturnMode ? (
+							// 여러건 반환 모드일 때, 체크 버튼으로 전환
+							<Check
+								fill={isSelected() ? 'var(--main-color)' : 'var(--gray-400)'}
+								onClick={() => addToBeReturned(settlement)}
+							/>
+						) : (
+							// 단일건 반환 모드일 때, 반환 버튼으로 전환
+							<button type="button" className="before-return" onClick={handleReturn}>
+								반환
+							</button>
+						)}
+					</>
 				)}
-
-				<Right />
 			</div>
 		</SettlementListItemContainer>
 	);

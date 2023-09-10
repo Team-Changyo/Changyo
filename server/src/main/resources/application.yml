@@ -24,3 +24,9 @@ logging:
     org.hibernate.SQL: debug
     com.shinhan.changyo: debug
 
+jwt:
+  secret: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
+changyo-account:
+  id: 1
+  accountNumber: 110291999999

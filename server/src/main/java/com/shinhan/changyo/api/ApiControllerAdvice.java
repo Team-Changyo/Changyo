@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,9 +16,9 @@ public class ApiControllerAdvice {
     @ExceptionHandler(BindException.class)
     public ApiResponse<Object> bindException(BindException e) {
         return ApiResponse.of(
-            HttpStatus.BAD_REQUEST,
-            e.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
-            null
+                HttpStatus.BAD_REQUEST,
+                e.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
+                null
         );
     }
 
@@ -25,9 +26,9 @@ public class ApiControllerAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     public ApiResponse<Object> illegalArgumentException(IllegalArgumentException e) {
         return ApiResponse.of(
-            HttpStatus.BAD_REQUEST,
-            e.getMessage(),
-            null
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                null
         );
     }
 
@@ -35,9 +36,19 @@ public class ApiControllerAdvice {
     @ExceptionHandler(NoSuchElementException.class)
     public ApiResponse<Object> noSuchElementException(NoSuchElementException e) {
         return ApiResponse.of(
-            HttpStatus.BAD_REQUEST,
-            e.getMessage(),
-            null
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                null
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FeignException.class)
+    public ApiResponse<Object> feignException(FeignException e) {
+        return ApiResponse.of(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                null
         );
     }
 }

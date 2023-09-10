@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 
-export const SettlementListItemContainer = styled.div`
-	height: 4rem;
+export const SettlementListItemContainer = styled.div<{ $isReturned: boolean }>`
+	height: 3rem;
 	max-height: 64px;
 	display: flex;
 	flex-direction: row;
@@ -12,7 +12,20 @@ export const SettlementListItemContainer = styled.div`
 		background-color: var(--gray-100);
 	}
 
-	.left {
+	.settlement-logo {
+		width: 3rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			fill: ${({ $isReturned }) => ($isReturned ? 'var(--gray-500)' : 'var(--main-color)')};
+			width: 2.5rem;
+			height: 2.5rem;
+		}
+	}
+
+	.settlement-info {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -20,46 +33,54 @@ export const SettlementListItemContainer = styled.div`
 		flex-grow: 1;
 		padding-left: 10px;
 
-		.title {
-			color: var(--main-color);
-		}
-
-		.money-unit-row {
-			font-size: 0.9rem;
-			color: var(--gray-500);
-
+		.depositor-name {
 			span {
 				color: var(--gray-400);
 			}
 		}
 
-		.before-return-total-row {
-			font-size: 0.9rem;
-			color: var(--gray-500);
-
+		.return-datetime {
 			span {
 				color: var(--gray-400);
 			}
 		}
 	}
 
-	.right {
+	.return-btn {
+		width: 3rem;
 		display: flex;
-		flex-direction: row;
-		align-items: center;
+		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 
-		svg {
-			width: 25px;
-			height: 25px;
+		button {
+			border: none;
+			background-color: var(--gray-200);
+			border-radius: var(--radius-l);
+			font-size: 0.7rem;
+			font-weight: bold;
+			padding: 5px 10px;
+			color: var(--black-100);
+
+			&:hover {
+				cursor: pointer;
+				color: var(--gray-300);
+			}
+		}
+
+		.returned {
+			background-color: var(--gray-400);
+			color: var(--gray-100);
+
+			&:hover {
+				cursor: pointer;
+				color: var(--gray-100);
+			}
 		}
 
 		.before-return {
-			color: var(--main-color);
-		}
-
-		.after-return {
-			color: var(--gray-500);
+			background-color: var(--danger-color);
+			color: var(--gray-100);
 		}
 	}
 `;

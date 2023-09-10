@@ -8,6 +8,7 @@ export const GlobalStyles = createGlobalStyle`
         /* color */
         --main-color : #2449FF;
         --sub-color : #6B6B6F;
+        --success-color : #138636;
         --danger-color : #ff2449;
         --white-color : #ffffff;
 
@@ -58,6 +59,7 @@ export const GlobalStyles = createGlobalStyle`
         list-style: none;
     }
     button {
+        font-family: 'Pretendard';
         border: 0;
         background: transparent;
         cursor: pointer;
