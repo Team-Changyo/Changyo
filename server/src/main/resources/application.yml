@@ -27,3 +27,6 @@ logging:
 jwt:
   secret: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
+changyo-account:
+  id: 1
+  accountNumber: 000000000000
