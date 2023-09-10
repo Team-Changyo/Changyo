@@ -10,14 +10,14 @@ public class WithdrawalDetailResponse {
     private String qrCodeTitle;
     private String depositName;
     private int amount;
-    private String returnDate;
+    private String tradeDate;
 
     @Builder
-    public WithdrawalDetailResponse(Long tradeId, String qrCodeTitle, String depositName, int amount, String returnDate) {
+    public WithdrawalDetailResponse(Long tradeId, String qrCodeTitle, String depositName, int amount, String tradeDate) {
         this.tradeId = tradeId;
         this.qrCodeTitle = qrCodeTitle;
         this.depositName = depositName;
         this.amount = amount;
-        this.returnDate = returnDate;
+        this.tradeDate = tradeDate;
     }
 }
