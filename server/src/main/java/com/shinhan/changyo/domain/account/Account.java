@@ -72,4 +72,8 @@ public class Account extends TimeBaseEntity {
     public void setSubAccount() {
         this.mainAccount = false;
     }
+
+    public void editBalance(int balance) {
+        this.balance = balance;
+    }
 }
