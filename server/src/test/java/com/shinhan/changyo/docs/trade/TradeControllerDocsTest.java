@@ -44,7 +44,9 @@ public class TradeControllerDocsTest extends RestDocsSupport {
     void createTrade() throws Exception {
         CreateTradeRequest request = CreateTradeRequest.builder()
                 .accountId(1L)
+                .withdrawalAccountNumber("1102008999999")
                 .qrCodeId(1L)
+                .depositAccountNumber("110054999999")
                 .amount(20000)
                 .content("럭셔리 글램핑 객실이용")
                 .build();
@@ -66,8 +68,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("출금 계좌 식별키"),
+                                fieldWithPath("withdrawalAccountNumber").type(JsonFieldType.STRING)
+                                                .description("출금 계좌 번호"),
                                 fieldWithPath("qrCodeId").type(JsonFieldType.NUMBER)
                                         .description("보증금 QR 코드 식별키"),
+                                fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
+                                        .description("입금 계좌 번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)
                                         .description("금액"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
