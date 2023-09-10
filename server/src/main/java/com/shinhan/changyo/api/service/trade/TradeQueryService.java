@@ -1,9 +1,6 @@
 package com.shinhan.changyo.api.service.trade;
 
-import com.shinhan.changyo.api.controller.trade.response.DepositDetailResponse;
-import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
-import com.shinhan.changyo.api.controller.trade.response.WithdrawalDetailResponse;
-import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
+import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +31,6 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 송금 거래내역 목록
      */
     public WithdrawalResponse getWithdrawalTrades(String loginId) {
-        log.debug("loginId={}", loginId);
         List<WithdrawalDetailResponse> withdrawals = tradeQueryRepository.getWithdrawalTrades(loginId);
         log.debug("withdrawals={}", withdrawals);
 
@@ -72,13 +68,17 @@ public class TradeQueryService {
     }
 
     /**
-     * 보증금 입금내역 목록 조회
+     * 보증금 정산관리 조회
      *
-     * @param memberId 조회할 회원 식별키
+     * @param loginId 로그인한 회원의 로그인 아이디
      * @return 해당 회원의 보증금 입금내역 목록
      */
-    public DepositResponse getDepositTrades(Long memberId) {
-        return null;
+    public DepositResponse getDepositTrades(String loginId) {
+        List<DepositOverviewResponse> overviews = tradeQueryRepository.getDepositTrades(loginId);
+        log.debug("overviews={}", overviews);
+        log.debug("totalCount={}", overviews.size());
+
+        return DepositResponse.of(overviews.size(), overviews);
     }
 
     /**
