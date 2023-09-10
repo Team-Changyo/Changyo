@@ -9,7 +9,7 @@ include::{snippets}/create-trade/request-fields.adoc[]
 include::{snippets}/create-trade/http-response.adoc[]
 include::{snippets}/create-trade/response-fields.adoc[]
 
-=== 보증금 송금내역 조회
+=== 보증금 송금내역 목록 조회
 
 ==== HTTP Request
 include::{snippets}/search-withdrawals/http-request.adoc[]
@@ -17,3 +17,12 @@ include::{snippets}/search-withdrawals/http-request.adoc[]
 ==== HTTP Response
 include::{snippets}/search-withdrawals/http-response.adoc[]
 include::{snippets}/search-withdrawals/response-fields.adoc[]
+
+=== 보증금 정산관리 목록 조회
+
+==== HTTP Request
+include::{snippets}/search-deposits/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-deposits/http-response.adoc[]
+include::{snippets}/search-deposits/response-fields.adoc[]

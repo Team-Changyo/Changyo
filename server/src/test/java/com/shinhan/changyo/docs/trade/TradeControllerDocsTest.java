@@ -2,6 +2,8 @@ package com.shinhan.changyo.docs.trade;
 
 import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
+import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
@@ -117,7 +119,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/trade")
+                        get("/trade/withdrawal")
                                 .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
@@ -161,6 +163,71 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("송금 금액"),
                                 fieldWithPath("data.doneWithdrawals[].returnDate").type(JsonFieldType.STRING)
                                         .description("반환일시")
+                        )
+                ));
+    }
+
+    @DisplayName("보증금 정산관리 목록 조회 API")
+    @Test
+    void getDepositTrades() throws Exception {
+        Long memberId = 1L;
+
+        DepositOverviewResponse overview1 = DepositOverviewResponse.builder()
+                .qrCodeId(1L)
+                .qrCodeTitle("럭셔리 글램핑 객실이용")
+                .amount(20000)
+                .remainTotal(60000)
+                .remainCount(3)
+                .build();
+        DepositOverviewResponse overview2 = DepositOverviewResponse.builder()
+                .qrCodeId(2L)
+                .qrCodeTitle("럭셔리 글램핑 2호점 객실이용")
+                .amount(30000)
+                .remainTotal(0)
+                .remainCount(0)
+                .build();
+
+        List<DepositOverviewResponse> overviews = List.of(overview1, overview2);
+
+        DepositResponse response = DepositResponse.builder()
+                .totalCount(1)
+                .depositOverviews(overviews)
+                .build();
+
+        given(tradeQueryService.getDepositTrades(anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        get("/trade/deposit")
+                                .header("memberId", String.valueOf(memberId))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("search-deposits",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER)
+                                        .description("보증금 정산관리 건수"),
+                                fieldWithPath("data.depositOverviews").type(JsonFieldType.ARRAY)
+                                        .description("보증금 정산관리 개요 목록"),
+                                fieldWithPath("data.depositOverviews[].qrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("보증금 정산관리 식별키"),
+                                fieldWithPath("data.depositOverviews[].qrCodeTitle").type(JsonFieldType.STRING)
+                                        .description("보증금 정산관리 이름"),
+                                fieldWithPath("data.depositOverviews[].amount").type(JsonFieldType.NUMBER)
+                                        .description("보증금 입금단위"),
+                                fieldWithPath("data.depositOverviews[].remainTotal").type(JsonFieldType.NUMBER)
+                                        .description("보증금 미반환 총액"),
+                                fieldWithPath("data.depositOverviews[].remainCount").type(JsonFieldType.NUMBER)
+                                        .description("보증금 미반환 건수")
                         )
                 ));
     }
