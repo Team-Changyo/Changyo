@@ -2,6 +2,7 @@ package com.shinhan.changyo.docs.trade;
 
 import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
+import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
@@ -300,6 +301,64 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("입금자명"),
                                 fieldWithPath("data.depositDetails[].tradeDate").type(JsonFieldType.STRING)
                                         .description("입금일시")
+                        )
+                ));
+    }
+
+    @DisplayName("보증금 반환 API")
+    @Test
+    void returnDeposit() throws Exception {
+        ReturnDepositRequest request1 = ReturnDepositRequest.builder()
+                .tradeId(1L)
+                .amount(20000)
+                .fee(6000)
+                .reason("물품/기물 파손")
+                .description("침대 파손")
+                .build();
+
+        ReturnDepositRequest request2 = ReturnDepositRequest.builder()
+                .tradeId(2L)
+                .amount(20000)
+                .reason("")
+                .description("")
+                .build();
+
+        List<ReturnDepositRequest> requests = List.of(request1, request2);
+
+        given(tradeService.returnDeposit(anyList()))
+                .willReturn(true);
+
+        mockMvc.perform(
+                        post("/trade/deposit")
+                                .content(objectMapper.writeValueAsString(requests))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("return-deposit",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[].tradeId").type(JsonFieldType.NUMBER)
+                                        .description("보증금 거래내역 식별키"),
+                                fieldWithPath("[].amount").type(JsonFieldType.NUMBER)
+                                        .description("보증금 송금 금액"),
+                                fieldWithPath("[].fee").type(JsonFieldType.NUMBER)
+                                        .description("수수료"),
+                                fieldWithPath("[].reason").type(JsonFieldType.STRING)
+                                        .description("반환 사유"),
+                                fieldWithPath("[].description").type(JsonFieldType.STRING)
+                                        .description("반환사유 상세")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("반환 성공 여부")
                         )
                 ));
     }

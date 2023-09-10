@@ -36,3 +36,13 @@ include::{snippets}/search-deposit-details/request-parameters.adoc[]
 ==== HTTP Response
 include::{snippets}/search-deposit-details/http-response.adoc[]
 include::{snippets}/search-deposit-details/response-fields.adoc[]
+
+=== 보증금 반환
+
+==== HTTP Request
+include::{snippets}/return-deposit/http-request.adoc[]
+include::{snippets}/return-deposit/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/return-deposit/http-response.adoc[]
+include::{snippets}/return-deposit/response-fields.adoc[]
