@@ -51,7 +51,7 @@ public class AccountController {
      * @return 계좌 개수, 계좌 정보 목록
      */
     @GetMapping()
-    public ApiResponse<AccountResponse> getAccounts(@RequestParam String memberId) {
+    public ApiResponse<AccountResponse> getAccounts(@RequestHeader(name = "memberId") String memberId) {
         log.debug("AccountController#getAccounts called");
         log.debug("memberId={}", memberId);
 

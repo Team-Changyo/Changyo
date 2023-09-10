@@ -34,8 +34,8 @@ public class QrCode extends TimeBaseEntity {
     private String title;
 
     // TODO: 2023-09-08 홍진식 : 변수명 체크 필요
-    @Column(nullable = false, name = "store_file_name")
-    private String storeFileName;
+    @Column(nullable = false, length = 10000, name = "base64_qr_code")
+    private String base64QrCode;
 
     @Column(nullable = false)
     private boolean active;
@@ -46,13 +46,27 @@ public class QrCode extends TimeBaseEntity {
 
 
     @Builder
-    public QrCode(Long qrCodeId, String url, int amount, String title, String storeFileName, boolean active, Account account) {
+    public QrCode(Long qrCodeId, String url, int amount, String title, String base64QrCode, boolean active, Account account) {
         this.qrCodeId = qrCodeId;
         this.url = url;
         this.amount = amount;
         this.title = title;
-        this.storeFileName = storeFileName;
+        this.base64QrCode = base64QrCode;
         this.active = active;
         this.account = account;
+    }
+
+    // 비즈니스 로직
+
+    public void editAmount(int amount){
+        this.amount = amount;
+    }
+
+    public void editTitle(String title){
+        this.title = title;
+    }
+
+    public void remove() {
+        this.active = false;
     }
 }
