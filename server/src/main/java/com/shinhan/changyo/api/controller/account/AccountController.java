@@ -9,6 +9,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.domain.account.Account;
+import com.shinhan.changyo.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,8 +42,9 @@ public class AccountController {
     public ApiResponse<Long> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         log.debug("AccountController#createAccount called");
         log.debug("CreateAccountRequest={}", request);
-
-        Long saveId = accountService.createAccount(request.toCreateAccountDto());
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        Long saveId = accountService.createAccount(request.toCreateAccountDto(loginId));
         log.debug("saveId={}", saveId);
 
         return ApiResponse.created(saveId);

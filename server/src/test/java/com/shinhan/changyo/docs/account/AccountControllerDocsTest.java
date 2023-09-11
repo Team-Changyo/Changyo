@@ -11,10 +11,13 @@ import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
+import com.shinhan.changyo.docs.qrcode.QrCodeControllerDocsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(QrCodeControllerDocsTest.class)
 public class AccountControllerDocsTest extends RestDocsSupport {
 
     private final AccountService accountService = mock(AccountService.class);
@@ -41,9 +45,9 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("계좌 등록 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createAccount() throws Exception {
         CreateAccountRequest request = CreateAccountRequest.builder()
-                .memberId(1L)
                 .customerName("김싸피")
                 .bankCode("088")
                 .accountNumber("110184999999")
@@ -68,8 +72,6 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("memberId").type(JsonFieldType.NUMBER)
-                                        .description("회원 식별키"),
                                 fieldWithPath("customerName").type(JsonFieldType.STRING)
                                         .description("고객명"),
                                 fieldWithPath("bankCode").type(JsonFieldType.STRING)

@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class CreateAccountRequest {
-    @NotNull
-    private Long memberId;
     @NotBlank
     private String customerName;
     @NotBlank
@@ -26,8 +24,7 @@ public class CreateAccountRequest {
     private Boolean mainAccount;
 
     @Builder
-    public CreateAccountRequest(Long memberId, String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
-        this.memberId = memberId;
+    public CreateAccountRequest(String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
         this.customerName = customerName;
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
@@ -36,9 +33,9 @@ public class CreateAccountRequest {
         this.mainAccount = mainAccount;
     }
 
-    public CreateAccountDto toCreateAccountDto() {
+    public CreateAccountDto toCreateAccountDto(String loginId) {
         return CreateAccountDto.builder()
-                .memberId(this.memberId)
+                .loginId(loginId)
                 .customerName(this.customerName)
                 .bankCode(this.bankCode)
                 .accountNumber(this.accountNumber)

@@ -44,7 +44,7 @@ public class AccountService {
      * @return 등록된 계좌 식별키
      */
     public Long createAccount(CreateAccountDto dto) {
-        Member member = getMember(dto.getMemberId());
+        Member member = getMember(dto.getLoginId());
 
         Account savedAccount = saveAccount(dto, member);
 
@@ -54,12 +54,12 @@ public class AccountService {
     /**
      * 회원 엔티티 조회
      *
-     * @param memberId 조회할 회원 식별키
+     * @param loginId 조회할 회원 로그인 아이디
      * @return 조회된 회원
      * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
      */
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMember(String loginId) {
+        return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
 
