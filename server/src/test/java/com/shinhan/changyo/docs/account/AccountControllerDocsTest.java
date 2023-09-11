@@ -257,4 +257,33 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
+
+    @DisplayName("계좌 삭제 API")
+    @Test
+    void removeAccount() throws Exception {
+
+        Boolean result = true;
+
+        given(accountService.removeAccount(anyLong()))
+                .willReturn(result);
+
+        mockMvc.perform(
+                        delete("/account/{accountId}", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andDo(document("delete-account",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("삭제 결과: true 또는 false")
+                        )
+                ));
+    }
 }

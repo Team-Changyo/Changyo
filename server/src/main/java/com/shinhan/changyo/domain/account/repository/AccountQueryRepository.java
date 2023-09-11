@@ -43,7 +43,8 @@ public class AccountQueryRepository {
                 ))
                 .from(account)
                 .join(account.member, member)
-                .where(account.member.id.eq(memberId))
+                .where(account.member.id.eq(memberId),
+                        account.active.eq(true))
                 .fetch();
     }
 
@@ -58,7 +59,8 @@ public class AccountQueryRepository {
                 .select(account.count())
                 .from(account)
                 .join(account.member, member)
-                .where(account.member.id.eq(memberId))
+                .where(account.member.id.eq(memberId),
+                        account.active.eq(true))
                 .fetchFirst().intValue();
     }
 
@@ -68,7 +70,8 @@ public class AccountQueryRepository {
 
         return queryFactory
                 .select(account)
-                .where(condition)
+                .where(condition,
+                        account.active.eq(true))
                 .orderBy(account.mainAccount.desc())
                 .fetch();
     }
