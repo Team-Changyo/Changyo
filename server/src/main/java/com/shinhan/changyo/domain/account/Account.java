@@ -76,4 +76,16 @@ public class Account extends TimeBaseEntity {
     public void editBalance(int balance) {
         this.balance = balance;
     }
+
+    public void editTitle(String title) {
+        this.title = title;
+    }
+
+    public void editMainAccount() {
+        if(this.mainAccount){
+            this.mainAccount = false;
+        }else{
+            this.mainAccount = true;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.controller.account.response;
 
+import com.shinhan.changyo.domain.account.Account;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +19,4 @@ public class AccountDetailResponse {
         this.bankCode = bankCode;
         this.mainAccount = mainAccount;
     }
-
 }

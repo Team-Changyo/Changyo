@@ -15,6 +15,28 @@ include::{snippets}/create-account/response-fields.adoc[]
 ==== HTTP Request
 include::{snippets}/search-account/http-request.adoc[]
 
+
 ==== HTTP Response
 include::{snippets}/search-account/http-response.adoc[]
 include::{snippets}/search-account/response-fields.adoc[]
+
+[[edit-account-title]]
+=== 계좌 별칭 변경
+
+==== HTTP Request
+include::{snippets}/edit-account-title/http-request.adoc[]
+include::{snippets}/edit-account-title/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/edit-account-title/http-response.adoc[]
+include::{snippets}/edit-account-title/response-fields.adoc[]
+
+[[edit-account-main]]
+=== 주계좌 변경
+
+==== HTTP Request
+include::{snippets}/edit-account-main/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/edit-account-main/http-response.adoc[]
+include::{snippets}/edit-account-main/response-fields.adoc[]
