@@ -87,17 +87,14 @@ public class TradeController {
      * 보증금 정산관리 상세조회 API
      *
      * @param qrCodeId QR 코드 식별키
-     * @param status   거래 상태
      * @return 보증금 정산관리 상세조회 목록
      */
     @GetMapping("/deposit/detail")
-    public ApiResponse<DepositDetailResponse> getDepositDetails(@RequestParam Long qrCodeId,
-                                                                @RequestParam String status) {
+    public ApiResponse<DepositDetailResponse> getDepositDetails(@RequestParam Long qrCodeId) {
         log.debug("TradeController#getDepositTradesDetail call");
         log.debug("qrCodeId={}", qrCodeId);
-        log.debug("status={}", status);
 
-        DepositDetailResponse response = tradeQueryService.getDepositDetails(qrCodeId, status);
+        DepositDetailResponse response = tradeQueryService.getDepositDetails(qrCodeId);
 
         return ApiResponse.ok(response);
     }

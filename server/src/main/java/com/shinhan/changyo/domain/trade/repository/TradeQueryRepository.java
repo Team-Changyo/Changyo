@@ -3,6 +3,7 @@ package com.shinhan.changyo.domain.trade.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.shinhan.changyo.api.controller.trade.response.DepositDetailDto;
 import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalDetailResponse;
 import com.shinhan.changyo.domain.trade.TradeStatus;
@@ -59,6 +60,7 @@ public class TradeQueryRepository {
                 .join(qrCode.account, account)
                 .join(account.member, member)
                 .where(account.id.in(accountIds))
+                .orderBy(trade.createdDate.desc())
                 .fetch();
     }
 
@@ -93,6 +95,7 @@ public class TradeQueryRepository {
                 .join(trade.qrCode, qrCode)
                 .where(qrCode.qrCodeId.in(qrCodeIds))
                 .groupBy(qrCode.qrCodeId)
+                .orderBy(trade.createdDate.desc())
                 .fetch();
     }
 
@@ -125,4 +128,19 @@ public class TradeQueryRepository {
                 .fetch();
     }
 
+    public List<DepositDetailDto> getDepositDetails(Long qrCodeId) {
+        return queryFactory
+                .select(Projections.constructor(DepositDetailDto.class,
+                        trade.id,
+                        trade.status,
+                        account.member.name,
+                        trade.createdDate
+                ))
+                .from(trade)
+                .join(trade.account, account)
+                .join(trade.account.member, member)
+                .where(qrCode.qrCodeId.eq(qrCodeId))
+                .orderBy(trade.createdDate.desc())
+                .fetch();
+    }
 }

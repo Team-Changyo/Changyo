@@ -29,6 +29,8 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 
 	const returnComplete = () => {
 		returnDeposit(returnMoney, reason, reasonDetail);
+		setReturnMoney(moneyUnit);
+		setReason('선택');
 		handleClose();
 	};
 
