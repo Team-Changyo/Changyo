@@ -1,6 +1,9 @@
 package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.ApiResponse;
+import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
+import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
+import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.client.BalanceRequest;
 import com.shinhan.changyo.client.BalanceResponse;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -144,5 +148,23 @@ public class AccountService {
      */
     private boolean isOk(HttpStatus status) {
         return status.equals(HttpStatus.OK);
+    }
+
+    public AccountEditResponse editTitle(EditAccountTitleDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        findAccount.editTitle(dto.getTitle());
+        return AccountEditResponse.of(findAccount);
+    }
+
+    public AccountEditResponse editMainAccount(Long accountId) {
+        List<Account> findAccounts = accountQueryRepository.getAccountsByMainAccountOrId(accountId);
+//        if(findAccounts.size() == 0){
+//            throw new IllegalAccessException("이미 주계좌로 등록되어있습니다.");
+//        }
+
+        for (Account findAccount: findAccounts) {
+            findAccount.editMainAccount();
+        }
+        return AccountEditResponse.of(findAccounts.get(1));
     }
 }
