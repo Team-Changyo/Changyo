@@ -1,6 +1,8 @@
 package com.shinhan.changyo.api.service.trade;
 
 import com.shinhan.changyo.api.controller.trade.response.*;
+import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
+import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class TradeQueryService {
 
     private final TradeQueryRepository tradeQueryRepository;
+    private final QrCodeQueryRepository qrCodeQueryRepository;
 
     /**
      * 보증금 송금관리 조회
@@ -85,10 +88,61 @@ public class TradeQueryService {
      * 보증금 정산관리 상세조회
      *
      * @param qrCodeId QR 코드 식별키
-     * @param status   거래 상태
      * @return 보증금 정산관리 상세조회 목록
      */
-    public DepositDetailResponse getDepositDetails(Long qrCodeId, String status) {
-        return null;
+    public DepositDetailResponse getDepositDetails(Long qrCodeId) {
+        // QR Overview
+        QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
+        List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId);
+
+        return createDepositDetailResponse(qrCodeTrade, deposits);
+    }
+
+    /**
+     * 보증금 정산관리 상세조회 목록 생성
+     *
+     * @param qrCodeTrade QR 코드 제목, 입금단위 DTO
+     * @param deposits    보증금 입금내역
+     * @return 보증금 정산관리 상세조회 목록
+     */
+    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits) {
+        List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
+        List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
+
+        int waitCount = waitDetails.size();
+        int doneCount = doneDetails.size();
+        return DepositDetailResponse.builder()
+                .qrCodeTitle(qrCodeTrade.getTitle())
+                .amount(qrCodeTrade.getAmount())
+                .totalAmount(qrCodeTrade.getAmount() * deposits.size())
+                .waitCount(waitCount)
+                .doneCount(doneCount)
+                .waitDetails(waitDetails)
+                .doneDetails(doneDetails)
+                .build();
+    }
+
+    /**
+     * 반환대기 입금내역 필터링
+     *
+     * @param deposits 입금내역
+     * @return 반환대기 입금내역 목록
+     */
+    private List<DepositDetailDto> filterDoneDepositDetails(List<DepositDetailDto> deposits) {
+        return deposits.stream()
+                .filter(detail -> !detail.getStatus().equals(TradeStatus.WAIT))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 반환완료 입금내역 필터링
+     * 
+     * @param details 입금내역
+     * @return 반환완료 입금내역 목록
+     */
+    private List<DepositDetailDto> filterWaitDepositDetails(List<DepositDetailDto> details) {
+        return details.stream()
+                .filter(detail -> detail.getStatus().equals(TradeStatus.WAIT))
+                .collect(Collectors.toList());
     }
 }

@@ -250,38 +250,40 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 정산관리 상세조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getDepositTradesDetail() throws Exception {
         String qrCodeId = "1";
-        String status = "반환 전";
 
-        DepositDetail detail2 = DepositDetail.builder()
-                .tradeId(1L)
-                .withdrawalName("임우택")
-                .tradeDate("2023-08-21 10:35")
-                .build();
-
-        DepositDetail detail1 = DepositDetail.builder()
+        DepositDetailDto detail1 = DepositDetailDto.builder()
                 .tradeId(2L)
-                .withdrawalName("홍진식")
-                .tradeDate("2023-08-24 14:30")
+                .status(TradeStatus.WAIT)
+                .memberName("홍진식")
+                .tradeDate(LocalDateTime.of(2023, 8, 24, 14, 30))
                 .build();
-        List<DepositDetail> details = List.of(detail1, detail2);
+
+        DepositDetailDto detail2 = DepositDetailDto.builder()
+                .tradeId(1L)
+                .status(TradeStatus.DONE)
+                .memberName("임우택")
+                .tradeDate(LocalDateTime.of(2023, 8, 21, 10, 35))
+                .build();
 
         DepositDetailResponse response = DepositDetailResponse.builder()
                 .qrCodeTitle("럭셔리 글램핑 객실이용")
                 .amount(20000)
-                .remainTotal(40000)
-                .remainCount(2)
-                .depositDetails(details)
+                .totalAmount(40000)
+                .waitCount(1)
+                .doneCount(1)
+                .waitDetails(List.of(detail1))
+                .doneDetails(List.of(detail2))
                 .build();
 
-        given(tradeQueryService.getDepositDetails(anyLong(), anyString()))
+        given(tradeQueryService.getDepositDetails(anyLong()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit/detail")
                                 .param("qrCodeId", qrCodeId)
-                                .param("status", status)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -289,9 +291,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("qrCodeId")
-                                        .description("보증금 정산관리 식별키"),
-                                parameterWithName("status")
-                                        .description("거래 상태")
+                                        .description("보증금 정산관리 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -306,17 +306,31 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("보증금 정산관리 이름"),
                                 fieldWithPath("data.amount").type(JsonFieldType.NUMBER)
                                         .description("입금 단위"),
-                                fieldWithPath("data.remainTotal").type(JsonFieldType.NUMBER)
-                                        .description("미반환 총액"),
-                                fieldWithPath("data.remainCount").type(JsonFieldType.NUMBER)
-                                        .description("미반환 건수"),
-                                fieldWithPath("data.depositDetails").type(JsonFieldType.ARRAY)
-                                        .description("보증금 정산관리 상세목록"),
-                                fieldWithPath("data.depositDetails[].tradeId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.totalAmount").type(JsonFieldType.NUMBER)
+                                        .description("총액"),
+                                fieldWithPath("data.waitCount").type(JsonFieldType.NUMBER)
+                                        .description("반환대기 건수"),
+                                fieldWithPath("data.doneCount").type(JsonFieldType.NUMBER)
+                                        .description("반환완료 건수"),
+                                fieldWithPath("data.waitDetails").type(JsonFieldType.ARRAY)
+                                        .description("보증금 반환대기 상세목록"),
+                                fieldWithPath("data.waitDetails[].tradeId").type(JsonFieldType.NUMBER)
                                         .description("보증금 거래내역 식별키"),
-                                fieldWithPath("data.depositDetails[].withdrawalName").type(JsonFieldType.STRING)
+                                fieldWithPath("data.waitDetails[].status").type(JsonFieldType.STRING)
+                                        .description("거래상태"),
+                                fieldWithPath("data.waitDetails[].memberName").type(JsonFieldType.STRING)
                                         .description("입금자명"),
-                                fieldWithPath("data.depositDetails[].tradeDate").type(JsonFieldType.STRING)
+                                fieldWithPath("data.waitDetails[].tradeDate").type(JsonFieldType.STRING)
+                                        .description("입금일시"),
+                                fieldWithPath("data.doneDetails").type(JsonFieldType.ARRAY)
+                                        .description("보증금 반환완료 상세목록"),
+                                fieldWithPath("data.doneDetails[].tradeId").type(JsonFieldType.NUMBER)
+                                        .description("보증금 거래내역 식별키"),
+                                fieldWithPath("data.doneDetails[].status").type(JsonFieldType.STRING)
+                                        .description("거래상태"),
+                                fieldWithPath("data.doneDetails[].memberName").type(JsonFieldType.STRING)
+                                        .description("입금자명"),
+                                fieldWithPath("data.doneDetails[].tradeDate").type(JsonFieldType.STRING)
                                         .description("입금일시")
                         )
                 ));

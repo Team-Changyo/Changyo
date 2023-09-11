@@ -3,6 +3,7 @@ package com.shinhan.changyo.domain.qrcode.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeResponse;
+import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -27,10 +28,28 @@ public class QrCodeQueryRepository {
                         qrCode.title,
                         qrCode.account.accountNumber,
                         qrCode.amount
-                        ))
+                ))
                 .from(qrCode)
                 .join(qrCode.account, account)
                 .where(account.member.loginId.eq(loginId))
                 .fetch();
+    }
+
+    /**
+     * QR Code 이름, 입금단위 조회
+     *
+     * @param qrCodeId QR Code 식별키
+     * @return 이름, 입금단위 객체
+     * @author 최영환
+     */
+    public QRCodeTradeDto getQrCodeTitleAndAmount(Long qrCodeId) {
+        return queryFactory
+                .select(Projections.constructor(QRCodeTradeDto.class,
+                        qrCode.title,
+                        qrCode.amount
+                ))
+                .from(qrCode)
+                .where(qrCode.qrCodeId.eq(qrCodeId))
+                .fetchOne();
     }
 }

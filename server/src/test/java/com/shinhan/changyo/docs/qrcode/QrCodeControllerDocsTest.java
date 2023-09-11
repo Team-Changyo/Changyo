@@ -45,6 +45,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 생성 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createQr() throws Exception{
         QrCodeRequest request = QrCodeRequest.builder()
                 .url("www.naver.com")
