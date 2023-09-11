@@ -1,5 +1,6 @@
 package com.shinhan.changyo.docs.account;
 
+import com.shinhan.changyo.api.ApiControllerAdvice;
 import com.shinhan.changyo.api.controller.account.AccountController;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
@@ -37,10 +38,10 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     private final AccountService accountService = mock(AccountService.class);
     private final AccountQueryService accountQueryService = mock(AccountQueryService.class);
-
+    private final ApiControllerAdvice apiControllerAdvice = mock(ApiControllerAdvice.class);
     @Override
     protected Object initController() {
-        return new AccountController(accountService, accountQueryService);
+        return new AccountController(accountService, accountQueryService, apiControllerAdvice);
     }
 
     @DisplayName("계좌 등록 API")

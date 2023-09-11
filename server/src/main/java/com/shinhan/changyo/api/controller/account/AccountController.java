@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.controller.account;
 
+import com.shinhan.changyo.api.ApiControllerAdvice;
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 /**
@@ -30,6 +32,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountQueryService accountQueryService;
+    private final ApiControllerAdvice apiControllerAdvice;
 
     /**
      * 계좌 등록
@@ -57,12 +60,15 @@ public class AccountController {
      * @return 계좌 개수, 계좌 정보 목록
      */
     @GetMapping()
-    public ApiResponse<AccountResponse> getAccounts(@RequestHeader(name = "memberId") String memberId) {
+    public ApiResponse<Object> getAccounts(@RequestHeader(name = "memberId") String memberId) {
         log.debug("AccountController#getAccounts called");
         log.debug("memberId={}", memberId);
 
         AccountResponse response = accountQueryService.getAccounts(Long.parseLong(memberId));
         log.debug("response={}", response);
+//        if(response.getAccountSize() == 0){
+//            return apiControllerAdvice.entityNotFoundException(throw new EntityNotFoundException());
+//        }
 
         return ApiResponse.ok(response);
     }
