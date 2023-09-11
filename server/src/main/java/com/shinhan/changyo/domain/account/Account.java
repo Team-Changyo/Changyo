@@ -88,4 +88,8 @@ public class Account extends TimeBaseEntity {
             this.mainAccount = true;
         }
     }
+
+    public void remove() {
+        this.active = false;
+    }
 }

@@ -167,4 +167,10 @@ public class AccountService {
         }
         return AccountEditResponse.of(findAccounts.get(1));
     }
+
+    public Boolean removeAccount(Long accountId) {
+        Account findAccount = accountRepository.findById(accountId).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        findAccount.remove();
+        return true;
+    }
 }

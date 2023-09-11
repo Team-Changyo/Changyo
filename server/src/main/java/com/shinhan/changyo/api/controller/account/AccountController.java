@@ -82,4 +82,12 @@ public class AccountController {
         AccountEditResponse response = accountService.editMainAccount(accountId);
         return ApiResponse.found(response);
     }
+
+    @DeleteMapping("/{accountId}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public ApiResponse<Boolean> removeAccount(@PathVariable Long accountId){
+        log.debug("accountId={}", accountId);
+        Boolean response = accountService.removeAccount(accountId);
+        return ApiResponse.found(response);
+    }
 }
