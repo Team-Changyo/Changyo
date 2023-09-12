@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.changyo.api.controller.trade.response.DepositDetailDto;
 import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalDetailResponse;
+import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.springframework.stereotype.Repository;
 
@@ -143,4 +144,46 @@ public class TradeQueryRepository {
                 .orderBy(trade.createdDate.desc())
                 .fetch();
     }
+
+    /**
+     * 입금자 (QR 코드 소유 회원) 계좌 정보 조회
+     *
+     * @param tradeId 보증금 거래내역 식별키
+     * @return 입금자 (QR 코드 소유 회원) 계좌 정보
+     */
+    public MemberAccountDto getDepositAccount(Long tradeId) {
+        return queryFactory
+                .select(Projections.constructor(MemberAccountDto.class,
+                        account.id,
+                        account.accountNumber,
+                        member.name
+                ))
+                .from(trade)
+                .join(trade.qrCode, qrCode)
+                .join(qrCode.account, account)
+                .join(account.member, member)
+                .where(trade.id.eq(tradeId))
+                .fetchOne();
+    }
+
+    /**
+     * 송금자 계좌 정보 조회
+     *
+     * @param tradeId 보증금 거래내역 식별키
+     * @return 송금자 계좌 정보
+     */
+    public MemberAccountDto getWithdrawalAccount(Long tradeId) {
+        return queryFactory
+                .select(Projections.constructor(MemberAccountDto.class,
+                        account.id,
+                        account.accountNumber,
+                        member.name
+                ))
+                .from(trade)
+                .join(trade.account, account)
+                .join(account.member, member)
+                .where(trade.id.eq(tradeId))
+                .fetchOne();
+    }
+
 }
