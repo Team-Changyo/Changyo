@@ -87,10 +87,11 @@ public class TradeService {
                 trade.editStatus(TradeStatus.FEE);
 
                 reports.add(dto.toReport());
+            } else {
+                trade.editStatus(TradeStatus.DONE);
             }
             MemberAccountDto withdrawalAccount = tradeQueryRepository.getWithdrawalAccount(dto.getTradeId());
             returnDeposit(withdrawalAccount, dto.getAmount());
-            trade.editStatus(TradeStatus.DONE);
         }
         reportRepository.saveAll(reports);
 
