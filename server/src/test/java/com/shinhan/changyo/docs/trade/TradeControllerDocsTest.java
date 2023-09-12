@@ -134,7 +134,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("search-withdrawals",
+                .andDo(document("search-waiting-withdrawals",
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -198,8 +198,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("search-withdrawals",
+                .andDo(document("search-done-withdrawals",
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("lastTradeId")
+                                        .description("마지막으로 조회된 거래내역 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -252,20 +256,25 @@ public class TradeControllerDocsTest extends RestDocsSupport {
         List<DepositOverviewResponse> overviews = List.of(overview1, overview2);
 
         DepositResponse response = DepositResponse.builder()
-                .totalCount(1)
+                .totalCount(2)
                 .depositOverviews(overviews)
                 .build();
 
-        given(tradeQueryService.getDepositTrades(anyString()))
+        given(tradeQueryService.getDepositTrades(anyString(), anyLong()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit")
+                                .param("lastQrCodeId", "2")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-deposits",
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                          parameterWithName("lastQrCodeId")
+                                  .description("마지막으로 조회된 QR 코드 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
