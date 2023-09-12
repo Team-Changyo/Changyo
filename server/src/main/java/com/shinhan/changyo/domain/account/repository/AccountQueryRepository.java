@@ -30,10 +30,10 @@ public class AccountQueryRepository {
     /**
      * 회원별 계좌 전체 조회
      *
-     * @param memberId 계좌 조회할 회원 식별키
+     * @param loginId 회원 로그인 아이디
      * @return 계좌 개수, 계좌 정보 목록
      */
-    public List<AccountDetailResponse> getAccountsByMemberId(Long memberId) {
+    public List<AccountDetailResponse> getAccountsByMemberId(String loginId) {
         return queryFactory
                 .select(Projections.constructor(AccountDetailResponse.class,
                         account.id,
@@ -44,7 +44,7 @@ public class AccountQueryRepository {
                 ))
                 .from(account)
                 .join(account.member, member)
-                .where(account.member.id.eq(memberId),
+                .where(account.member.loginId.eq(loginId),
                         account.active.eq(true))
                 .fetch();
     }

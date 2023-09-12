@@ -55,21 +55,17 @@ public class AccountController {
     /**
      * 회원별 계좌 전체 조회
      *
-     * @param memberId 계좌 조회할 회원 식별키
+     *
      * @return 계좌 개수, 계좌 정보 목록
      */
     @GetMapping()
-    public ApiResponse<Object> getAccounts(@RequestHeader(name = "memberId") String memberId) {
+    public ApiResponse<AccountResponse> getAccounts() {
         log.debug("AccountController#getAccounts called");
-        log.debug("memberId={}", memberId);
-
-        AccountResponse response = accountQueryService.getAccounts(Long.parseLong(memberId));
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountResponse response = accountQueryService.getAccounts(loginId);
         log.debug("response={}", response);
-        if(response.getAccountSize() == 0){
-            throw new EntityNotFoundException();
-        }
-
-        return ApiResponse.ok(response);
+        return ApiResponse.ok(response); // -> 성공 코드
     }
 
     @PatchMapping("/title/{accountId}")

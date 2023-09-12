@@ -22,8 +22,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -100,6 +99,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("회원별 계좌 전체 조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getAccounts() throws Exception {
         Long memberId = 1L;
 
@@ -126,12 +126,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .accountDetailResponses(accounts)
                 .build();
 
-        given(accountQueryService.getAccounts(anyLong()))
+        given(accountQueryService.getAccounts(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/account")
-                                .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())

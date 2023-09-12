@@ -53,14 +53,5 @@ public class ApiControllerAdvice {
         );
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ApiResponse<Object> entityNotFoundException(EntityNotFoundException e){
-        return ApiResponse.of(
-                HttpStatus.NO_CONTENT,
-                e.getMessage(),
-                null
-        );
-    }
 }
 
