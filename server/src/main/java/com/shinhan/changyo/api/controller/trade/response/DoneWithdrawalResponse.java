@@ -18,4 +18,12 @@ public class DoneWithdrawalResponse {
         this.totalCount = totalCount;
         this.doneWithdrawals = doneWithdrawals;
     }
+
+    public static DoneWithdrawalResponse of(Boolean hasNextPage, int totalCount, List<DoneWithdrawalDetailResponse> doneWithdrawals) {
+        return DoneWithdrawalResponse.builder()
+                .hasNextPage(hasNextPage)
+                .totalCount(totalCount)
+                .doneWithdrawals(doneWithdrawals)
+                .build();
+    }
 }

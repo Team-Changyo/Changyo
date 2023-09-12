@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.shinhan.changyo.domain.trade.SizeConstants.PAGE_SIZE;
+
 /**
  * 보증금 거래내역 조회 서비스
  *
@@ -46,11 +48,30 @@ public class TradeQueryService {
      * 보증금 송금관리 반환완료 내역 조회
      *
      * @param loginId 로그인한 회원 아이디
-     * @param tradeId 마지막으로 조회된 거래내역 식별키
+     * @param lastTradeId 마지막으로 조회된 거래내역 식별키
      * @return 해당 회원의 반환완료된 보증금 송금 거래내역 목록
      */
-    public DoneWithdrawalResponse getDoneWithdrawalTrades(String loginId, Long tradeId) {
-        return null;
+    public DoneWithdrawalResponse getDoneWithdrawalTrades(String loginId, Long lastTradeId) {
+        int totalCount = tradeQueryRepository.getDoneWithdrawalTradesCount(loginId).intValue();
+        List<DoneWithdrawalDetailResponse> doneWithdrawals = tradeQueryRepository.getDoneWithdrawalTrades(loginId, lastTradeId);
+
+        Boolean hasNextPage = checkHasNextPage(doneWithdrawals);
+
+        return DoneWithdrawalResponse.of(hasNextPage, totalCount, doneWithdrawals);
+    }
+
+    /**
+     * 다음페이지 존재여부 확인
+     * 
+     * @param doneWithdrawals 반환완료된 보증금 송금 거래내역 목록
+     * @return true: 거래내역 목록의 개수가 PAGE_SIZE 보다 큰 경우, false: 거래내역 목록의 개수가 PAGE_SIZE 보다 작은 경우
+     */
+    private boolean checkHasNextPage(List<DoneWithdrawalDetailResponse> doneWithdrawals) {
+        if (doneWithdrawals.size() > PAGE_SIZE) {
+            doneWithdrawals.remove(PAGE_SIZE);
+            return true;
+        }
+        return false;
     }
 
     /**
