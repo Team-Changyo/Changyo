@@ -32,7 +32,6 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountQueryService accountQueryService;
-    private final ApiControllerAdvice apiControllerAdvice;
 
     /**
      * 계좌 등록
@@ -66,9 +65,9 @@ public class AccountController {
 
         AccountResponse response = accountQueryService.getAccounts(Long.parseLong(memberId));
         log.debug("response={}", response);
-//        if(response.getAccountSize() == 0){
-//            return apiControllerAdvice.entityNotFoundException(throw new EntityNotFoundException());
-//        }
+        if(response.getAccountSize() == 0){
+            throw new EntityNotFoundException();
+        }
 
         return ApiResponse.ok(response);
     }

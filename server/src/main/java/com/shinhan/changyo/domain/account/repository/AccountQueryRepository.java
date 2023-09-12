@@ -36,6 +36,7 @@ public class AccountQueryRepository {
     public List<AccountDetailResponse> getAccountsByMemberId(Long memberId) {
         return queryFactory
                 .select(Projections.constructor(AccountDetailResponse.class,
+                        account.id,
                         account.accountNumber,
                         account.balance,
                         account.bankCode,

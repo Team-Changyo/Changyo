@@ -38,10 +38,9 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     private final AccountService accountService = mock(AccountService.class);
     private final AccountQueryService accountQueryService = mock(AccountQueryService.class);
-    private final ApiControllerAdvice apiControllerAdvice = mock(ApiControllerAdvice.class);
     @Override
     protected Object initController() {
-        return new AccountController(accountService, accountQueryService, apiControllerAdvice);
+        return new AccountController(accountService, accountQueryService);
     }
 
     @DisplayName("계좌 등록 API")
@@ -105,6 +104,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
         Long memberId = 1L;
 
         AccountDetailResponse account1 = AccountDetailResponse.builder()
+                .accountId(1l)
                 .accountNumber("110184999999")
                 .balance(200501)
                 .bankCode("088")
@@ -112,6 +112,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .build();
 
         AccountDetailResponse account2 = AccountDetailResponse.builder()
+                .accountId(2l)
                 .accountNumber("110185999999")
                 .balance(0)
                 .bankCode("088")
@@ -150,6 +151,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("전체 계좌 개수"),
                                 fieldWithPath("data.accountDetailResponses").type(JsonFieldType.ARRAY)
                                         .description("계좌 정보 데이터"),
+                                fieldWithPath("data.accountDetailResponses[].accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별 키"),
                                 fieldWithPath("data.accountDetailResponses[].accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
                                 fieldWithPath("data.accountDetailResponses[].balance").type(JsonFieldType.NUMBER)
