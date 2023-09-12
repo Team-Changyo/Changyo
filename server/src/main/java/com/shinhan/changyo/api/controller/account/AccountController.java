@@ -7,6 +7,7 @@ import com.shinhan.changyo.api.controller.account.request.EditAccountTitleReques
 import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
+import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.domain.account.Account;
@@ -66,6 +67,21 @@ public class AccountController {
         AccountResponse response = accountQueryService.getAccounts(loginId);
         log.debug("response={}", response);
         return ApiResponse.ok(response); // -> 성공 코드
+    }
+
+    /**
+     * 계좌내역 상세 전체 조회(내역 조회)
+     *
+     * @param accountId
+     * @return
+     */
+    @GetMapping("/{accountId}")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@PathVariable Long accountId){
+        log.debug("AccountController#getAccount called");
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountTradeAllResponse response = accountQueryService.getAcountTradeAll(loginId,accountId);
+
     }
 
     @PatchMapping("/title/{accountId}")

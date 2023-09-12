@@ -2,6 +2,8 @@ package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
+import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
+import com.shinhan.changyo.api.service.account.exception.NoAccountException;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +47,14 @@ public class AccountQueryService {
      * @throws EntityNotFoundException 등록된 계좌 목록이 비어있거나 NULL 일 경우
      */
 
+
+    public AccountTradeAllResponse getAcountTradeAll(String loginId, Long accountId) {
+
+    }
+
     private void checkIsEmpty(List<AccountDetailResponse> accounts) {
         if (accounts == null || accounts.isEmpty()) {
-            throw new NoSuchElementException("등록된 계좌가 없습니다.");
+            throw new NoAccountException("등록된 계좌가 없습니다.");
         }
     }
 }
