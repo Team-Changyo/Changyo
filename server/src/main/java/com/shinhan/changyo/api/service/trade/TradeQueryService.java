@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.service.trade;
 
 import com.shinhan.changyo.api.controller.trade.response.*;
+import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.trade.TradeStatus;
@@ -23,51 +24,33 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Service
 public class TradeQueryService {
-
     private final TradeQueryRepository tradeQueryRepository;
+
     private final QrCodeQueryRepository qrCodeQueryRepository;
 
     /**
-     * 보증금 송금관리 조회
+     * 보증금 송금관리 반환대기 내역 조회
      *
      * @param loginId 로그인한 회원 아이디
-     * @return 해당 회원의 보증금 송금 거래내역 목록
+     * @return 해당 회원의 반환대기 중인 보증금 송금 거래내역 목록
      */
-    public WithdrawalResponse getWithdrawalTrades(String loginId) {
-        List<WithdrawalDetailResponse> withdrawals = tradeQueryRepository.getWithdrawalTrades(loginId);
+    public WaitWithdrawalResponse getWaitingWithdrawalTrades(String loginId) {
+        List<WaitWithdrawalDetailResponse> withdrawals = tradeQueryRepository.getWaitingWithdrawalTrades(loginId);
         log.debug("withdrawals={}", withdrawals);
 
-        List<WithdrawalDetailResponse> waitWithdrawals = filterWaitWithdrawals(withdrawals);
-        log.debug("waitWithdrawals={}", waitWithdrawals);
-
-        List<WithdrawalDetailResponse> doneWithdrawals = filterDoneWithdrawals(withdrawals);
-        log.debug("doneWithdrawals={}", doneWithdrawals);
-
-        return WithdrawalResponse.of(waitWithdrawals, doneWithdrawals);
+        return WaitWithdrawalResponse.of(withdrawals.size(), withdrawals);
     }
 
-    /**
-     * 반환대기 송금내역 필터링
-     *
-     * @param withdrawals 송금내역
-     * @return 반환대기 송금내역
-     */
-    private List<WithdrawalDetailResponse> filterWaitWithdrawals(List<WithdrawalDetailResponse> withdrawals) {
-        return withdrawals.stream()
-                .filter(detail -> detail.getStatus().equals(TradeStatus.WAIT))
-                .collect(Collectors.toList());
-    }
 
     /**
-     * 반환완료 송금내역 필터링
+     * 보증금 송금관리 반환완료 내역 조회
      *
-     * @param withdrawals 송금내역
-     * @return 반환완료 송금내역
+     * @param loginId 로그인한 회원 아이디
+     * @param tradeId 마지막으로 조회된 거래내역 식별키
+     * @return 해당 회원의 반환완료된 보증금 송금 거래내역 목록
      */
-    private List<WithdrawalDetailResponse> filterDoneWithdrawals(List<WithdrawalDetailResponse> withdrawals) {
-        return withdrawals.stream()
-                .filter(detail -> !detail.getStatus().equals(TradeStatus.WAIT))
-                .collect(Collectors.toList());
+    public DoneWithdrawalResponse getDoneWithdrawalTrades(String loginId, Long tradeId) {
+        return null;
     }
 
     /**
@@ -136,7 +119,7 @@ public class TradeQueryService {
 
     /**
      * 반환완료 입금내역 필터링
-     * 
+     *
      * @param details 입금내역
      * @return 반환완료 입금내역 목록
      */

@@ -3,9 +3,9 @@ package com.shinhan.changyo.domain.trade.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shinhan.changyo.api.controller.trade.response.DepositDetailDto;
+import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
-import com.shinhan.changyo.api.controller.trade.response.WithdrawalDetailResponse;
+import com.shinhan.changyo.api.controller.trade.response.WaitWithdrawalDetailResponse;
 import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.springframework.stereotype.Repository;
@@ -39,7 +39,7 @@ public class TradeQueryRepository {
      * @param loginId 조회하려는 회원의 로그인 아이디
      * @return 해당 회원의 전체 보증금 송금내역
      */
-    public List<WithdrawalDetailResponse> getWithdrawalTrades(String loginId) {
+    public List<WaitWithdrawalDetailResponse> getWaitingWithdrawalTrades(String loginId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
         if (accountIds == null || accountIds.isEmpty()) {
@@ -47,20 +47,22 @@ public class TradeQueryRepository {
         }
 
         return queryFactory
-                .select(Projections.constructor(WithdrawalDetailResponse.class,
+                .select(Projections.constructor(WaitWithdrawalDetailResponse.class,
                         trade.id,
                         qrCode.title,
                         member.name,
                         trade.withdrawalAmount,
-                        trade.status,
-                        trade.createdDate
+                        trade.status
                 ))
                 .from(trade)
                 .join(trade.account, account)
                 .join(trade.qrCode, qrCode)
                 .join(qrCode.account, account)
                 .join(account.member, member)
-                .where(account.id.in(accountIds))
+                .where(
+                        account.id.in(accountIds),
+                        trade.status.eq(TradeStatus.WAIT)
+                )
                 .orderBy(trade.createdDate.desc())
                 .fetch();
     }
@@ -129,6 +131,12 @@ public class TradeQueryRepository {
                 .fetch();
     }
 
+    /**
+     * 보증금 정산관리 상세조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return 보증금 정산관리 상세 내역
+     */
     public List<DepositDetailDto> getDepositDetails(Long qrCodeId) {
         return queryFactory
                 .select(Projections.constructor(DepositDetailDto.class,
@@ -139,8 +147,8 @@ public class TradeQueryRepository {
                 ))
                 .from(trade)
                 .join(trade.account, account)
-                .join(trade.account.member, member)
-                .where(qrCode.qrCodeId.eq(qrCodeId))
+                .join(account.member, member)
+                .where(trade.qrCode.qrCodeId.eq(qrCodeId))
                 .orderBy(trade.createdDate.desc())
                 .fetch();
     }
