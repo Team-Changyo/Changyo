@@ -332,12 +332,13 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .doneDetails(List.of(detail2))
                 .build();
 
-        given(tradeQueryService.getDepositDetails(anyLong()))
+        given(tradeQueryService.getDepositDetails(anyLong(), anyLong()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit/detail")
                                 .param("qrCodeId", qrCodeId)
+                                .param("lastQrCodeId", "2")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -345,7 +346,9 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("qrCodeId")
-                                        .description("보증금 정산관리 식별키")
+                                        .description("보증금 정산관리 식별키"),
+                                parameterWithName("lastQrCodeId")
+                                        .description("마지막으로 조회된 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
