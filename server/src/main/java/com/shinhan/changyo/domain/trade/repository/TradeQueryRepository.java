@@ -105,7 +105,7 @@ public class TradeQueryRepository {
                         member.name,
                         trade.withdrawalAmount,
                         trade.lastModifiedDate
-                        ))
+                ))
                 .from(trade)
                 .join(trade.account, account)
                 .join(trade.qrCode, qrCode)
@@ -126,12 +126,43 @@ public class TradeQueryRepository {
     }
 
     /**
+     * 보증금 정산관리 목록 개수 조회
+     *
+     * @param loginId 현재 로그인한 회원 로그인아이디
+     * @return 보증금 정산관리 내역 총 개수
+     */
+    public Long getDepositTradesTotalCount(String loginId) {
+        List<Long> accountIds = getAccountIdsByLoginId(loginId);
+
+        if (accountIds == null || accountIds.isEmpty()) {
+            return 0L;
+        }
+
+        List<Long> qrCodeIds = getQrCodeIds(accountIds);
+
+        if (qrCodeIds == null || qrCodeIds.isEmpty()) {
+            return 0L;
+        }
+
+        return queryFactory
+                .select(trade.count())
+                .from(trade)
+                .join(trade.qrCode, qrCode)
+                .where(
+                        qrCode.qrCodeId.in(qrCodeIds)
+                )
+                .groupBy(qrCode.qrCodeId)
+                .fetchOne();
+    }
+
+    /**
      * 보증금 정산관리 조회
      *
-     * @param loginId 로그인한 회원의 로그인 아이디
+     * @param loginId      로그인한 회원의 로그인 아이디
+     * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 해당 회원의 보증금 입금내역 목록
      */
-    public List<DepositOverviewResponse> getDepositTrades(String loginId) {
+    public List<DepositOverviewResponse> getDepositTrades(String loginId, Long lastQrCodeId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
         if (accountIds == null || accountIds.isEmpty()) {
@@ -154,10 +185,17 @@ public class TradeQueryRepository {
                 ))
                 .from(trade)
                 .join(trade.qrCode, qrCode)
-                .where(qrCode.qrCodeId.in(qrCodeIds))
+                .where(
+                        qrCode.qrCodeId.in(qrCodeIds),
+                        isLagerThanLastQrCodeId(lastQrCodeId)
+                )
                 .groupBy(qrCode.qrCodeId)
                 .orderBy(trade.createdDate.desc())
                 .fetch();
+    }
+
+    private BooleanExpression isLagerThanLastQrCodeId(Long qrCodeId) {
+        return qrCodeId == null ? null : qrCode.qrCodeId.lt(qrCodeId);
     }
 
     /**
