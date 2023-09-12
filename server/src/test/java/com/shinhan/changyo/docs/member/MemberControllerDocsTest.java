@@ -6,6 +6,7 @@ import com.shinhan.changyo.api.controller.member.request.LoginRequest;
 import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
+import com.shinhan.changyo.api.controller.member.response.MemberResponse;
 import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
 import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -197,6 +199,42 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                         .description("메시지"),
                     fieldWithPath("data").type(JsonFieldType.BOOLEAN)
                         .description("탈퇴 여부")
+                )
+            ));
+    }
+
+    @DisplayName("회원탈퇴 API")
+    @Test
+    void getInfo() throws Exception {
+        MemberResponse response = MemberResponse.builder()
+            .name("홍진식")
+            .phoneNumber("010-1234-1234")
+            .role("MEMBER")
+            .build();
+
+        given(memberService.getInfo(anyString()))
+            .willReturn(response);
+
+        mockMvc.perform(
+                get("/info")
+            )
+            .andDo(print())
+            .andExpect(status().isFound())
+            .andDo(document("search-member",
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("코드"),
+                    fieldWithPath("status").type(JsonFieldType.STRING)
+                        .description("상태"),
+                    fieldWithPath("message").type(JsonFieldType.STRING)
+                        .description("메시지"),
+                    fieldWithPath("data.name").type(JsonFieldType.BOOLEAN)
+                        .description("이름"),
+                    fieldWithPath("data.phoneNumber").type(JsonFieldType.BOOLEAN)
+                        .description("연락처"),
+                    fieldWithPath("data.role").type(JsonFieldType.BOOLEAN)
+                        .description("역할")
                 )
             ));
     }

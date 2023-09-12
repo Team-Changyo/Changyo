@@ -6,16 +6,15 @@ import com.shinhan.changyo.api.controller.member.request.LoginRequest;
 import com.shinhan.changyo.api.controller.member.request.WithdrawalRequest;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.LoginResponse;
+import com.shinhan.changyo.api.controller.member.response.MemberResponse;
 import com.shinhan.changyo.api.service.member.MemberAccountService;
 import com.shinhan.changyo.api.service.member.MemberService;
+import com.shinhan.changyo.security.SecurityUtil;
 import com.shinhan.changyo.security.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -83,5 +82,17 @@ public class MemberController {
         log.debug("result={}", result);
 
         return ApiResponse.found(result);
+    }
+
+    @GetMapping("/info")
+    public ApiResponse<MemberResponse> getInfo() {
+        log.debug("MemberController#getInfo");
+
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        MemberResponse response = memberService.getInfo(loginId);
+
+        return ApiResponse.ok(response);
     }
 }
