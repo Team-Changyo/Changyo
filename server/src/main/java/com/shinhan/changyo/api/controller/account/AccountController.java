@@ -80,7 +80,8 @@ public class AccountController {
         log.debug("AccountController#getAccount called");
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountTradeAllResponse response = accountQueryService.getAcountTradeAll(loginId,accountId);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(loginId,accountId);
+        return ApiResponse.ok(response);
 
     }
 
