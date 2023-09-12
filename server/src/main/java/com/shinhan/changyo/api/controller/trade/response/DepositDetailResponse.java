@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.controller.trade.response;
 
+import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import lombok.Builder;
 import lombok.Data;
 

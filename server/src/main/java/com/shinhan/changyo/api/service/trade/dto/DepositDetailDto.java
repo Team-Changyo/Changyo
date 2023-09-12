@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.controller.trade.response;
+package com.shinhan.changyo.api.service.trade.dto;
 
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import lombok.Builder;
@@ -19,6 +19,6 @@ public class DepositDetailDto {
         this.tradeId = tradeId;
         this.status = status;
         this.memberName = memberName;
-        this.tradeDate = tradeDate.format(DateTimeFormatter.ofPattern("yyyyMMdd hhmm"));
+        this.tradeDate = tradeDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }
 }
