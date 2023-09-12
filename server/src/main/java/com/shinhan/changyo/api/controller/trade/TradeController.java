@@ -88,12 +88,12 @@ public class TradeController {
      * @return 해당 회원의 보증금 정산관리 목록
      */
     @GetMapping("/deposit")
-    public ApiResponse<DepositResponse> getDepositTrades() {
+    public ApiResponse<DepositResponse> getDepositTrades(@RequestParam(required = false) Long lastQrCodeId) {
         log.debug("TradeController#getDepositTrades call");
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        DepositResponse response = tradeQueryService.getDepositTrades(loginId);
+        DepositResponse response = tradeQueryService.getDepositTrades(loginId, lastQrCodeId);
         log.debug("DepositResponse={}", response);
 
         return ApiResponse.ok(response);
