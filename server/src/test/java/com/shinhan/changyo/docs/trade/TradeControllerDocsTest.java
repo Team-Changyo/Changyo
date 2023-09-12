@@ -284,6 +284,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
+                                fieldWithPath("data.hasNextPage").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 페이지 존재여부"),
                                 fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER)
                                         .description("보증금 정산관리 건수"),
                                 fieldWithPath("data.depositOverviews").type(JsonFieldType.ARRAY)
@@ -338,7 +340,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                         get("/trade/deposit/detail")
                                 .param("qrCodeId", qrCodeId)
-                                .param("lastQrCodeId", "2")
+                                .param("lastTradeId", "2")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -347,8 +349,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         requestParameters(
                                 parameterWithName("qrCodeId")
                                         .description("보증금 정산관리 식별키"),
-                                parameterWithName("lastQrCodeId")
-                                        .description("마지막으로 조회된 QR 코드 식별키")
+                                parameterWithName("lastTradeId")
+                                        .description("마지막으로 조회된 거래내역 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -359,6 +361,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
+                                fieldWithPath("data.hasNextPage").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 페이지 존재여부"),
                                 fieldWithPath("data.qrCodeTitle").type(JsonFieldType.STRING)
                                         .description("보증금 정산관리 이름"),
                                 fieldWithPath("data.amount").type(JsonFieldType.NUMBER)

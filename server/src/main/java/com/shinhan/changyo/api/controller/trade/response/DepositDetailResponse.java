@@ -8,6 +8,8 @@ import java.util.List;
 
 @Data
 public class DepositDetailResponse {
+
+    private boolean hasNextPage;
     private String qrCodeTitle;
     private int amount;
     private int totalAmount;
@@ -17,7 +19,8 @@ public class DepositDetailResponse {
     List<DepositDetailDto> doneDetails;
 
     @Builder
-    public DepositDetailResponse(String qrCodeTitle, int amount, int totalAmount, int waitCount, int doneCount, List<DepositDetailDto> waitDetails, List<DepositDetailDto> doneDetails) {
+    public DepositDetailResponse(boolean hasNextPage, String qrCodeTitle, int amount, int totalAmount, int waitCount, int doneCount, List<DepositDetailDto> waitDetails, List<DepositDetailDto> doneDetails) {
+        this.hasNextPage = hasNextPage;
         this.qrCodeTitle = qrCodeTitle;
         this.amount = amount;
         this.totalAmount = totalAmount;
