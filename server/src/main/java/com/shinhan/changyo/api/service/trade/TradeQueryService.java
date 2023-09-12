@@ -54,6 +54,7 @@ public class TradeQueryService {
     public DoneWithdrawalResponse getDoneWithdrawalTrades(String loginId, Long lastTradeId) {
         int totalCount = tradeQueryRepository.getDoneWithdrawalTradesCount(loginId).intValue();
         List<DoneWithdrawalDetailResponse> doneWithdrawals = tradeQueryRepository.getDoneWithdrawalTrades(loginId, lastTradeId);
+        log.debug("doneWithdrawals={}", doneWithdrawals);
 
         Boolean hasNextPage = checkHasNextPage(doneWithdrawals);
 

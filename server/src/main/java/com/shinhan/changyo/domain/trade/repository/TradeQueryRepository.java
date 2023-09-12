@@ -86,8 +86,7 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         account.id.in(accountIds),
-                        trade.status.eq(TradeStatus.DONE),
-                        trade.status.eq(TradeStatus.FEE)
+                        trade.status.ne(TradeStatus.WAIT)
                 )
                 .fetchOne();
     }
@@ -114,8 +113,7 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         account.id.in(accountIds),
-                        trade.status.eq(TradeStatus.DONE),
-                        trade.status.eq(TradeStatus.FEE),
+                        trade.status.ne(TradeStatus.WAIT),
                         isLagerThanLastTradeId(lastTradeId)
                 )
                 .orderBy(trade.createdDate.desc())
