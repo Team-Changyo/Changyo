@@ -62,31 +62,19 @@ public class TradeQueryService {
     }
 
     /**
-     * 다음페이지 존재여부 확인
-     * 
-     * @param doneWithdrawals 반환완료된 보증금 송금 거래내역 목록
-     * @return true: 거래내역 목록의 개수가 PAGE_SIZE 보다 큰 경우, false: 거래내역 목록의 개수가 PAGE_SIZE 보다 작은 경우
-     */
-    private boolean checkHasNextPage(List<DoneWithdrawalDetailResponse> doneWithdrawals) {
-        if (doneWithdrawals.size() > PAGE_SIZE) {
-            doneWithdrawals.remove(PAGE_SIZE);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * 보증금 정산관리 조회
      *
-     * @param loginId 로그인한 회원의 로그인 아이디
+     * @param loginId     로그인한 회원의 로그인 아이디
+     * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 해당 회원의 보증금 입금내역 목록
      */
-    public DepositResponse getDepositTrades(String loginId) {
-        List<DepositOverviewResponse> overviews = tradeQueryRepository.getDepositTrades(loginId);
+    public DepositResponse getDepositTrades(String loginId, Long lastQrCodeId) {
+        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId).intValue();
+        List<DepositOverviewResponse> overviews = tradeQueryRepository.getDepositTrades(loginId, lastQrCodeId);
         log.debug("overviews={}", overviews);
         log.debug("totalCount={}", overviews.size());
 
-        return DepositResponse.of(overviews.size(), overviews);
+        return DepositResponse.of(totalCount, overviews);
     }
 
     /**
@@ -149,5 +137,19 @@ public class TradeQueryService {
         return details.stream()
                 .filter(detail -> detail.getStatus().equals(TradeStatus.WAIT))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 다음페이지 존재여부 확인
+     *
+     * @param responses 조회된 응답객체 목록
+     * @return true: 조회된 목록의 개수가 PAGE_SIZE 보다 큰 경우, false: 조회된 목록의 개수가 PAGE_SIZE 보다 작은 경우
+     */
+    private <T> boolean checkHasNextPage(List<T> responses) {
+        if (responses.size() > PAGE_SIZE) {
+            responses.remove(PAGE_SIZE);
+            return true;
+        }
+        return false;
     }
 }
