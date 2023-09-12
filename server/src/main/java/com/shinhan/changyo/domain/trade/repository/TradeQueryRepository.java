@@ -70,6 +70,12 @@ public class TradeQueryRepository {
                 .fetch();
     }
 
+    /**
+     * 보증금 반환완료 송금내역 개수 조회
+     *
+     * @param loginId 현재 로그인한 회원의 로그인 아이디
+     * @return 보증금 반환완료 송금내역 개수
+     */
     public Long getDoneWithdrawalTradesCount(String loginId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
@@ -91,6 +97,13 @@ public class TradeQueryRepository {
                 .fetchOne();
     }
 
+    /**
+     * 보증금 반환완료 송금내역 조회
+     *
+     * @param loginId     현재 로그인한 회원의 로그인 아이디
+     * @param lastTradeId 마지막으로 조회된 거래내역 식별키
+     * @return 보증금 반환완료 송금내역
+     */
     public List<DoneWithdrawalDetailResponse> getDoneWithdrawalTrades(String loginId, Long lastTradeId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
@@ -191,6 +204,7 @@ public class TradeQueryRepository {
                 )
                 .groupBy(qrCode.qrCodeId)
                 .orderBy(trade.createdDate.desc())
+                .limit(PAGE_SIZE + 1)
                 .fetch();
     }
 
@@ -228,12 +242,53 @@ public class TradeQueryRepository {
     }
 
     /**
-     * 보증금 정산관리 상세조회
+     * 보증금 정산관리 반환대기 목록개수 조회
      *
      * @param qrCodeId QR 코드 식별키
+     * @return 보증금 정산대기 반환완료 목록개수
+     */
+    public Long getWaitDepositCountByQrCodeId(Long qrCodeId) {
+        return queryFactory
+                .select(trade.count())
+                .from(trade)
+                .join(trade.account, account)
+                .join(account.member, member)
+                .where(
+                        trade.qrCode.qrCodeId.eq(qrCodeId),
+                        trade.status.eq(TradeStatus.WAIT)
+                )
+                .orderBy(trade.createdDate.desc())
+                .fetchOne();
+    }
+
+    /**
+     * 보증금 정산관리 반환완료 목록개수 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return 보증금 정산관리 반환완료 목록개수
+     */
+    public Long getDoneDepositCountByQrCodeId(Long qrCodeId) {
+        return queryFactory
+                .select(trade.count())
+                .from(trade)
+                .join(trade.account, account)
+                .join(account.member, member)
+                .where(
+                        trade.qrCode.qrCodeId.eq(qrCodeId),
+                        trade.status.ne(TradeStatus.WAIT)
+                )
+                .orderBy(trade.createdDate.desc())
+                .fetchOne();
+    }
+
+    /**
+     * 보증금 정산관리 상세조회
+     *
+     * @param qrCodeId     QR 코드 식별키
+     * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 보증금 정산관리 상세 내역
      */
-    public List<DepositDetailDto> getDepositDetails(Long qrCodeId) {
+    public List<DepositDetailDto> getDepositDetails(Long qrCodeId, Long lastQrCodeId) {
         return queryFactory
                 .select(Projections.constructor(DepositDetailDto.class,
                         trade.id,
@@ -244,8 +299,12 @@ public class TradeQueryRepository {
                 .from(trade)
                 .join(trade.account, account)
                 .join(account.member, member)
-                .where(trade.qrCode.qrCodeId.eq(qrCodeId))
+                .where(
+                        trade.qrCode.qrCodeId.eq(qrCodeId),
+                        isLagerThanLastQrCodeId(lastQrCodeId)
+                )
                 .orderBy(trade.createdDate.desc())
+                .limit(PAGE_SIZE * 2 + 1)
                 .fetch();
     }
 
