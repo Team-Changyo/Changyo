@@ -69,31 +69,30 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 입금내역 목록
      */
     public DepositResponse getDepositTrades(String loginId, Long lastQrCodeId) {
-        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId).intValue();
+        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId);
         List<DepositOverviewResponse> overviews = tradeQueryRepository.getDepositTrades(loginId, lastQrCodeId);
         log.debug("overviews={}", overviews);
-        log.debug("totalCount={}", overviews.size());
 
-        return DepositResponse.of(totalCount, overviews);
+        boolean hasNextPage = checkHasNextPage(overviews);
+
+        return DepositResponse.of(hasNextPage, totalCount, overviews);
     }
 
     /**
      * 보증금 정산관리 상세조회
      *
      * @param qrCodeId     QR 코드 식별키
-     * @param lastQrCodeId 마지막
+     * @param lastTradeId 마지막
      * @return 보증금 정산관리 상세조회 목록
      */
-    public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastQrCodeId) {
+    public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastTradeId) {
         QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
 
-        int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId).intValue();
-        int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId).intValue();
+        int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId);
+        int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId);
 
-        List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId, lastQrCodeId);
+        List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId, lastTradeId);
         log.debug("deposits={}", deposits);
-
-        checkHasNextPage(deposits);
 
         return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount);
     }
@@ -110,8 +109,10 @@ public class TradeQueryService {
     private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount) {
         List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
         List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
+        boolean hasNextPage = checkHasNextPage(deposits);
 
         return DepositDetailResponse.builder()
+                .hasNextPage(hasNextPage)
                 .qrCodeTitle(qrCodeTrade.getTitle())
                 .amount(qrCodeTrade.getAmount())
                 .totalAmount(qrCodeTrade.getAmount() * deposits.size())

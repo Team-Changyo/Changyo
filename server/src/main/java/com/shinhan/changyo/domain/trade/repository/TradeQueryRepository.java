@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.shinhan.changyo.domain.account.QAccount.account;
 import static com.shinhan.changyo.domain.member.QMember.member;
@@ -144,28 +145,19 @@ public class TradeQueryRepository {
      * @param loginId 현재 로그인한 회원 로그인아이디
      * @return 보증금 정산관리 내역 총 개수
      */
-    public Long getDepositTradesTotalCount(String loginId) {
+    public int getDepositTradesTotalCount(String loginId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
         if (accountIds == null || accountIds.isEmpty()) {
-            return 0L;
+            return 0;
         }
 
-        List<Long> qrCodeIds = getQrCodeIds(accountIds);
-
-        if (qrCodeIds == null || qrCodeIds.isEmpty()) {
-            return 0L;
-        }
-
-        return queryFactory
-                .select(trade.count())
-                .from(trade)
-                .join(trade.qrCode, qrCode)
-                .where(
-                        qrCode.qrCodeId.in(qrCodeIds)
-                )
-                .groupBy(qrCode.qrCodeId)
-                .fetchOne();
+        return Objects.requireNonNull(queryFactory
+                .select(qrCode.count())
+                .from(qrCode)
+                .join(qrCode.account, account)
+                .where(account.id.in(accountIds))
+                .fetchOne()).intValue();
     }
 
     /**
@@ -202,7 +194,7 @@ public class TradeQueryRepository {
                         qrCode.qrCodeId.in(qrCodeIds),
                         isLagerThanLastQrCodeId(lastQrCodeId)
                 )
-                .groupBy(qrCode.qrCodeId)
+                .groupBy(qrCode.qrCodeId, trade.createdDate)
                 .orderBy(trade.createdDate.desc())
                 .limit(PAGE_SIZE + 1)
                 .fetch();
@@ -247,8 +239,8 @@ public class TradeQueryRepository {
      * @param qrCodeId QR 코드 식별키
      * @return 보증금 정산대기 반환완료 목록개수
      */
-    public Long getWaitDepositCountByQrCodeId(Long qrCodeId) {
-        return queryFactory
+    public int getWaitDepositCountByQrCodeId(Long qrCodeId) {
+        return Objects.requireNonNull(queryFactory
                 .select(trade.count())
                 .from(trade)
                 .join(trade.account, account)
@@ -257,8 +249,7 @@ public class TradeQueryRepository {
                         trade.qrCode.qrCodeId.eq(qrCodeId),
                         trade.status.eq(TradeStatus.WAIT)
                 )
-                .orderBy(trade.createdDate.desc())
-                .fetchOne();
+                .fetchOne()).intValue();
     }
 
     /**
@@ -267,8 +258,8 @@ public class TradeQueryRepository {
      * @param qrCodeId QR 코드 식별키
      * @return 보증금 정산관리 반환완료 목록개수
      */
-    public Long getDoneDepositCountByQrCodeId(Long qrCodeId) {
-        return queryFactory
+    public int getDoneDepositCountByQrCodeId(Long qrCodeId) {
+        return Objects.requireNonNull(queryFactory
                 .select(trade.count())
                 .from(trade)
                 .join(trade.account, account)
@@ -277,18 +268,17 @@ public class TradeQueryRepository {
                         trade.qrCode.qrCodeId.eq(qrCodeId),
                         trade.status.ne(TradeStatus.WAIT)
                 )
-                .orderBy(trade.createdDate.desc())
-                .fetchOne();
+                .fetchOne()).intValue();
     }
 
     /**
      * 보증금 정산관리 상세조회
      *
-     * @param qrCodeId     QR 코드 식별키
-     * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
+     * @param qrCodeId    QR 코드 식별키
+     * @param lastTradeId 마지막으로 조회된 QR 코드 식별키
      * @return 보증금 정산관리 상세 내역
      */
-    public List<DepositDetailDto> getDepositDetails(Long qrCodeId, Long lastQrCodeId) {
+    public List<DepositDetailDto> getDepositDetails(Long qrCodeId, Long lastTradeId) {
         return queryFactory
                 .select(Projections.constructor(DepositDetailDto.class,
                         trade.id,
@@ -301,7 +291,7 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.qrCode.qrCodeId.eq(qrCodeId),
-                        isLagerThanLastQrCodeId(lastQrCodeId)
+                        isLagerThanLastTradeId(lastTradeId)
                 )
                 .orderBy(trade.createdDate.desc())
                 .limit(PAGE_SIZE * 2 + 1)
