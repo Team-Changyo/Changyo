@@ -61,4 +61,9 @@ public class Trade extends TimeBaseEntity {
         this.account = account;
         this.qrCode = qrCode;
     }
+
+    // === Business Logics ===/
+    public void editStatus(TradeStatus status) {
+        this.status = status;
+    }
 }
