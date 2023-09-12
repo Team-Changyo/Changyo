@@ -37,11 +37,11 @@ public class JoinRequest {
 
     public JoinMemberDto toJoinMemberDto() {
         return JoinMemberDto.builder()
-                .loginId(this.loginId)
-                .password(this.password)
-                .name(this.name)
-                .phoneNumber(this.phoneNumber)
-
-                .build();
+            .loginId(this.loginId)
+            .password(this.password)
+            .name(this.name)
+            .phoneNumber(this.phoneNumber)
+            .role(this.role)
+            .build();
     }
 }
