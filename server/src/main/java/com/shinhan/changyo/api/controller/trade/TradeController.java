@@ -3,6 +3,7 @@ package com.shinhan.changyo.api.controller.trade;
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
+import com.shinhan.changyo.api.controller.trade.request.ReturnRequest;
 import com.shinhan.changyo.api.controller.trade.response.DepositDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.DepositResponse;
 import com.shinhan.changyo.api.controller.trade.response.WithdrawalResponse;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -102,16 +102,17 @@ public class TradeController {
     /**
      * 보증금 반환 API (단건 / 다건 통합)
      *
-     * @param requests 보증금 반환 요청 객체 리스트
+     * @param request 보증금 반환 요청 객체
      * @return 반환 여부 (true: 성공 / false: 실패)
      */
     @PostMapping("/deposit")
-    public ApiResponse<Boolean> returnDeposit(@Valid @RequestBody List<ReturnDepositRequest> requests) {
+    public ApiResponse<Boolean> returnDeposits(@Valid @RequestBody ReturnRequest request) {
         log.debug("TradeController#returnDeposit call");
-        log.debug("ReturnDepositRequest={}", requests);
+        log.debug("ReturnDepositRequest={}", request);
 
-        Boolean result = tradeService.returnDeposit(
-                requests.stream()
+        Boolean result = tradeService.returnDeposits(
+                request.getReturnRequests()
+                        .stream()
                         .map(ReturnDepositRequest::toReturnDepositDto)
                         .collect(Collectors.toList())
         );
