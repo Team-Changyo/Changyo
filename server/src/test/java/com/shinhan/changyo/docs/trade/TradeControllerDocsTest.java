@@ -3,6 +3,7 @@ package com.shinhan.changyo.docs.trade;
 import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
+import com.shinhan.changyo.api.controller.trade.request.ReturnRequest;
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
@@ -356,12 +357,16 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         List<ReturnDepositRequest> requests = List.of(request1, request2);
 
-        given(tradeService.returnDeposit(anyList()))
+        ReturnRequest request = ReturnRequest.builder()
+                .returnRequests(requests)
+                .build();
+
+        given(tradeService.returnDeposits(anyList()))
                 .willReturn(true);
 
         mockMvc.perform(
                         post("/trade/deposit")
-                                .content(objectMapper.writeValueAsString(requests))
+                                .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -370,15 +375,15 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("[].tradeId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("returnRequests[].tradeId").type(JsonFieldType.NUMBER)
                                         .description("보증금 거래내역 식별키"),
-                                fieldWithPath("[].amount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("returnRequests[].amount").type(JsonFieldType.NUMBER)
                                         .description("보증금 송금 금액"),
-                                fieldWithPath("[].fee").type(JsonFieldType.NUMBER)
+                                fieldWithPath("returnRequests[].fee").type(JsonFieldType.NUMBER)
                                         .description("수수료"),
-                                fieldWithPath("[].reason").type(JsonFieldType.STRING)
+                                fieldWithPath("returnRequests[].reason").type(JsonFieldType.STRING)
                                         .description("반환 사유"),
-                                fieldWithPath("[].description").type(JsonFieldType.STRING)
+                                fieldWithPath("returnRequests[].description").type(JsonFieldType.STRING)
                                         .description("반환사유 상세")
                         ),
                         responseFields(

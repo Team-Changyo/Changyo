@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.service.trade.dto;
 
+import com.shinhan.changyo.domain.report.Report;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +19,14 @@ public class ReturnDepositDto {
         this.fee = fee;
         this.reason = reason;
         this.description = description;
+    }
+
+    public Report toReport() {
+        return Report.builder()
+                .reason(this.reason)
+                .description(this.description)
+                .fee(this.fee)
+                .amount(this.amount)
+                .build();
     }
 }
