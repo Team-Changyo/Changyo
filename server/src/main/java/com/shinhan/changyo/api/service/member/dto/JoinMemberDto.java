@@ -13,13 +13,15 @@ public class JoinMemberDto {
     private String password;
     private String name;
     private String phoneNumber;
+    private String role;
 
     @Builder
-    private JoinMemberDto(String loginId, String password, String name, String phoneNumber) {
+    private JoinMemberDto(String loginId, String password, String name, String phoneNumber, String role) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.role = role;
     }
 
     public Member toEntity(String encryptedPwd) {
@@ -29,7 +31,7 @@ public class JoinMemberDto {
             .name(this.name)
             .phoneNumber(this.phoneNumber)
             .active(true)
-            .roles(Collections.singletonList("MEMBER"))
+            .roles(Collections.singletonList(this.role))
             .build();
     }
 }

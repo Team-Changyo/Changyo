@@ -23,12 +23,16 @@ public class JoinRequest {
     @NotBlank
     private String phoneNumber;
 
+    @NotBlank
+    private String role;
+
     @Builder
-    private JoinRequest(String loginId, String password, String name, String phoneNumber) {
+    private JoinRequest(String loginId, String password, String name, String phoneNumber, String role) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.role = role;
     }
 
     public JoinMemberDto toJoinMemberDto() {
@@ -37,6 +41,7 @@ public class JoinRequest {
                 .password(this.password)
                 .name(this.name)
                 .phoneNumber(this.phoneNumber)
+
                 .build();
     }
 }
