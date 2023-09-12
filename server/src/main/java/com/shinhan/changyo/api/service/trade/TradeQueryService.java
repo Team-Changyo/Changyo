@@ -47,7 +47,7 @@ public class TradeQueryService {
     /**
      * 보증금 송금관리 반환완료 내역 조회
      *
-     * @param loginId 로그인한 회원 아이디
+     * @param loginId     로그인한 회원 아이디
      * @param lastTradeId 마지막으로 조회된 거래내역 식별키
      * @return 해당 회원의 반환완료된 보증금 송금 거래내역 목록
      */
@@ -64,7 +64,7 @@ public class TradeQueryService {
     /**
      * 보증금 정산관리 조회
      *
-     * @param loginId     로그인한 회원의 로그인 아이디
+     * @param loginId      로그인한 회원의 로그인 아이디
      * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 해당 회원의 보증금 입금내역 목록
      */
@@ -80,15 +80,22 @@ public class TradeQueryService {
     /**
      * 보증금 정산관리 상세조회
      *
-     * @param qrCodeId QR 코드 식별키
+     * @param qrCodeId     QR 코드 식별키
+     * @param lastQrCodeId 마지막
      * @return 보증금 정산관리 상세조회 목록
      */
-    public DepositDetailResponse getDepositDetails(Long qrCodeId) {
-        // QR Overview
+    public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastQrCodeId) {
         QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
-        List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId);
 
-        return createDepositDetailResponse(qrCodeTrade, deposits);
+        int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId).intValue();
+        int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId).intValue();
+
+        List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId, lastQrCodeId);
+        log.debug("deposits={}", deposits);
+
+        checkHasNextPage(deposits);
+
+        return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount);
     }
 
     /**
@@ -96,14 +103,14 @@ public class TradeQueryService {
      *
      * @param qrCodeTrade QR 코드 제목, 입금단위 DTO
      * @param deposits    보증금 입금내역
+     * @param waitCount   반환대기 목록 전체개수
+     * @param doneCount   반환완료 목록 전체개수
      * @return 보증금 정산관리 상세조회 목록
      */
-    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits) {
+    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount) {
         List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
         List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
 
-        int waitCount = waitDetails.size();
-        int doneCount = doneDetails.size();
         return DepositDetailResponse.builder()
                 .qrCodeTitle(qrCodeTrade.getTitle())
                 .amount(qrCodeTrade.getAmount())
