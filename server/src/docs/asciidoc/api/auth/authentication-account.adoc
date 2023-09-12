@@ -1,0 +1,10 @@
+[[authentication-account]]
+=== 1원 인증 요청
+
+==== HTTP Request
+include::{snippets}/authentication-account/http-request.adoc[]
+include::{snippets}/authentication-account/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/authentication-account/http-response.adoc[]
+include::{snippets}/authentication-account/response-fields.adoc[]
