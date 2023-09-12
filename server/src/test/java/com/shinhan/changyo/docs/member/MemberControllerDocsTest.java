@@ -41,157 +41,163 @@ public class MemberControllerDocsTest extends RestDocsSupport {
     @Test
     void join() throws Exception {
         JoinRequest request = JoinRequest.builder()
-                .loginId("ssafy")
-                .password("ssafy1234")
-                .name("김싸피")
-                .phoneNumber("010-1234-5678")
-                .build();
+            .loginId("ssafy")
+            .password("ssafy1234")
+            .name("김싸피")
+            .phoneNumber("010-1234-5678")
+            .role("MEMBER")
+            .build();
 
         JoinMemberResponse response = JoinMemberResponse.builder()
-                .loginId("ssafy")
-                .name("김싸피")
-                .phoneNumber("010-1234-5678")
-                .build();
+            .loginId("ssafy")
+            .name("김싸피")
+            .phoneNumber("010-1234-5678")
+            .role("MEMBER")
+            .build();
 
         given(memberService.join(any(JoinMemberDto.class)))
-                .willReturn(response);
+            .willReturn(response);
 
         mockMvc.perform(
-                        post("/join")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
+                post("/join")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andDo(document("create-member",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("loginId").type(JsonFieldType.STRING)
+                        .description("로그인 아이디"),
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("비밀번호"),
+                    fieldWithPath("name").type(JsonFieldType.STRING)
+                        .description("이름"),
+                    fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
+                        .description("전화번호"),
+                    fieldWithPath("role").type(JsonFieldType.STRING)
+                        .description("역할")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("코드"),
+                    fieldWithPath("status").type(JsonFieldType.STRING)
+                        .description("상태"),
+                    fieldWithPath("message").type(JsonFieldType.STRING)
+                        .description("메시지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                        .description("응답데이터"),
+                    fieldWithPath("data.loginId").type(JsonFieldType.STRING)
+                        .description("로그인 아이디"),
+                    fieldWithPath("data.name").type(JsonFieldType.STRING)
+                        .description("이름"),
+                    fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
+                        .description("전화번호"),
+                    fieldWithPath("data.role").type(JsonFieldType.STRING)
+                        .description("역할")
                 )
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andDo(document("create-member",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("loginId").type(JsonFieldType.STRING)
-                                        .description("로그인 아이디"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호"),
-                                fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("이름"),
-                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                                        .description("전화번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("응답데이터"),
-                                fieldWithPath("data.loginId").type(JsonFieldType.STRING)
-                                        .description("로그인 아이디"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
-                                        .description("이름"),
-                                fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
-                                        .description("전화번호")
-                        )
-                ));
+            ));
     }
 
     @DisplayName("로그인 API")
     @Test
     void login() throws Exception {
         LoginRequest request = LoginRequest.builder()
-                .loginId("ssafy")
-                .password("ssafy1234")
-                .build();
+            .loginId("ssafy")
+            .password("ssafy1234")
+            .build();
 
         LoginResponse response = LoginResponse.builder()
-                .memberId(1L)
-                .name("김싸피")
-                .build();
+            .memberId(1L)
+            .name("김싸피")
+            .build();
 
         TokenInfo token = TokenInfo.builder()
-                .grantType("Bearer")
-                .accessToken("accessToken")
-                .refreshToken("refreshToken")
-                .build();
+            .grantType("Bearer")
+            .accessToken("accessToken")
+            .refreshToken("refreshToken")
+            .build();
 
 
         given(memberAccountService.login(anyString(), anyString()))
-                .willReturn(token);
+            .willReturn(token);
 
         mockMvc.perform(
-                        post("/login")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
+                post("/login")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("login-member",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("loginId").type(JsonFieldType.STRING)
+                        .description("로그인 아이디"),
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("비밀번호")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("코드"),
+                    fieldWithPath("status").type(JsonFieldType.STRING)
+                        .description("상태"),
+                    fieldWithPath("message").type(JsonFieldType.STRING)
+                        .description("메시지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                        .description("응답데이터"),
+                    fieldWithPath("data.grantType").type(JsonFieldType.STRING)
+                        .description("grantType"),
+                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                        .description("accessToken"),
+                    fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                        .description("refreshToken")
                 )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("login-member",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("loginId").type(JsonFieldType.STRING)
-                                        .description("로그인 아이디"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("응답데이터"),
-                                fieldWithPath("data.grantType").type(JsonFieldType.STRING)
-                                        .description("grantType"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("accessToken"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
-                                        .description("refreshToken")
-                        )
-                ));
+            ));
     }
 
     @DisplayName("회원탈퇴 API")
     @Test
     void withdrawal() throws Exception {
         WithdrawalRequest request = WithdrawalRequest.builder()
-                .loginId("ssafy")
-                .password("ssafy1234")
-                .build();
+            .loginId("ssafy")
+            .password("ssafy1234")
+            .build();
 
         Boolean result = true;
 
         given(memberService.withdrawal(anyString(), anyString()))
-                .willReturn(result);
+            .willReturn(result);
 
         mockMvc.perform(
-                        post("/withdrawal")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
+                post("/withdrawal")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isFound())
+            .andDo(document("remove-member",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("loginId").type(JsonFieldType.STRING)
+                        .description("로그인 아이디"),
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("비밀번호")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("코드"),
+                    fieldWithPath("status").type(JsonFieldType.STRING)
+                        .description("상태"),
+                    fieldWithPath("message").type(JsonFieldType.STRING)
+                        .description("메시지"),
+                    fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                        .description("탈퇴 여부")
                 )
-                .andDo(print())
-                .andExpect(status().isFound())
-                .andDo(document("remove-member",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("loginId").type(JsonFieldType.STRING)
-                                        .description("로그인 아이디"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-                                        .description("탈퇴 여부")
-                        )
-                ));
+            ));
     }
 }
