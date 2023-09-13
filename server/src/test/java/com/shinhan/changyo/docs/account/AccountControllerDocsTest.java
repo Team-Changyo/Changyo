@@ -111,9 +111,12 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .build();
 
         List<AccountDetailResponse> accounts = List.of(account1, account2);
+        List<String> bankCodeList = List.of("088");
 
         AccountResponse response = AccountResponse.builder()
                 .accountSize(accounts.size())
+                .accountTotalBalance(200501)
+                .bankCodeList(bankCodeList)
                 .accountDetailResponses(accounts)
                 .build();
 
@@ -139,6 +142,10 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("응답 데이터"),
                                 fieldWithPath("data.accountSize").type(JsonFieldType.NUMBER)
                                         .description("전체 계좌 개수"),
+                                fieldWithPath("data.accountTotalBalance").type(JsonFieldType.NUMBER)
+                                        .description("전체 계좌 금액"),
+                                fieldWithPath("data.bankCodeList").type(JsonFieldType.ARRAY)
+                                        .description("계좌 은행 코드 정보"),
                                 fieldWithPath("data.accountDetailResponses").type(JsonFieldType.ARRAY)
                                         .description("계좌 정보 데이터"),
                                 fieldWithPath("data.accountDetailResponses[].accountId").type(JsonFieldType.NUMBER)

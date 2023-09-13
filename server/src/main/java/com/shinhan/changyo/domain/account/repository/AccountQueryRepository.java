@@ -71,9 +71,19 @@ public class AccountQueryRepository {
 
         return queryFactory
                 .select(account)
+                .from(account)
                 .where(condition,
                         account.active.eq(true))
                 .orderBy(account.mainAccount.desc())
                 .fetch();
+    }
+
+    public Account getMainAccountsById(Long id) {
+        return queryFactory
+                .select(account)
+                .from(account)
+                .where(account.mainAccount.eq(true),
+                        account.member.id.eq(id))
+                .fetchOne();
     }
 }
