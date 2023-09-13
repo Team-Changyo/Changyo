@@ -1,9 +1,9 @@
 export interface IAccount {
-	key: number;
-	alias: string;
+	accountId: number;
 	accountNumber: string;
+	balance: number;
 	bankCode: string;
-	accountHolder: string;
+	mainAccount: boolean;
 }
 
 export interface IHistory {
