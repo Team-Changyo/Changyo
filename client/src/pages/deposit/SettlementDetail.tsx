@@ -1,17 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import SettlementSubtab from 'components/organisms/deposit/SettlementSubtab';
 import PageLayout from 'layouts/common/PageLayout';
 import SettlementDetailLayout from 'layouts/page/deposit/SettlementDetailLayout';
 import SettlementGroupInfo from 'components/organisms/deposit/SettlementGroupInfo';
 import { useParams } from 'react-router-dom';
+import { isAxiosError } from 'axios';
+import { toast } from 'react-hot-toast';
+import { findAllSettlementApi } from 'utils/apis/deposit';
+import { ISettlementGroup } from 'types/deposit';
 
 function SettlementDetail() {
 	const location = useParams();
+	const [settlementGroup, setSettlementGroup] = useState<ISettlementGroup>({
+		qrCodeId: 0,
+		amount: 0,
+		qrCodeTitle: '',
+		remainCount: 0,
+		remainTotal: 0,
+	});
 
-	console.log(location.sid);
+	const fetchSettlementGroup = async () => {
+		try {
+			if (location.sid) {
+				const response = await findAllSettlementApi(location.sid);
 
-	const settlementGroup = { key: 0, title: '럭셔리 글램핑 객실이용', moneyUnit: 20000, cntBeforeReturn: 2 };
+				if (response.status === 200) {
+					setSettlementGroup(response.data.data);
+					console.log(response);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message);
+			}
+		}
+	};
+
+	useEffect(() => {
+		fetchSettlementGroup();
+	}, []);
 
 	return (
 		<PageLayout>
