@@ -50,7 +50,7 @@ public class AccountQueryService {
      */
     public AccountResponse getAccounts(String loginId) {
         List<AccountDetailResponse> accounts = accountQueryRepository.getAccountsByMemberId(loginId);
-        checkIsEmpty(accounts);
+//        checkIsEmpty(accounts);
         return AccountResponse.of(accounts, accounts.size());
     }
 

@@ -1,10 +1,10 @@
 spring:
   # database setting
   datasource:
-    url: jdbc:mariadb://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S09P22C205?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-    username: S09P22C205
-    password: t47Rd1DnsH
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   # h2 setting
   h2:
     console:
