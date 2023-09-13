@@ -2,11 +2,19 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { CheckTextWrapper } from './style';
 
-function CheckText({ value, setValue }: { value: boolean; setValue: Dispatch<SetStateAction<boolean>> }) {
+function CheckText({
+	value,
+	setValue,
+	text,
+}: {
+	value: boolean;
+	setValue: Dispatch<SetStateAction<boolean>>;
+	text: string;
+}) {
 	return (
 		<CheckTextWrapper $value={value} onClick={() => setValue(!value)}>
 			<Check />
-			해당 계좌를 주 계좌로 사용할래요
+			{text}
 		</CheckTextWrapper>
 	);
 }
