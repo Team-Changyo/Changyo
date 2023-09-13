@@ -6,6 +6,7 @@ import Button from 'components/organisms/common/Button';
 import { formatMoney } from 'utils/common/formatMoney';
 import ReasonSelect from 'components/organisms/deposit/ReasonSelect';
 import { DEPOSIT_VALUE_SELECT_OPTION_LIST } from 'constants/select';
+import { toast } from 'react-hot-toast';
 import { DepositReturnModalContainer } from './style';
 
 interface IDepositReturnModalProps {
@@ -36,7 +37,7 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 
 	const returnCancel = () => {
 		// TODO : 토스트로 교체하기
-		alert('그러세요 네');
+		toast.error('보증금 반환을 취소합니다');
 		setReturnMoney(moneyUnit);
 		setReason('선택');
 		handleClose();

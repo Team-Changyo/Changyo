@@ -1,5 +1,5 @@
 import { JoinApiBody, LoginApiBody, WithdrawalApiBody } from 'types/api';
-import { instance } from './instance';
+import instance from './instance';
 
 // 로그인
 export const loginApi = async (body: LoginApiBody) => {

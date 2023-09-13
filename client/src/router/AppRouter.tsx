@@ -17,17 +17,18 @@ import AccountDetailPage from 'pages/account/AccountDetailPage';
 import LoadingPage from 'pages/etc/LoadingPage';
 import LoginPage from 'pages/auth/LoginPage';
 import RegisterPage from 'pages/auth/RegisterPage';
-import userState from 'store/user';
 import { GlobalKeyFrames } from 'styles/GlobalKeyFrames';
 import SettlementDetail from 'pages/deposit/SettlementDetail';
 import AccountRegisterPage from 'pages/account/AccountRegisterPage';
 import SuccessPage from 'pages/etc/SuccessPage';
 import FailPage from 'pages/etc/FailPage';
+import { Toaster } from 'react-hot-toast';
+import { authState } from 'store/user';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
 	const [isLoading, setIsLoading] = useState(true);
-	const [user, setUser] = useRecoilState(userState);
+	const [auth, setAuth] = useRecoilState(authState);
 
 	const loading = () => {
 		setTimeout(() => {
@@ -36,9 +37,18 @@ function AppRouter() {
 	};
 
 	const fetchUserData = () => {
+		const accessToken = localStorage.getItem('accessToken');
+		const grantType = localStorage.getItem('grantType');
+
 		// TODO API 나오면 로직 추가
-		setUser({ memberId: 1, name: '전인혁' });
-		// setUser(null);
+		if (accessToken && grantType) {
+			const authData = {
+				grantType,
+				accessToken,
+			};
+
+			setAuth(authData);
+		}
 	};
 
 	useEffect(() => {
@@ -59,7 +69,7 @@ function AppRouter() {
 					) : (
 						<>
 							<Routes>
-								<Route path="/" element={<Navigate replace to={user ? '/account' : '/auth/login'} />} />
+								<Route path="/" element={<Navigate replace to={auth ? '/account' : '/auth/login'} />} />
 								<Route path="/auth/login" element={<LoginPage />} />
 								<Route path="/auth/register" element={<RegisterPage />} />
 
@@ -85,6 +95,7 @@ function AppRouter() {
 					)}
 				</AppLayout>
 			</BrowserRouter>
+			<Toaster />
 		</div>
 	);
 }

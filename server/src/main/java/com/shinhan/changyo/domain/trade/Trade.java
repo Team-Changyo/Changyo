@@ -35,7 +35,7 @@ public class Trade extends TimeBaseEntity {
     private String content;
     @Column(nullable = false)
     private int balance;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TradeStatus status;
     @Column(nullable = false, length = 100)
@@ -60,5 +60,10 @@ public class Trade extends TimeBaseEntity {
         this.dealershipName = dealershipName;
         this.account = account;
         this.qrCode = qrCode;
+    }
+
+    // === Business Logics ===/
+    public void editStatus(TradeStatus status) {
+        this.status = status;
     }
 }

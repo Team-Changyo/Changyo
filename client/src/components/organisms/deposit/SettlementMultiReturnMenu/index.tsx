@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { ISettlement } from 'types/deposit';
 
 import Button from 'components/organisms/common/Button';
+import { toast } from 'react-hot-toast';
 import { SettleMultiReturnMenuWrapper } from './style';
 
 interface IMultiReturnMenuProps {
@@ -12,9 +13,8 @@ interface IMultiReturnMenuProps {
 
 function SettlementMultiReturnMenu({ toBeReturned, setIsMultiReturnMode, openReturnModal }: IMultiReturnMenuProps) {
 	const handleClick = () => {
-		// TODO : toast로 교체하기
 		if (toBeReturned.length === 0) {
-			alert('선택된 건이 없어연');
+			toast.error('선택된 반환 항목이 없습니다');
 		} else {
 			openReturnModal();
 		}

@@ -11,6 +11,7 @@ export interface JoinApiBody {
 	password: string;
 	name: string;
 	phoneNumber: string;
+	role: string;
 }
 
 export interface WithdrawalApiBody {

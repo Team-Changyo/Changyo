@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.service.member;
 
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
+import com.shinhan.changyo.api.controller.member.response.MemberResponse;
 import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
 import com.shinhan.changyo.api.service.member.exception.DuplicateException;
 import com.shinhan.changyo.domain.member.Member;
@@ -124,5 +125,11 @@ public class MemberService {
      */
     private boolean isMatchPassword(String password, String encryptedPwd) {
         return passwordEncoder.matches(password, encryptedPwd);
+    }
+
+    public MemberResponse getInfo(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+            .orElseThrow(NoSuchElementException::new);
+        return MemberResponse.of(member);
     }
 }

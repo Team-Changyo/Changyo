@@ -1,5 +1,5 @@
 import { CreateDepositQRApiBody, CreateQRApiBody } from 'types/api';
-import { instance } from './instance';
+import instance from './instance';
 
 // 간편 송금 QR 생성
 export const createQRApi = async (body: CreateQRApiBody) => {

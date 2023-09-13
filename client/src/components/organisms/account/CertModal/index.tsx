@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 
 import Button from 'components/organisms/common/Button';
 import CertCodeInput from 'components/atoms/auth/CertCodeInput';
+import { toast } from 'react-hot-toast';
 import { CertModalContainer } from './style';
 
 interface ICertModalProps {
@@ -20,11 +21,11 @@ function CertModal(props: ICertModalProps) {
 	const confirmCert = () => {
 		// TODO API 연결
 		if (certCode === '1234') {
-			alert('계좌 인증에 성공했습니다!');
+			toast.success('계좌 인증에 성공했습니다!');
 			handleClose();
 			setCertified(true);
 		} else {
-			alert('계좌 인증에 실패했습니다. 인증 번호를 다시 확인해주세요');
+			toast.error('계좌 인증에 실패했습니다. 인증 번호를 다시 확인해주세요');
 		}
 	};
 

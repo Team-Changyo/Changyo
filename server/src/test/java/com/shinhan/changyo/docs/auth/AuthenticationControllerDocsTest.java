@@ -9,7 +9,9 @@ import com.shinhan.changyo.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.mockito.MockitoSession;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -74,19 +76,22 @@ public class AuthenticationControllerDocsTest extends RestDocsSupport {
     }
 
     @DisplayName("인증번호 확인 API")
-//    @Test
+    @Test
     void checkAuthenticationNumber() throws Exception {
         CheckAuthenticationRequest request = CheckAuthenticationRequest.builder()
             .authenticationNumber("123")
             .build();
-        
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("authenticationNumber", "123");
+
         mockMvc.perform(
                 post("/authentication/check")
                     .content(objectMapper.writeValueAsString(request))
+                    .session(session)
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
-            .andExpect(status().isOk())
+            .andExpect(status().isNoContent())
             .andDo(document("authentication-check-account",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),

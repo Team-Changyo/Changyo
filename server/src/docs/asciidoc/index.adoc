@@ -28,3 +28,9 @@ include::api/trade/trade.adoc[]
 == QrCode API
 
 include::api/qrcode/qrcode.adoc[]
+
+[[Authentication-API]]
+== Authentication API
+
+include::api/auth/authentication-account.adoc[]
+include::api/auth/authentication-check-account.adoc[]

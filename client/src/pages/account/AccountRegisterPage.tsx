@@ -10,6 +10,7 @@ import AccountRegisterPageLayout from 'layouts/page/account/AccountRegisterPageL
 import CheckText from 'components/atoms/common/CheckText';
 import CertModal from 'components/organisms/account/CertModal';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 function AccountRegisterPage() {
 	const [isDone, setIsDone] = useState(false);
@@ -24,16 +25,16 @@ function AccountRegisterPage() {
 	const confirmRegister = () => {
 		if (isDone) {
 			// TODO : 등록 API 호출
-			alert('계좌 등록 성공 !');
+			toast.success('계좌 등록 성공 !');
 			navigate('/account');
 		}
 	};
 
 	const sendCertRequest = () => {
 		if (!bankCode) {
-			alert('은행을 선택해주세요');
+			toast.error('은행을 선택해주세요');
 		} else if (!accountNumber) {
-			alert('계좌번호를 입력해주세요');
+			toast.error('계좌번호를 입력해주세요');
 		} else if (window.confirm('1원 이체 인증을 요청하시겠습니까?')) {
 			// TODO : 계좌가 유효한지 검증로직 추가 (해커톤때는 안할듯)
 			// 유효하다면 모달 오픈
@@ -92,7 +93,9 @@ function AccountRegisterPage() {
 						/>
 					)
 				}
-				CheckIsMainAccount={<CheckText value={isMainAccount} setValue={setIsMainAccount} />}
+				CheckIsMainAccount={
+					<CheckText value={isMainAccount} setValue={setIsMainAccount} text="해당 계좌를 주 계좌로 사용할래요" />
+				}
 				AccountRegisterBtn={
 					<Button handleClick={confirmRegister} text="계좌 등록 완료" type={isDone ? 'Primary' : 'Normal'} />
 				}

@@ -1,5 +1,5 @@
 import { RemitApiBody, RemitDepositApiBody, ReturnDepositApiBody } from 'types/api';
-import { instance } from './instance';
+import instance from './instance';
 
 // TODO 간편 송금
 export const remitApi = async (body: RemitApiBody) => {

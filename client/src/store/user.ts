@@ -1,9 +1,12 @@
 import { atom } from 'recoil';
-import { IUser } from 'types/auth';
+import { IAuth, IMember } from 'types/auth';
 
-const userState = atom<IUser | null>({
-	key: 'userState',
+export const authState = atom<IAuth | null>({
+	key: ' authState',
 	default: null,
 });
 
-export default userState;
+export const memberInfoState = atom<IMember | null>({
+	key: 'memberInfoState',
+	default: null,
+});
