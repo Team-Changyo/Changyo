@@ -19,7 +19,8 @@ public class CreateAccountRequest {
     private String accountNumber;
     @NotBlank
     private String productName;
-    @NotBlank    private String title;
+    @NotBlank
+    private String title;
     @NotNull
     private Boolean mainAccount;
 

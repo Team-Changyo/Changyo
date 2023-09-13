@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.*;
@@ -8,10 +9,14 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 public class ApiResponse<T> {
 
-    private final int code;
-    private final HttpStatus status;
-    private final String message;
-    private final T data;
+    private int code;
+    private HttpStatus status;
+    private String message;
+    private T data;
+
+    public ApiResponse() {
+
+    }
 
     public ApiResponse(HttpStatus status, String message, T data) {
         this.code = status.value();

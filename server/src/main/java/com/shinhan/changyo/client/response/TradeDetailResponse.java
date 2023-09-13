@@ -2,11 +2,13 @@ package com.shinhan.changyo.client.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@NoArgsConstructor
 public class TradeDetailResponse {
     private String tradeDate;
     private String tradeTime;

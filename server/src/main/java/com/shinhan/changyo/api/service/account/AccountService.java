@@ -36,6 +36,7 @@ public class AccountService {
     private final MemberRepository memberRepository;
     private final ShinHanApiClient shinHanApiClient;
 
+
     /**
      * 계좌 등록
      *
@@ -111,7 +112,10 @@ public class AccountService {
      * @return API 응답
      */
     private ApiResponse<BalanceResponse> getBalanceResponse(String accountNumber) {
-        return shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        log.debug("@@@@@@@@@@@@@@터졌ㄲ니?@@@@@@@@@@@@@@");
+        ApiResponse<BalanceResponse> response = shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        log.debug("response={}", response);
+        return response;
     }
 
     /**
