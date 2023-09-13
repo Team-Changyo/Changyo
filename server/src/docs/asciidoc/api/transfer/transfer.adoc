@@ -1,0 +1,8 @@
+=== 보증금 송금 정보 조회
+
+==== HTTP Request
+include::{snippets}/search-transfer/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-transfer/http-response.adoc[]
+include::{snippets}/search-transfer/response-fields.adoc[]

@@ -131,6 +131,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/withdrawal/wait")
+                                .header("Authentication", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -194,6 +195,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/withdrawal/done")
+                                .header("Authentication", "test")
                                 .param("lastTradeId", "2")
                 )
                 .andDo(print())
@@ -265,6 +267,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/deposit")
+                                .header("Authentication", "test")
                                 .param("lastQrCodeId", "2")
                 )
                 .andDo(print())
@@ -272,8 +275,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .andDo(document("search-deposits",
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                          parameterWithName("lastQrCodeId")
-                                  .description("마지막으로 조회된 QR 코드 식별키")
+                                parameterWithName("lastQrCodeId")
+                                        .description("마지막으로 조회된 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -339,6 +342,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/deposit/detail")
+                                .header("Authentication", "test")
                                 .param("qrCodeId", qrCodeId)
                                 .param("lastTradeId", "2")
                 )
