@@ -5,12 +5,8 @@ import com.shinhan.changyo.domain.qrcode.QrCode;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 public class QrCodeDto {
-
-    private String url;
 
     private Long accountId;
 
@@ -20,17 +16,16 @@ public class QrCodeDto {
 
     private String loginId;
     @Builder
-    public QrCodeDto(String url, Long accountId, int amount, String title, String loginId) {
-        this.url = url;
+    public QrCodeDto(Long accountId, int amount, String title, String loginId) {
         this.accountId = accountId;
         this.amount = amount;
         this.title = title;
         this.loginId = loginId;
     }
 
-    public QrCode toEntity(String base64QrCode, Account account){
+    public QrCode toEntity(String url, String base64QrCode, Account account){
         return QrCode.builder()
-                .url(this.url)
+                .url(url)
                 .amount(this.amount)
                 .title(this.title)
                 .base64QrCode(base64QrCode)
