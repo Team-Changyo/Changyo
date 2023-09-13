@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +45,17 @@ public class AccountQueryService {
     public AccountResponse getAccounts(String loginId) {
         List<AccountDetailResponse> accounts = accountQueryRepository.getAccountsByMemberId(loginId);
 //        checkIsEmpty(accounts);
-        return AccountResponse.of(accounts, accounts.size());
+        int totalBalance = accounts.stream()
+                .mapToInt(AccountDetailResponse::getBalance)
+                .sum();
+        Set<String> bankCodes = accounts.stream()
+                .map(AccountDetailResponse::getBankCode)
+                .collect(Collectors.toSet());
+
+        List<String> bankCodeList = new ArrayList<>();
+        bankCodeList.addAll(bankCodes);
+
+        return AccountResponse.of(accounts, totalBalance, bankCodeList, accounts.size());
     }
 
     /**
