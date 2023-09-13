@@ -39,7 +39,7 @@ export function TabbarItem({ pathname }: { pathname: string }) {
  * 탭바의 CenterItem (홈버튼)
  */
 export function TabbarCenterItem() {
-	const isActive = usePathMatch('/');
+	const isActive = usePathMatch('/account');
 	const [isHover, setIsHover] = useState(0);
 	const navigate = useNavigate();
 	const moveToHome = () => navigate('/');
