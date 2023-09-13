@@ -52,3 +52,12 @@ include::{snippets}/delete-account/http-request.adoc[]
 include::{snippets}/delete-account/http-response.adoc[]
 include::{snippets}/delete-account/response-fields.adoc[]
 
+[[search-account-detail-all]]
+=== 주계좌 변경
+
+==== HTTP Request
+include::{snippets}/search-account-detail-all/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-account-detail-all/http-response.adoc[]
+include::{snippets}/search-account-detail-all/response-fields.adoc[]
