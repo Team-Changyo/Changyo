@@ -175,6 +175,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .balance(341147)
                 .withdrawalAmount(11000000)
                 .depositAmount(0)
+                .status(2)
                 .build();
 
         AllTradeResponse allTradeResponses2 = AllTradeResponse.builder()
@@ -184,6 +185,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .balance(341147)
                 .withdrawalAmount(0)
                 .depositAmount(5000)
+                .status(1)
                 .build();
 
         List<AllTradeResponse> tmp = List.of(allTradeResponses1, allTradeResponses2);
@@ -239,7 +241,9 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.allTradeResponses.*.[].withdrawalAmount").type(JsonFieldType.NUMBER)
                                         .description("출금 금액"),
                                 fieldWithPath("data.allTradeResponses.*.[].depositAmount").type(JsonFieldType.NUMBER)
-                                        .description("입금 금액")
+                                        .description("입금 금액"),
+                                fieldWithPath("data.allTradeResponses.*.[].status").type(JsonFieldType.NUMBER)
+                                        .description("입지 구분 / 1 : 입금 , 2 : 출금")
                         )
                 ));
 

@@ -77,13 +77,44 @@ public class AccountController {
      */
     @GetMapping("/{accountId}")
     public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@PathVariable Long accountId){
-        log.debug("AccountController#getAccount called");
+        log.debug("AccountController#getAccountDetailAll called");
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
         AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(loginId,accountId);
         return ApiResponse.ok(response);
-
     }
+
+    /**
+     * 입금 계좌내역 상세 전체 조회(내역 조회)
+     *
+     * @param accountId
+     * @return
+     */
+    @GetMapping("/deposit/{accountId}")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailDeposit(@PathVariable Long accountId){
+        log.debug("AccountController#getAccountDetailDeposit called");
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeDeposit(loginId,accountId);
+        return ApiResponse.ok(response);
+    }
+
+    /**
+     * 출금 계좌내역 상세 전체 조회(내역 조회)
+     *
+     * @param accountId
+     * @return
+     */
+
+    @GetMapping("/withdrawal/{accountId}")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailWithdrawal(@PathVariable Long accountId){
+        log.debug("AccountController#getAccountDetailWithdrawal called");
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeWithdrawal(loginId,accountId);
+        return ApiResponse.ok(response);
+    }
+
 
     @PatchMapping("/title/{accountId}")
     @ResponseStatus(HttpStatus.FOUND)

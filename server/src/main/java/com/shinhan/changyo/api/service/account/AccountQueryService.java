@@ -71,6 +71,77 @@ public class AccountQueryService {
     }
 
     public AccountTradeAllResponse getAccountTradeAll(String loginId, Long accountId)  {
+        return getTradeResponse(loginId, accountId, 0);
+    }
+
+
+    public AccountTradeAllResponse getAccountTradeDeposit(String loginId, Long accountId) {
+        return getTradeResponse(loginId, accountId, 1);
+    }
+
+    public AccountTradeAllResponse getAccountTradeWithdrawal(String loginId, Long accountId){
+        return getTradeResponse(loginId, accountId, 2);
+    }
+
+
+    private TradeRequest createTradeRequest(String accountNumber){
+        return TradeRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
+    }
+
+
+
+
+    private Map<String, List<AllTradeResponse>> createGroupByDateTime(List<TradeDetailResponse> trades, int status){
+
+        // 필요한 정보만 뽑아서 list 화
+        List<AllTradeResponse> allTradeResponses = trades.stream()
+                .filter(trade -> {
+                    if(status == 0){
+                        return true;
+                    }else if(status == 1){
+                        return trade.getStatus() == 1;
+                    }else if(status == 2){
+                        return trade.getStatus() == 2;
+                    }else{
+                        return false;
+                    }
+                })
+                .map(trade-> {
+                    AllTradeResponse tmp = AllTradeResponse.builder()
+                            .tradeDate(trade.getTradeDate())
+                            .tradeTime(trade.getTradeTime())
+                            .content(trade.getContent())
+                            .balance(trade.getBalance())
+                            .withdrawalAmount(trade.getWithdrawalAmount())
+                            .depositAmount(trade.getDepositAmount())
+                            .status(trade.getStatus())
+                            .build();
+                    return tmp;
+
+                })
+                .collect(Collectors.toList());
+
+        // 거래날짜별로 묶기
+        Map<String, List<AllTradeResponse>> res =
+                allTradeResponses.stream().collect(Collectors.groupingBy(
+                        AllTradeResponse::getTradeDate
+                ));
+
+
+        return res;
+    }
+
+
+    /**
+     *
+     * @param loginId 로그인 아이디
+     * @param accountId 계좌 식별키
+     * @param status 입지 구분 0 : 전체 / 1 : 입금(deposit) / 2 : 출금(withdrawal)
+     * @return
+     */
+    private AccountTradeAllResponse getTradeResponse(String loginId, Long accountId, int status){
         // 계좌 조회
         Account findAccount = accountRepository.findById(accountId).orElseThrow(() ->
                 new NoSuchElementException("존재 하지 않는 계좌입니다."));
@@ -91,9 +162,8 @@ public class AccountQueryService {
         Map<String, List<AllTradeResponse>> allTradeResponses = null;
         // 거래내역이 없는 경우
         if(trades.size() != 0){
-            allTradeResponses = createGroupByDateTime(trades);
+            allTradeResponses = createGroupByDateTime(trades, status);
         }
-
 
         AccountTradeAllResponse response = AccountTradeAllResponse.builder()
                 .accountId(accountId)
@@ -105,40 +175,4 @@ public class AccountQueryService {
 
         return response;
     }
-
-    private TradeRequest createTradeRequest(String accountNumber){
-        return TradeRequest.builder()
-                .accountNumber(accountNumber)
-                .build();
-    }
-
-
-    private Map<String, List<AllTradeResponse>> createGroupByDateTime(List<TradeDetailResponse> trades){
-
-        // 필요한 정보만 뽑아서 list 화
-        List<AllTradeResponse> allTradeResponses = trades.stream()
-                .map(trade-> {
-                    AllTradeResponse tmp = AllTradeResponse.builder()
-                            .tradeDate(trade.getTradeDate())
-                            .tradeTime(trade.getTradeTime())
-                            .content(trade.getContent())
-                            .balance(trade.getBalance())
-                            .withdrawalAmount(trade.getWithdrawalAmount())
-                            .depositAmount(trade.getDepositAmount())
-                            .build();
-                    return tmp;
-
-                })
-                .collect(Collectors.toList());
-
-        // 거래날짜별로 묶기
-        Map<String, List<AllTradeResponse>> res =
-                allTradeResponses.stream().collect(Collectors.groupingBy(
-                        AllTradeResponse::getTradeDate
-                ));
-
-
-        return res;
-    }
-
 }
