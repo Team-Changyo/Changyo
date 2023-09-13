@@ -53,7 +53,7 @@ include::{snippets}/delete-account/http-response.adoc[]
 include::{snippets}/delete-account/response-fields.adoc[]
 
 [[search-account-detail-all]]
-=== 주계좌 변경
+=== 전체 계좌 내역 상세 조회
 
 ==== HTTP Request
 include::{snippets}/search-account-detail-all/http-request.adoc[]
@@ -61,3 +61,24 @@ include::{snippets}/search-account-detail-all/http-request.adoc[]
 ==== HTTP Response
 include::{snippets}/search-account-detail-all/http-response.adoc[]
 include::{snippets}/search-account-detail-all/response-fields.adoc[]
+
+[[search-account-detail-deposit]]
+=== 입금 계좌 내역 상세 조회
+
+==== HTTP Request
+include::{snippets}/search-account-detail-deposit/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-account-detail-deposit/http-response.adoc[]
+include::{snippets}/search-account-detail-deposit/response-fields.adoc[]
+
+
+[[search-account-detail-withdrawal]]
+=== 출금 계좌 내역 상세 조회
+
+==== HTTP Request
+include::{snippets}/search-account-detail-withdrawal/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-account-detail-withdrawal/http-response.adoc[]
+include::{snippets}/search-account-detail-withdrawal/response-fields.adoc[]
