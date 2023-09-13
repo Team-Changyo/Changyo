@@ -1,4 +1,4 @@
-import { instance } from './instance';
+import instance from './instance';
 
 // 보증금 송금내역 전체조회
 export const findAllRemitHistoryApi = async () => {

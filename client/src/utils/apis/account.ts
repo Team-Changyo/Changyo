@@ -1,5 +1,5 @@
 import { RegisterAccountApi } from 'types/api';
-import { instance } from './instance';
+import instance from './instance';
 
 // 계좌 등록
 export const registerAccountApi = async (body: RegisterAccountApi) => {
