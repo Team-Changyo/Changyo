@@ -1,10 +1,10 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { authState } from 'store/user';
+import { memberInfoState } from 'store/member';
 
 function PrivateRoute() {
-	const [auth] = useRecoilState(authState);
-	return auth ? <Outlet /> : <Navigate to="/auth/login" />;
+	const [memberInfo] = useRecoilState(memberInfoState);
+	return memberInfo ? <Outlet /> : <Navigate to="/auth/login" />;
 }
 export default PrivateRoute;
