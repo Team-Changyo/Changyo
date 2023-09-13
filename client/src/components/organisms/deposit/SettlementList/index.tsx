@@ -20,7 +20,7 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 	const [modalOpen, setModalOpen] = useState(false);
 
 	const addToBeReturned = (settlement: ISettlement) => {
-		const idx = toBeReturned.findIndex((el) => el.key === settlement.key);
+		const idx = toBeReturned.findIndex((el) => el.tradeId === settlement.tradeId);
 		if (idx === -1) {
 			toBeReturned.push(settlement);
 			setToBeReturned([...toBeReturned]);
@@ -103,7 +103,7 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 			{/* 정산 사항 리스트 */}
 			{settlements.map((el) => (
 				<SettlementListItem
-					key={el.key}
+					key={el.tradeId}
 					addToBeReturned={addToBeReturned}
 					isMultiReturnMode={isMultiReturnMode}
 					openReturnModal={openReturnModal}

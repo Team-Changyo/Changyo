@@ -8,9 +8,11 @@ function SettlementGroupList({ settlementGroups }: { settlementGroups: ISettleme
 	return (
 		<SettlementGroupListContainer>
 			<ListTotalText text="관리 중" totalCnt={settlementGroups.length} />
-			{settlementGroups.map((el) => (
-				<SettlementGroupListItem key={el.key} settlementGroup={el} />
-			))}
+			{settlementGroups.length ? (
+				settlementGroups.map((el) => <SettlementGroupListItem key={el.qrCodeId} settlementGroup={el} />)
+			) : (
+				<div>현재 관리중인 정산건이 없습니다.</div>
+			)}
 		</SettlementGroupListContainer>
 	);
 }
