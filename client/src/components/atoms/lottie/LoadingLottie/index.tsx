@@ -9,7 +9,7 @@ function LoadingLottie() {
 		animationData: LoadingAnimation,
 	};
 
-	return <Lottie options={defaultOptions} width={350} height={350} />;
+	return <Lottie options={defaultOptions} width={350} height={350} isClickToPauseDisabled />;
 }
 
 export default LoadingLottie;
