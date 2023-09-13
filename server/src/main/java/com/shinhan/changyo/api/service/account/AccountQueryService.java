@@ -13,19 +13,13 @@ import com.shinhan.changyo.client.response.TradeResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
-import com.shinhan.changyo.domain.trade.Trade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.persistence.EntityNotFoundException;
-import java.nio.file.AccessDeniedException;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +44,18 @@ public class AccountQueryService {
      */
     public AccountResponse getAccounts(String loginId) {
         List<AccountDetailResponse> accounts = accountQueryRepository.getAccountsByMemberId(loginId);
-        checkIsEmpty(accounts);
-        return AccountResponse.of(accounts, accounts.size());
+//        checkIsEmpty(accounts);
+        int totalBalance = accounts.stream()
+                .mapToInt(AccountDetailResponse::getBalance)
+                .sum();
+        Set<String> bankCodes = accounts.stream()
+                .map(AccountDetailResponse::getBankCode)
+                .collect(Collectors.toSet());
+
+        List<String> bankCodeList = new ArrayList<>();
+        bankCodeList.addAll(bankCodes);
+
+        return AccountResponse.of(accounts, totalBalance, bankCodeList, accounts.size());
     }
 
     /**
@@ -83,13 +87,12 @@ public class AccountQueryService {
         // 데이터 뽑기
         List<TradeDetailResponse> trades = tradeResponse.getData().getTrades();
 
-        // 거래내역이 없는 경우
-        if(trades.size() == 0){
-            throw new NoAccountException("계좌 거래 내역이 존재하지 않습니다.");
-        }
 
-        // 거래 일자 별로 묶어서 리스트화
-        Map<String, List<AllTradeResponse>> allTradeResponses = createGroupByDateTime(trades);
+        Map<String, List<AllTradeResponse>> allTradeResponses = null;
+        // 거래내역이 없는 경우
+        if(trades.size() != 0){
+            allTradeResponses = createGroupByDateTime(trades);
+        }
 
 
         AccountTradeAllResponse response = AccountTradeAllResponse.builder()

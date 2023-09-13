@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Component
-@FeignClient(name = "shinhan-api", url = "localhost:8081", configuration = FeignConfig.class)
+@FeignClient(name = "shinhan-api", url = "https://j9c205.p.ssafy.io/shinhan/api/", configuration = FeignConfig.class)
 public interface ShinHanApiClient {
     @PostMapping(produces = "application/json", value = "/v1/account")
     ApiResponse<DetailResponse> getAccountDetail(@RequestBody AccountDetailRequest request);

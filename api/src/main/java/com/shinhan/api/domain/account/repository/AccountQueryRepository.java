@@ -59,7 +59,7 @@ public class AccountQueryRepository {
         return queryFactory
                 .select(Projections.constructor(AccountDetailResponse.class,
                         account.balance,
-                        account.accountNumber,
+                        account.productName,
                         account.customerName
                         ))
                 .from(account)

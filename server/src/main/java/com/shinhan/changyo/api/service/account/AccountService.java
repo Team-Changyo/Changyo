@@ -85,8 +85,13 @@ public class AccountService {
 
         Account account = dto.toEntity(member, balance);
 
-        if (checkIsFirstAccount(member.getId())) {
+        if (checkIsFirstAccount(member.getId())) { // 첫 계좌면
             account.setMainAccount();
+        }else{
+            if(dto.getMainAccount()){ //메인 계좌로 설정 했으면
+                Account mainAccount = accountQueryRepository.getMainAccountsById(member.getId());
+                mainAccount.editMainAccount();
+            }
         }
 
         return accountRepository.save(account);
