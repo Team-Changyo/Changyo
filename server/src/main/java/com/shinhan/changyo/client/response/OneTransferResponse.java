@@ -1,9 +1,11 @@
-package com.shinhan.changyo.client;
+package com.shinhan.changyo.client.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class OneTransferResponse {
 
     private String bankCode;

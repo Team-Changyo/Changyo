@@ -3,6 +3,7 @@ package com.shinhan.api.docs.account;
 import com.shinhan.api.api.controller.account.AccountController;
 import com.shinhan.api.api.controller.account.request.AccountRequest;
 import com.shinhan.api.api.controller.account.request.CustomerNameRequest;
+import com.shinhan.api.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
 import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.api.service.account.AccountQueryService;
@@ -30,6 +31,57 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     @Override
     protected Object initController() {
         return new AccountController(accountQueryService);
+    }
+
+
+    @DisplayName("계좌 정보 조회 API")
+    @Test
+    void getAccountDetail() throws Exception {
+
+        AccountRequest request = AccountRequest.builder()
+                .accountNumber("110184999999")
+                .build();
+
+        AccountDetailResponse response = AccountDetailResponse.builder()
+                .balance(10_000_000)
+                .productName("예금")
+                .customerName("홍진식")
+                .build();
+
+        given(accountQueryService.getAccountDetail(anyString()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        post("/v1/account")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("account-detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("출금계좌번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답데이터"),
+                                fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
+                                        .description("지불가능금액"),
+                                fieldWithPath("data.productName").type(JsonFieldType.STRING)
+                                        .description("상품 이름"),
+                                fieldWithPath("data.customerName").type(JsonFieldType.STRING)
+                                        .description("고객 명")
+                        )
+                ));
     }
 
     @DisplayName("계좌잔액조회 API")

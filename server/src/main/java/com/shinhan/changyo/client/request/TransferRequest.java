@@ -1,10 +1,12 @@
-package com.shinhan.changyo.client;
+package com.shinhan.changyo.client.request;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class TransferResponse {
+@NoArgsConstructor
+public class TransferRequest {
 
     private String withdrawalAccountNumber;
     private String depositBankCode;
@@ -12,16 +14,14 @@ public class TransferResponse {
     private int amount;
     private String depositMemo;
     private String withdrawalMemo;
-    private int result;
 
     @Builder
-    public TransferResponse(String withdrawalAccountNumber, String depositBankCode, String depositAccountNumber, int amount, String depositMemo, String withdrawalMemo, int result) {
+    private TransferRequest(String withdrawalAccountNumber, String depositBankCode, String depositAccountNumber, int amount, String depositMemo, String withdrawalMemo) {
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.depositBankCode = depositBankCode;
         this.depositAccountNumber = depositAccountNumber;
         this.amount = amount;
         this.depositMemo = depositMemo;
         this.withdrawalMemo = withdrawalMemo;
-        this.result = result;
     }
 }

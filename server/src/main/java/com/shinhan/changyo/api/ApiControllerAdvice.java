@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -51,5 +53,16 @@ public class ApiControllerAdvice {
                 null
         );
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(SecurityException.class)
+    public ApiResponse<Object> securityException(SecurityException e){
+        return ApiResponse.of(
+                HttpStatus.FORBIDDEN,
+                e.getMessage(),
+                null
+        );
+    }
+
 }
 

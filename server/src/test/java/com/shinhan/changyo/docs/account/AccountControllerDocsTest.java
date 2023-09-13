@@ -1,5 +1,6 @@
 package com.shinhan.changyo.docs.account;
 
+import com.shinhan.changyo.api.ApiControllerAdvice;
 import com.shinhan.changyo.api.controller.account.AccountController;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
@@ -11,15 +12,17 @@ import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
+import com.shinhan.changyo.docs.qrcode.QrCodeControllerDocsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -29,11 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(QrCodeControllerDocsTest.class)
 public class AccountControllerDocsTest extends RestDocsSupport {
 
     private final AccountService accountService = mock(AccountService.class);
     private final AccountQueryService accountQueryService = mock(AccountQueryService.class);
-
     @Override
     protected Object initController() {
         return new AccountController(accountService, accountQueryService);
@@ -41,20 +44,18 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("계좌 등록 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createAccount() throws Exception {
         CreateAccountRequest request = CreateAccountRequest.builder()
-                .memberId(1L)
-                .customerName("김싸피")
                 .bankCode("088")
                 .accountNumber("110184999999")
-                .productName("예금")
                 .title("싸피월급통장")
                 .mainAccount(true)
                 .build();
 
         Long accountId = 1L;
 
-        given(accountService.createAccount(any(CreateAccountDto.class)))
+        given(accountService.createAccount(any(CreateAccountRequest.class), anyString()))
                 .willReturn(accountId);
 
         mockMvc.perform(
@@ -68,16 +69,10 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("memberId").type(JsonFieldType.NUMBER)
-                                        .description("회원 식별키"),
-                                fieldWithPath("customerName").type(JsonFieldType.STRING)
-                                        .description("고객명"),
                                 fieldWithPath("bankCode").type(JsonFieldType.STRING)
                                         .description("은행코드"),
                                 fieldWithPath("accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
-                                fieldWithPath("productName").type(JsonFieldType.STRING)
-                                        .description("상품명"),
                                 fieldWithPath("title").type(JsonFieldType.STRING)
                                         .description("별칭"),
                                 fieldWithPath("mainAccount").type(JsonFieldType.BOOLEAN)
@@ -98,10 +93,12 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("회원별 계좌 전체 조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getAccounts() throws Exception {
         Long memberId = 1L;
 
         AccountDetailResponse account1 = AccountDetailResponse.builder()
+                .accountId(1l)
                 .accountNumber("110184999999")
                 .balance(200501)
                 .bankCode("088")
@@ -109,6 +106,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .build();
 
         AccountDetailResponse account2 = AccountDetailResponse.builder()
+                .accountId(2l)
                 .accountNumber("110185999999")
                 .balance(0)
                 .bankCode("088")
@@ -122,12 +120,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .accountDetailResponses(accounts)
                 .build();
 
-        given(accountQueryService.getAccounts(anyLong()))
+        given(accountQueryService.getAccounts(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/account")
-                                .header("memberId", String.valueOf(memberId))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -147,6 +144,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("전체 계좌 개수"),
                                 fieldWithPath("data.accountDetailResponses").type(JsonFieldType.ARRAY)
                                         .description("계좌 정보 데이터"),
+                                fieldWithPath("data.accountDetailResponses[].accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별 키"),
                                 fieldWithPath("data.accountDetailResponses[].accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
                                 fieldWithPath("data.accountDetailResponses[].balance").type(JsonFieldType.NUMBER)
@@ -254,6 +253,35 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.mainAccount").type(JsonFieldType.BOOLEAN)
                                         .description("주계좌여부")
 
+                        )
+                ));
+    }
+
+    @DisplayName("계좌 삭제 API")
+    @Test
+    void removeAccount() throws Exception {
+
+        Boolean result = true;
+
+        given(accountService.removeAccount(anyLong()))
+                .willReturn(result);
+
+        mockMvc.perform(
+                        delete("/account/{accountId}", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andDo(document("delete-account",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("삭제 결과: true 또는 false")
                         )
                 ));
     }

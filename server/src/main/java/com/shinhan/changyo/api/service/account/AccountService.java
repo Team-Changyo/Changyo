@@ -1,13 +1,15 @@
 package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.ApiResponse;
-import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
+import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
-import com.shinhan.changyo.client.BalanceRequest;
-import com.shinhan.changyo.client.BalanceResponse;
+import com.shinhan.changyo.client.request.AccountDetailRequest;
+import com.shinhan.changyo.client.request.BalanceRequest;
+import com.shinhan.changyo.client.response.BalanceResponse;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
+import com.shinhan.changyo.client.response.DetailResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
@@ -37,14 +39,22 @@ public class AccountService {
     private final MemberRepository memberRepository;
     private final ShinHanApiClient shinHanApiClient;
 
+
     /**
      * 계좌 등록
      *
      * @param dto 등록할 계좌 정보
      * @return 등록된 계좌 식별키
      */
-    public Long createAccount(CreateAccountDto dto) {
-        Member member = getMember(dto.getMemberId());
+    public Long createAccount(CreateAccountRequest request, String loginId) {
+
+        Member member = getMember(loginId);
+        ApiResponse<DetailResponse> response = shinHanApiClient.getAccountDetail(
+                createAccountDetailRequest(request.getAccountNumber())
+        );
+
+
+        CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 
         Account savedAccount = saveAccount(dto, member);
 
@@ -54,12 +64,12 @@ public class AccountService {
     /**
      * 회원 엔티티 조회
      *
-     * @param memberId 조회할 회원 식별키
+     * @param loginId 조회할 회원 로그인 아이디
      * @return 조회된 회원
      * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
      */
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMember(String loginId) {
+        return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
 
@@ -112,7 +122,10 @@ public class AccountService {
      * @return API 응답
      */
     private ApiResponse<BalanceResponse> getBalanceResponse(String accountNumber) {
-        return shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        log.debug("@@@@@@@@@@@@@@터졌ㄲ니?@@@@@@@@@@@@@@");
+        ApiResponse<BalanceResponse> response = shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        log.debug("response={}", response);
+        return response;
     }
 
     /**
@@ -121,6 +134,13 @@ public class AccountService {
      * @param accountNumber 계좌번호
      * @return 요청 객체
      */
+
+    private AccountDetailRequest createAccountDetailRequest(String accountNumber){
+        return AccountDetailRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
+    }
+
     private BalanceRequest createBalanceRequest(String accountNumber) {
         return BalanceRequest.builder()
                 .accountNumber(accountNumber)
@@ -166,5 +186,11 @@ public class AccountService {
             findAccount.editMainAccount();
         }
         return AccountEditResponse.of(findAccounts.get(1));
+    }
+
+    public Boolean removeAccount(Long accountId) {
+        Account findAccount = accountRepository.findById(accountId).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        findAccount.remove();
+        return true;
     }
 }
