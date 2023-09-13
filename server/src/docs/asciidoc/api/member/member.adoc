@@ -30,3 +30,13 @@ include::{snippets}/remove-member/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/remove-member/http-response.adoc[]
 include::{snippets}/remove-member/response-fields.adoc[]
+
+[[search-member]]
+=== 회원정보 조회
+
+==== HTTP Request
+include::{snippets}/search-member/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-member/http-response.adoc[]
+include::{snippets}/search-member/response-fields.adoc[]
