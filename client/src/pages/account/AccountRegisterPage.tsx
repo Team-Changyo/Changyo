@@ -11,6 +11,8 @@ import CheckText from 'components/atoms/common/CheckText';
 import CertModal from 'components/organisms/account/CertModal';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { registerAccountApi } from 'utils/apis/account';
+import { isAxiosError } from 'axios';
 
 function AccountRegisterPage() {
 	const [isDone, setIsDone] = useState(false);
@@ -22,11 +24,29 @@ function AccountRegisterPage() {
 	const [certified, setCertified] = useState(false);
 	const navigate = useNavigate();
 
-	const confirmRegister = () => {
+	const confirmRegister = async () => {
 		if (isDone) {
-			// TODO : 등록 API 호출
-			toast.success('계좌 등록 성공 !');
-			navigate('/account');
+			try {
+				const body = {
+					bankCode,
+					accountNumber,
+					title: alias,
+					mainAccount: isMainAccount,
+				};
+
+				const response = await registerAccountApi(body);
+				console.log(response);
+
+				if (response.status === 201) {
+					toast.success('계좌 등록 성공 !');
+					navigate('/account');
+				}
+			} catch (error) {
+				console.error(error);
+				if (isAxiosError(error)) {
+					toast.error(error.response?.data.message);
+				}
+			}
 		}
 	};
 
