@@ -3,33 +3,52 @@ import Button from 'components/organisms/common/Button';
 import TextInput from 'components/atoms/auth/TextInput';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { useNavigate } from 'react-router-dom';
-import { loginApi } from 'utils/apis/member';
-import { LoginApiBody } from 'types/api';
+import { loginApi } from 'utils/apis/auth';
+import { toast } from 'react-hot-toast';
+import { useRecoilState } from 'recoil';
+import { authState } from 'store/user';
 import { LoginFormContainer } from './style';
 
 function LoginForm() {
 	const navigate = useNavigate();
-	const [memberId, setMemberId] = useState('');
-	const [memberPw, setMemberPw] = useState('');
+	const [loginId, setLoginId] = useState('');
+	const [password, setPassword] = useState('');
 	const [saveLoginState, setSaveLoginState] = useState(false);
+	const [, setAuth] = useRecoilState(authState);
 
 	const login = async () => {
 		try {
-			const body: LoginApiBody = {
-				loginId: memberId,
-				password: memberPw,
+			const body = {
+				loginId,
+				password,
 			};
+
 			const response = await loginApi(body);
-			console.log(response);
+
+			if (response.status === 200) {
+				toast.success('로그인에 성공했습니다.');
+				console.log(response);
+				localStorage.setItem('grantType', response.data.data.grantType);
+				localStorage.setItem('accessToken', response.data.data.accessToken);
+				localStorage.setItem('refreshToken', response.data.data.refreshToken);
+
+				const auth = {
+					grantType: response.data.data.grantType,
+					accessToken: response.data.data.accessToken,
+				};
+
+				setAuth(auth);
+				navigate('/');
+			}
 		} catch (error) {
-			console.error(error);
+			toast.error('아이디와 비밀번호를 확인하세요');
 		}
 	};
 	return (
 		<LoginFormContainer $saveLoginState={saveLoginState}>
 			<div className="login-input">
-				<TextInput value={memberId} setValue={setMemberId} placeholder="아이디" />
-				<TextInput value={memberPw} setValue={setMemberPw} placeholder="비밀번호" />
+				<TextInput value={loginId} setValue={setLoginId} label="아이디" placeholder="" type="text" />
+				<TextInput value={password} setValue={setPassword} label="비밀번호" placeholder="" type="password" />
 				<button type="button" className="save-login-state-btn" onClick={() => setSaveLoginState(!saveLoginState)}>
 					<Check />
 					로그인 상태 유지
