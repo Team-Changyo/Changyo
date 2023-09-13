@@ -8,6 +8,7 @@ import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
+import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -100,45 +101,40 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("보증금 송금내역 목록 조회 API")
+    @DisplayName("보증금 송금내역 반환대기 목록 조회 API")
     @Test
     @WithMockUser(roles = "MEMBER")
-    void getWithdrawalTrades() throws Exception {
+    void getWaitingWithdrawalTrades() throws Exception {
 
-        WithdrawalDetailResponse waitDetail1 = WithdrawalDetailResponse.builder()
+        WaitWithdrawalDetailResponse detail1 = WaitWithdrawalDetailResponse.builder()
                 .tradeId(1L)
                 .qrCodeTitle("럭셔리 글램핑 객실이용")
                 .memberName("전인혁")
-                .withdrawalAmount(20000)
+                .amount(20000)
                 .status(TradeStatus.WAIT)
-                .tradeDate(LocalDateTime.of(2023, 3, 8, 19, 30))
                 .build();
-        WithdrawalDetailResponse doneDetail1 = WithdrawalDetailResponse.builder()
+        WaitWithdrawalDetailResponse detail2 = WaitWithdrawalDetailResponse.builder()
                 .tradeId(1L)
                 .qrCodeTitle("럭셔리 글램핑 2호점 객실이용")
                 .memberName("전인혁")
-                .withdrawalAmount(30000)
+                .amount(30000)
                 .status(TradeStatus.DONE)
-                .tradeDate(LocalDateTime.of(2023, 3, 8, 19, 30))
                 .build();
-        List<WithdrawalDetailResponse> waitDetails = List.of(waitDetail1);
-        List<WithdrawalDetailResponse> doneDetails = List.of(doneDetail1);
-        WithdrawalResponse response = WithdrawalResponse.builder()
-                .waitCount(1)
-                .doneCount(1)
-                .waitWithdrawals(waitDetails)
-                .doneWithdrawals(doneDetails)
+        List<WaitWithdrawalDetailResponse> details = List.of(detail1, detail2);
+        WaitWithdrawalResponse response = WaitWithdrawalResponse.builder()
+                .totalCount(2)
+                .waitWithdrawals(details)
                 .build();
 
-        given(tradeQueryService.getWithdrawalTrades(anyString()))
+        given(tradeQueryService.getWaitingWithdrawalTrades(anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/trade/withdrawal")
+                        get("/trade/withdrawal/wait")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("search-withdrawals",
+                .andDo(document("search-waiting-withdrawals",
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -149,10 +145,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
-                                fieldWithPath("data.waitCount").type(JsonFieldType.NUMBER)
-                                        .description("반환대기 건수"),
-                                fieldWithPath("data.doneCount").type(JsonFieldType.NUMBER)
-                                        .description("반환완료 건수"),
+                                fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER)
+                                        .description("전체 반환대기 건수"),
                                 fieldWithPath("data.waitWithdrawals").type(JsonFieldType.ARRAY)
                                         .description("반환대기 거래내역리스트"),
                                 fieldWithPath("data.waitWithdrawals[].tradeId").type(JsonFieldType.NUMBER)
@@ -161,12 +155,68 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("QR 코드 이름"),
                                 fieldWithPath("data.waitWithdrawals[].memberName").type(JsonFieldType.STRING)
                                         .description("송금처"),
-                                fieldWithPath("data.waitWithdrawals[].withdrawalAmount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.waitWithdrawals[].amount").type(JsonFieldType.NUMBER)
                                         .description("송금 금액"),
-                                fieldWithPath("data.waitWithdrawals[].status").type(JsonFieldType.STRING)
-                                        .description("거래 상태"),
                                 fieldWithPath("data.waitWithdrawals[].tradeDate").type(JsonFieldType.STRING)
-                                        .description("반환일시"),
+                                        .description("반환일시")
+                        )
+                ));
+    }
+
+    @DisplayName("보증금 송금내역 반환완료 목록 조회 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void getDoneWithdrawalTrades() throws Exception {
+
+        DoneWithdrawalDetailResponse detail1 = DoneWithdrawalDetailResponse.builder()
+                .tradeId(1L)
+                .qrCodeTitle("럭셔리 글램핑 객실이용")
+                .memberName("전인혁")
+                .amount(20000)
+                .tradeDate(LocalDateTime.of(2023, 8, 24, 14, 30))
+                .build();
+        DoneWithdrawalDetailResponse detail2 = DoneWithdrawalDetailResponse.builder()
+                .tradeId(1L)
+                .qrCodeTitle("럭셔리 글램핑 2호점 객실이용")
+                .memberName("전인혁")
+                .amount(30000)
+                .tradeDate(LocalDateTime.of(2023, 8, 24, 14, 30))
+                .build();
+        List<DoneWithdrawalDetailResponse> details = List.of(detail1, detail2);
+        DoneWithdrawalResponse response = DoneWithdrawalResponse.builder()
+                .hasNextPage(false)
+                .totalCount(2)
+                .doneWithdrawals(details)
+                .build();
+
+        given(tradeQueryService.getDoneWithdrawalTrades(anyString(), anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        get("/trade/withdrawal/done")
+                                .param("lastTradeId", "2")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("search-done-withdrawals",
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("lastTradeId")
+                                        .description("마지막으로 조회된 거래내역 식별키")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.hasNextPage").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 페이지 존재여부"),
+                                fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER)
+                                        .description("전체 반환완료 건수"),
                                 fieldWithPath("data.doneWithdrawals").type(JsonFieldType.ARRAY)
                                         .description("반환완료 거래내역리스트"),
                                 fieldWithPath("data.doneWithdrawals[].tradeId").type(JsonFieldType.NUMBER)
@@ -175,10 +225,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("QR 코드 이름"),
                                 fieldWithPath("data.doneWithdrawals[].memberName").type(JsonFieldType.STRING)
                                         .description("송금처"),
-                                fieldWithPath("data.doneWithdrawals[].withdrawalAmount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.doneWithdrawals[].amount").type(JsonFieldType.NUMBER)
                                         .description("송금 금액"),
-                                fieldWithPath("data.doneWithdrawals[].status").type(JsonFieldType.STRING)
-                                        .description("거래 상태"),
                                 fieldWithPath("data.doneWithdrawals[].tradeDate").type(JsonFieldType.STRING)
                                         .description("반환일시")
                         )
@@ -208,20 +256,25 @@ public class TradeControllerDocsTest extends RestDocsSupport {
         List<DepositOverviewResponse> overviews = List.of(overview1, overview2);
 
         DepositResponse response = DepositResponse.builder()
-                .totalCount(1)
+                .totalCount(2)
                 .depositOverviews(overviews)
                 .build();
 
-        given(tradeQueryService.getDepositTrades(anyString()))
+        given(tradeQueryService.getDepositTrades(anyString(), anyLong()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit")
+                                .param("lastQrCodeId", "2")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-deposits",
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                          parameterWithName("lastQrCodeId")
+                                  .description("마지막으로 조회된 QR 코드 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -231,6 +284,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
+                                fieldWithPath("data.hasNextPage").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 페이지 존재여부"),
                                 fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER)
                                         .description("보증금 정산관리 건수"),
                                 fieldWithPath("data.depositOverviews").type(JsonFieldType.ARRAY)
@@ -279,12 +334,13 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .doneDetails(List.of(detail2))
                 .build();
 
-        given(tradeQueryService.getDepositDetails(anyLong()))
+        given(tradeQueryService.getDepositDetails(anyLong(), anyLong()))
                 .willReturn(response);
 
         mockMvc.perform(
                         get("/trade/deposit/detail")
                                 .param("qrCodeId", qrCodeId)
+                                .param("lastTradeId", "2")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -292,7 +348,9 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("qrCodeId")
-                                        .description("보증금 정산관리 식별키")
+                                        .description("보증금 정산관리 식별키"),
+                                parameterWithName("lastTradeId")
+                                        .description("마지막으로 조회된 거래내역 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -303,6 +361,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터"),
+                                fieldWithPath("data.hasNextPage").type(JsonFieldType.BOOLEAN)
+                                        .description("다음 페이지 존재여부"),
                                 fieldWithPath("data.qrCodeTitle").type(JsonFieldType.STRING)
                                         .description("보증금 정산관리 이름"),
                                 fieldWithPath("data.amount").type(JsonFieldType.NUMBER)

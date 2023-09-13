@@ -65,8 +65,6 @@ public class MemberService {
         return false;
     }
 
-    public
-
     /**
      * 회원 엔티티 생성 및 DB 저장
      *

@@ -35,7 +35,7 @@ public class Trade extends TimeBaseEntity {
     private String content;
     @Column(nullable = false)
     private int balance;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TradeStatus status;
     @Column(nullable = false, length = 100)
