@@ -3,6 +3,7 @@ package com.shinhan.api.domain.account.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.shinhan.api.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
 import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.domain.account.Account;
@@ -50,6 +51,18 @@ public class AccountQueryRepository {
     public Account getAccount(String accountNumber) {
         return queryFactory
                 .selectFrom(account)
+                .where(account.accountNumber.eq(accountNumber))
+                .fetchOne();
+    }
+
+    public AccountDetailResponse getAccountDetail(String accountNumber) {
+        return queryFactory
+                .select(Projections.constructor(AccountDetailResponse.class,
+                        account.balance,
+                        account.accountNumber,
+                        account.customerName
+                        ))
+                .from(account)
                 .where(account.accountNumber.eq(accountNumber))
                 .fetchOne();
     }
