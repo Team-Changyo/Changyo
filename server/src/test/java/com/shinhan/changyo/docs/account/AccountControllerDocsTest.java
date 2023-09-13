@@ -250,6 +250,185 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("입금 계좌 거래내역 상세조회 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void getAccountDetailDeposit() throws Exception {
+        Long accountId = 1L;
+
+        AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
+                .tradeDate("20230220")
+                .tradeTime("023753")
+                .content("전세보증금")
+                .balance(341147)
+                .withdrawalAmount(11000000)
+                .depositAmount(0)
+                .status(1)
+                .build();
+
+        AllTradeResponse allTradeResponses2 = AllTradeResponse.builder()
+                .tradeDate("20230220")
+                .tradeTime("023754")
+                .content("김밥천국")
+                .balance(341147)
+                .withdrawalAmount(0)
+                .depositAmount(5000)
+                .status(1)
+                .build();
+
+        List<AllTradeResponse> tmp = List.of(allTradeResponses1, allTradeResponses2);
+        Map<String, List<AllTradeResponse>> allTradeResponses = Map.of("20230220", tmp);
+
+
+        AccountTradeAllResponse response = AccountTradeAllResponse.builder()
+                .accountId(1L)
+                .accountNumber("12345612")
+                .balance(341147)
+                .bankCode("088")
+                .allTradeResponses(allTradeResponses)
+
+                .build();
+
+        given(accountQueryService.getAccountTradeDeposit(anyString(), anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        get("/account/deposit/1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("search-account-detail-deposit",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data.accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별 키"),
+                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌 번호"),
+                                fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
+                                        .description("잔액"),
+                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행 코드"),
+                                fieldWithPath("data.allTradeResponses").type(JsonFieldType.OBJECT)
+                                        .description("거래 날짜 별 거래내역 List를 담은 Map"),
+                                fieldWithPath("data.allTradeResponses.*").type(JsonFieldType.ARRAY)
+                                        .description("객체 목록"),
+                                fieldWithPath("data.allTradeResponses.*.[].tradeDate").type(JsonFieldType.STRING)
+                                        .description("거래 날짜"),
+                                fieldWithPath("data.allTradeResponses.*.[].tradeTime").type(JsonFieldType.STRING)
+                                        .description("거래 시간"),
+                                fieldWithPath("data.allTradeResponses.*.[].content").type(JsonFieldType.STRING)
+                                        .description("(입금처/출금처)"),
+                                fieldWithPath("data.allTradeResponses.*.[].balance").type(JsonFieldType.NUMBER)
+                                        .description("거래 후 잔액"),
+                                fieldWithPath("data.allTradeResponses.*.[].withdrawalAmount").type(JsonFieldType.NUMBER)
+                                        .description("출금 금액"),
+                                fieldWithPath("data.allTradeResponses.*.[].depositAmount").type(JsonFieldType.NUMBER)
+                                        .description("입금 금액"),
+                                fieldWithPath("data.allTradeResponses.*.[].status").type(JsonFieldType.NUMBER)
+                                        .description("입지 구분 / 1 : 입금 , 2 : 출금")
+                        )
+                ));
+
+
+    }
+
+
+    @DisplayName("출금 계좌 거래내역 상세조회 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void getAccountDetailWithdrawal() throws Exception {
+        Long accountId = 1L;
+
+        AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
+                .tradeDate("20230220")
+                .tradeTime("023753")
+                .content("전세보증금")
+                .balance(341147)
+                .withdrawalAmount(11000000)
+                .depositAmount(0)
+                .status(2)
+                .build();
+
+        AllTradeResponse allTradeResponses2 = AllTradeResponse.builder()
+                .tradeDate("20230220")
+                .tradeTime("023754")
+                .content("김밥천국")
+                .balance(341147)
+                .withdrawalAmount(0)
+                .depositAmount(5000)
+                .status(2)
+                .build();
+
+        List<AllTradeResponse> tmp = List.of(allTradeResponses1, allTradeResponses2);
+        Map<String, List<AllTradeResponse>> allTradeResponses = Map.of("20230220", tmp);
+
+
+        AccountTradeAllResponse response = AccountTradeAllResponse.builder()
+                .accountId(1L)
+                .accountNumber("12345612")
+                .balance(341147)
+                .bankCode("088")
+                .allTradeResponses(allTradeResponses)
+
+                .build();
+
+        given(accountQueryService.getAccountTradeWithdrawal(anyString(), anyLong()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        get("/account/withdrawal/1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("search-account-detail-withdrawal",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data.accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별 키"),
+                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌 번호"),
+                                fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
+                                        .description("잔액"),
+                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행 코드"),
+                                fieldWithPath("data.allTradeResponses").type(JsonFieldType.OBJECT)
+                                        .description("거래 날짜 별 거래내역 List를 담은 Map"),
+                                fieldWithPath("data.allTradeResponses.*").type(JsonFieldType.ARRAY)
+                                        .description("객체 목록"),
+                                fieldWithPath("data.allTradeResponses.*.[].tradeDate").type(JsonFieldType.STRING)
+                                        .description("거래 날짜"),
+                                fieldWithPath("data.allTradeResponses.*.[].tradeTime").type(JsonFieldType.STRING)
+                                        .description("거래 시간"),
+                                fieldWithPath("data.allTradeResponses.*.[].content").type(JsonFieldType.STRING)
+                                        .description("(입금처/출금처)"),
+                                fieldWithPath("data.allTradeResponses.*.[].balance").type(JsonFieldType.NUMBER)
+                                        .description("거래 후 잔액"),
+                                fieldWithPath("data.allTradeResponses.*.[].withdrawalAmount").type(JsonFieldType.NUMBER)
+                                        .description("출금 금액"),
+                                fieldWithPath("data.allTradeResponses.*.[].depositAmount").type(JsonFieldType.NUMBER)
+                                        .description("입금 금액"),
+                                fieldWithPath("data.allTradeResponses.*.[].status").type(JsonFieldType.NUMBER)
+                                        .description("입지 구분 / 1 : 입금 , 2 : 출금")
+                        )
+                ));
+
+
+    }
+
+
+
 
     @DisplayName("계좌 별칭 변경 API")
     @Test
