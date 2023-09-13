@@ -16,8 +16,6 @@ public class QrCodeRequest {
      * 링크
      * 표시명
      */
-    @NotBlank
-    private String url;
 
     @NotBlank
     private Long accountId;
@@ -29,8 +27,7 @@ public class QrCodeRequest {
     private String title;
 
     @Builder
-    public QrCodeRequest(String url, Long accountId, int amount, String title) {
-        this.url = url;
+    public QrCodeRequest(Long accountId, int amount, String title) {
         this.accountId = accountId;
         this.amount = amount;
         this.title = title;
@@ -38,7 +35,6 @@ public class QrCodeRequest {
 
     public QrCodeDto toQrCodeDto(String loginId){
         return QrCodeDto.builder()
-                .url(url)
                 .accountId(accountId)
                 .amount(amount)
                 .title(title)

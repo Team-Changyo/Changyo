@@ -1,4 +1,4 @@
-package com.shinhan.changyo.client;
+package com.shinhan.changyo.client.request;
 
 import lombok.Builder;
 import lombok.Data;

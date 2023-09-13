@@ -14,8 +14,10 @@ import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.security.TokenInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(MemberControllerDocsTest.class)
 public class MemberControllerDocsTest extends RestDocsSupport {
 
     private final MemberService memberService = mock(MemberService.class);
@@ -203,8 +206,9 @@ public class MemberControllerDocsTest extends RestDocsSupport {
             ));
     }
 
-    @DisplayName("회원조회 API")
-//    @Test
+    @DisplayName("회원 정보조회 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
     void getInfo() throws Exception {
         MemberResponse response = MemberResponse.builder()
             .name("홍진식")
@@ -220,7 +224,7 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                     .header("Authentication", "test")
             )
             .andDo(print())
-            .andExpect(status().isFound())
+            .andExpect(status().isOk())
             .andDo(document("search-member",
                 preprocessResponse(prettyPrint()),
                 responseFields(
@@ -230,11 +234,11 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                         .description("상태"),
                     fieldWithPath("message").type(JsonFieldType.STRING)
                         .description("메시지"),
-                    fieldWithPath("data.name").type(JsonFieldType.BOOLEAN)
+                    fieldWithPath("data.name").type(JsonFieldType.STRING)
                         .description("이름"),
-                    fieldWithPath("data.phoneNumber").type(JsonFieldType.BOOLEAN)
+                    fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
                         .description("연락처"),
-                    fieldWithPath("data.role").type(JsonFieldType.BOOLEAN)
+                    fieldWithPath("data.role").type(JsonFieldType.STRING)
                         .description("역할")
                 )
             ));

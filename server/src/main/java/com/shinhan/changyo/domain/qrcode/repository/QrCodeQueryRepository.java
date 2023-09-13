@@ -52,4 +52,17 @@ public class QrCodeQueryRepository {
                 .where(qrCode.qrCodeId.eq(qrCodeId))
                 .fetchOne();
     }
+
+    /**
+     * 마지막으로 저장된 QR 코드 식별키 조회
+     * 
+     * @return 마지막으로 저장된 QR 코드 식별키
+     */
+    public Long getLastSavedQrCodeId() {
+        return queryFactory
+                .select(qrCode.qrCodeId)
+                .from(qrCode)
+                .orderBy(qrCode.qrCodeId.desc())
+                .fetchFirst();
+    }
 }

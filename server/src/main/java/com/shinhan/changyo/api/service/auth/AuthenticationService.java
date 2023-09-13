@@ -1,7 +1,7 @@
 package com.shinhan.changyo.api.service.auth;
 
-import com.shinhan.changyo.client.OneTransferRequest;
-import com.shinhan.changyo.client.OneTransferResponse;
+import com.shinhan.changyo.client.request.OneTransferRequest;
+import com.shinhan.changyo.client.response.OneTransferResponse;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

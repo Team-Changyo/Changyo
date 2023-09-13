@@ -34,3 +34,8 @@ include::api/qrcode/qrcode.adoc[]
 
 include::api/auth/authentication-account.adoc[]
 include::api/auth/authentication-check-account.adoc[]
+
+[[Transfer-API]]
+== Transfer API
+
+include::api/transfer/transfer.adoc[]

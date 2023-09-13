@@ -1,0 +1,10 @@
+[[account-detail]]
+=== 계좌정보조회
+
+==== HTTP Request
+include::{snippets}/account-detail/http-request.adoc[]
+include::{snippets}/account-detail/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/account-detail/http-response.adoc[]
+include::{snippets}/account-detail/response-fields.adoc[]

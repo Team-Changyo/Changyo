@@ -1,6 +1,7 @@
 package com.shinhan.api.api.controller;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.OK;
