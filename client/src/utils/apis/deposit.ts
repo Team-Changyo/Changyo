@@ -13,7 +13,7 @@ export const findAllSettlementGroupApi = async () => {
 };
 
 // 보증금 정산관리 상세조회
-export const findAllSettlementApi = async (qrCodeId: number) => {
+export const findAllSettlementApi = async (qrCodeId: string) => {
 	const response = await instance.get(`/trade/deposit?qrCodeId=${qrCodeId}`);
 	return response;
 };
