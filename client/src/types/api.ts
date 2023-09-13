@@ -21,11 +21,8 @@ export interface WithdrawalApiBody {
 
 // - account
 export interface RegisterAccountApi {
-	memberId: number;
-	customerName: string;
 	bankCode: string;
 	accountNumber: string;
-	productName: string;
 	title: string;
 	mainAccount: boolean;
 }

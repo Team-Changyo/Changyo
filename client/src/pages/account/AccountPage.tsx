@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageLayout from 'layouts/common/PageLayout';
 import AccountPageLayout from 'layouts/page/account/AccountPageLayout';
 import AccountTotalSummary from 'components/organisms/account/AccountTotalSummary';
@@ -7,11 +7,34 @@ import AccountList from 'components/organisms/account/AccountList';
 import MainTabNavbar from 'components/organisms/common/MainTabNavbar';
 import { useNavigate } from 'react-router-dom';
 import UnderlineButton from 'components/atoms/common/UnderlineButton';
+import { findAllAccountApi } from 'utils/apis/account';
+import { isAxiosError } from 'axios';
+import { toast } from 'react-hot-toast';
+import { IAccount } from 'types/account';
 
 function AccountPage() {
-	const [selectedCode, setSelectedCode] = useState('000');
+	const [selectedCode, setSelectedCode] = useState('000'); // 은행구분
+	const [accountList, setAccountList] = useState<IAccount[]>([]);
+	const [totalMoney, setTotalMoney] = useState(0);
 	const navigate = useNavigate();
 
+	const fetchAccountData = async () => {
+		try {
+			const response = await findAllAccountApi();
+			if (response.status === 200) {
+				setAccountList(response.data.data.accountDetailResponses);
+				setTotalMoney(response.data.data.accountSize);
+			}
+		} catch (error) {
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message);
+			}
+		}
+	};
+
+	useEffect(() => {
+		fetchAccountData();
+	}, []);
 	// TODO : api 연결 후 수정
 	return (
 		<PageLayout>
@@ -22,11 +45,11 @@ function AccountPage() {
 						navBtn={<UnderlineButton text="계좌 등록하기" handleClick={() => navigate('register')} type="Primary" />}
 					/>
 				}
-				AccountSummary={<AccountTotalSummary accountCnt={2} totalMoney={200501} />}
+				AccountSummary={<AccountTotalSummary accountCnt={accountList.length} totalMoney={totalMoney} />}
 				AccountFilterList={
-					<AccountFilterList bankCodes={[]} selectedCode={selectedCode} setSelectedCode={setSelectedCode} />
+					<AccountFilterList bankCodes={['088']} selectedCode={selectedCode} setSelectedCode={setSelectedCode} />
 				}
-				AccountList={<AccountList accountList={[{ code: '000' }]} selectedCode={selectedCode} />}
+				AccountList={<AccountList accountList={accountList} selectedCode={selectedCode} />}
 			/>
 		</PageLayout>
 	);

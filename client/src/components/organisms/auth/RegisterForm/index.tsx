@@ -4,6 +4,7 @@ import Button from 'components/organisms/common/Button';
 import { joinApi } from 'utils/apis/auth';
 import CheckText from 'components/atoms/common/CheckText';
 import { toast } from 'react-hot-toast';
+import { isAxiosError } from 'axios';
 import { RegisterFormContainer } from './style';
 
 interface IRegisterFormProps {
@@ -43,7 +44,9 @@ function RegisterForm({ setStep }: IRegisterFormProps) {
 					setStep(2);
 				}
 			} catch (error) {
-				console.error(error);
+				if (isAxiosError(error)) {
+					toast.error(error.response?.data.message);
+				}
 			}
 		} else {
 			toast.error('항목을 모두 입력해주세요.');

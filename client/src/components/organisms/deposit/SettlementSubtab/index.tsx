@@ -21,24 +21,8 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGroup }) {
 	const [value, setValue] = React.useState(0);
 
-	// API 나오면 통합
-	const settlements: ISettlement[] = [
-		{ key: 0, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '홍진식' },
-		{ key: 1, isReturned: true, dateTime: '2023-03-08 11:53', depositorName: '김진식' },
-		{ key: 2, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '홍진식' },
-		{ key: 3, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 4, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 5, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 6, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 7, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 8, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 9, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 10, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 11, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 12, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 13, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 14, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최익현' },
-	];
+	// TODO : API 나오면 통합 (보증금 정산관리 상세 조회)
+	const settlements: ISettlement[] = [{ tradeId: 1, memberName: '전인혁', status: 'WAIT', tradeDate: '2023' }];
 
 	return (
 		<SettlementSubtabContainer>
@@ -53,7 +37,7 @@ function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGro
 				{/* 반환 전 탭 */}
 				<TabPanel value={value} index={0}>
 					<SettlementList
-						settlements={settlements.filter((el) => !el.isReturned)}
+						settlements={settlements.filter((el) => !el.status)}
 						isReturned={false}
 						settlementGroup={settlementGroup}
 					/>
@@ -62,7 +46,7 @@ function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGro
 				{/* 반환 완료 탭 */}
 				<TabPanel value={value} index={1}>
 					<SettlementList
-						settlements={settlements.filter((el) => el.isReturned)}
+						settlements={settlements.filter((el) => el.status)}
 						isReturned
 						settlementGroup={settlementGroup}
 					/>

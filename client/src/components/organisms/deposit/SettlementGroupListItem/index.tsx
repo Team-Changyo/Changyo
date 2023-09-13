@@ -11,14 +11,14 @@ interface ISettlementGroupListItemProps {
 
 function SettlementGroupListItem({ settlementGroup }: ISettlementGroupListItemProps) {
 	const navigate = useNavigate();
-	const formattedMoneyUnit = formatMoney(settlementGroup.moneyUnit);
-	const formattedTotalMoney = formatMoney(settlementGroup.cntBeforeReturn * settlementGroup.moneyUnit);
+	const formattedMoneyUnit = formatMoney(settlementGroup.amount);
+	const formattedTotalMoney = formatMoney(settlementGroup.remainTotal);
 
 	return (
-		<SettlementGroupListItemContainer onClick={() => navigate(`settlement/${settlementGroup.key}`)}>
+		<SettlementGroupListItemContainer onClick={() => navigate(`settlement/${settlementGroup.qrCodeId}`)}>
 			<div className="left">
 				<div>
-					<span className="title">{settlementGroup.title}</span> 건
+					<span className="title">{settlementGroup.qrCodeTitle}</span> 건
 				</div>
 				<div className="money-unit-row">
 					입금단위 <span>{formattedMoneyUnit}원</span>
@@ -28,8 +28,8 @@ function SettlementGroupListItem({ settlementGroup }: ISettlementGroupListItemPr
 				</div>
 			</div>
 			<div className="right">
-				{settlementGroup.cntBeforeReturn ? (
-					<span className="before-return">반환 전 {settlementGroup.cntBeforeReturn}건</span>
+				{settlementGroup.remainCount ? (
+					<span className="before-return">반환 전 {settlementGroup.remainCount}건</span>
 				) : (
 					<span className="after-return">반환완료</span>
 				)}

@@ -13,8 +13,14 @@ export const joinApi = async (body: JoinApiBody) => {
 	return response;
 };
 
-// 회원가입
+// 회원탈퇴
 export const withdrawalApi = async (body: WithdrawalApiBody) => {
 	const response = await instance.post('/withdrawal', body);
+	return response;
+};
+
+// 회원 정보조회
+export const findMemberInfo = async () => {
+	const response = await instance.get('/info');
 	return response;
 };

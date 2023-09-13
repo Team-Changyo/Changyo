@@ -5,8 +5,6 @@ import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { useNavigate } from 'react-router-dom';
 import { loginApi } from 'utils/apis/auth';
 import { toast } from 'react-hot-toast';
-import { useRecoilState } from 'recoil';
-import { authState } from 'store/user';
 import { LoginFormContainer } from './style';
 
 function LoginForm() {
@@ -14,7 +12,6 @@ function LoginForm() {
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [saveLoginState, setSaveLoginState] = useState(false);
-	const [, setAuth] = useRecoilState(authState);
 
 	const login = async () => {
 		try {
@@ -26,18 +23,11 @@ function LoginForm() {
 			const response = await loginApi(body);
 
 			if (response.status === 200) {
-				toast.success('로그인에 성공했습니다.');
-				console.log(response);
-				localStorage.setItem('grantType', response.data.data.grantType);
+				toast.success('로그인 되었습니다.');
+
 				localStorage.setItem('accessToken', response.data.data.accessToken);
 				localStorage.setItem('refreshToken', response.data.data.refreshToken);
 
-				const auth = {
-					grantType: response.data.data.grantType,
-					accessToken: response.data.data.accessToken,
-				};
-
-				setAuth(auth);
 				navigate('/');
 			}
 		} catch (error) {

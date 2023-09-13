@@ -48,7 +48,6 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "MEMBER")
     void createQr() throws Exception{
         QrCodeRequest request = QrCodeRequest.builder()
-                .url("www.naver.com")
                 .accountId(1L)
                 .amount(20000)
                 .title("프라이빗 객실")
@@ -79,8 +78,6 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL"),
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("계좌 식별 키"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)

@@ -22,13 +22,15 @@ import SettlementDetail from 'pages/deposit/SettlementDetail';
 import AccountRegisterPage from 'pages/account/AccountRegisterPage';
 import SuccessPage from 'pages/etc/SuccessPage';
 import FailPage from 'pages/etc/FailPage';
-import { Toaster } from 'react-hot-toast';
-import { authState } from 'store/user';
+import { Toaster, toast } from 'react-hot-toast';
+import { memberInfoState } from 'store/member';
+import { isAxiosError } from 'axios';
+import { findMemberInfo } from 'utils/apis/auth';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
 	const [isLoading, setIsLoading] = useState(true);
-	const [auth, setAuth] = useRecoilState(authState);
+	const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
 
 	const loading = () => {
 		setTimeout(() => {
@@ -36,18 +38,23 @@ function AppRouter() {
 		}, 1500);
 	};
 
-	const fetchUserData = () => {
+	const fetchUserData = async () => {
 		const accessToken = localStorage.getItem('accessToken');
-		const grantType = localStorage.getItem('grantType');
 
-		// TODO API 나오면 로직 추가
-		if (accessToken && grantType) {
-			const authData = {
-				grantType,
-				accessToken,
-			};
+		if (accessToken) {
+			try {
+				const response = await findMemberInfo();
 
-			setAuth(authData);
+				if (response.status === 200) {
+					setMemberInfo(response.data.data);
+					toast.success('로그인 되었습니다.');
+				}
+			} catch (error) {
+				console.error(error);
+				if (isAxiosError(error)) {
+					toast.error(error.response?.data.message);
+				}
+			}
 		}
 	};
 
@@ -69,7 +76,7 @@ function AppRouter() {
 					) : (
 						<>
 							<Routes>
-								<Route path="/" element={<Navigate replace to={auth ? '/account' : '/auth/login'} />} />
+								<Route path="/" element={<Navigate replace to={memberInfo ? '/account' : '/auth/login'} />} />
 								<Route path="/auth/login" element={<LoginPage />} />
 								<Route path="/auth/register" element={<RegisterPage />} />
 

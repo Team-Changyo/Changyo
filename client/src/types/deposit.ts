@@ -7,15 +7,16 @@ export interface IDepositHistory {
 }
 
 export interface ISettlementGroup {
-	key: number;
-	title: string;
-	moneyUnit: number;
-	cntBeforeReturn: number;
+	qrCodeId: number;
+	qrCodeTitle: string;
+	amount: number;
+	remainTotal: number;
+	remainCount: number;
 }
 
 export interface ISettlement {
-	key: number;
-	depositorName: string;
-	dateTime: string;
-	isReturned: boolean;
+	tradeId: number;
+	status: 'WAIT' | 'DONE';
+	memberName: string;
+	tradeDate: string;
 }
