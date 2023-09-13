@@ -47,7 +47,7 @@ public class AccountController {
         log.debug("CreateAccountRequest={}", request);
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        Long saveId = accountService.createAccount(request.toCreateAccountDto(loginId));
+        Long saveId = accountService.createAccount(request, loginId);
         log.debug("saveId={}", saveId);
 
         return ApiResponse.created(saveId);

@@ -1,12 +1,15 @@
 package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.ApiResponse;
+import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
+import com.shinhan.changyo.client.request.AccountDetailRequest;
 import com.shinhan.changyo.client.request.BalanceRequest;
 import com.shinhan.changyo.client.response.BalanceResponse;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
+import com.shinhan.changyo.client.response.DetailResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
@@ -43,8 +46,15 @@ public class AccountService {
      * @param dto 등록할 계좌 정보
      * @return 등록된 계좌 식별키
      */
-    public Long createAccount(CreateAccountDto dto) {
-        Member member = getMember(dto.getLoginId());
+    public Long createAccount(CreateAccountRequest request, String loginId) {
+
+        Member member = getMember(loginId);
+        ApiResponse<DetailResponse> response = shinHanApiClient.getAccountDetail(
+                createAccountDetailRequest(request.getAccountNumber())
+        );
+
+
+        CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 
         Account savedAccount = saveAccount(dto, member);
 
@@ -124,6 +134,13 @@ public class AccountService {
      * @param accountNumber 계좌번호
      * @return 요청 객체
      */
+
+    private AccountDetailRequest createAccountDetailRequest(String accountNumber){
+        return AccountDetailRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
+    }
+
     private BalanceRequest createBalanceRequest(String accountNumber) {
         return BalanceRequest.builder()
                 .accountNumber(accountNumber)

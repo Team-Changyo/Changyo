@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.controller.account.request;
 
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
+import com.shinhan.changyo.client.response.DetailResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,13 +29,13 @@ public class CreateAccountRequest {
         this.mainAccount = mainAccount;
     }
 
-    public CreateAccountDto toCreateAccountDto(String loginId) {
+    public CreateAccountDto toCreateAccountDto(DetailResponse response, String loginId) {
         return CreateAccountDto.builder()
                 .loginId(loginId)
-                .customerName(this.customerName)
+                .customerName(response.getCustomerName())
                 .bankCode(this.bankCode)
                 .accountNumber(this.accountNumber)
-                .productName(this.productName)
+                .productName(response.getProductName())
                 .title(this.title)
                 .mainAccount(this.mainAccount)
                 .build();

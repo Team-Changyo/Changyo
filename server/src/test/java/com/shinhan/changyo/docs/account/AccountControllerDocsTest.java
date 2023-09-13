@@ -47,17 +47,15 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "MEMBER")
     void createAccount() throws Exception {
         CreateAccountRequest request = CreateAccountRequest.builder()
-                .customerName("김싸피")
                 .bankCode("088")
                 .accountNumber("110184999999")
-                .productName("예금")
                 .title("싸피월급통장")
                 .mainAccount(true)
                 .build();
 
         Long accountId = 1L;
 
-        given(accountService.createAccount(any(CreateAccountDto.class)))
+        given(accountService.createAccount(any(CreateAccountRequest.class), anyString()))
                 .willReturn(accountId);
 
         mockMvc.perform(
@@ -71,14 +69,10 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("customerName").type(JsonFieldType.STRING)
-                                        .description("고객명"),
                                 fieldWithPath("bankCode").type(JsonFieldType.STRING)
                                         .description("은행코드"),
                                 fieldWithPath("accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
-                                fieldWithPath("productName").type(JsonFieldType.STRING)
-                                        .description("상품명"),
                                 fieldWithPath("title").type(JsonFieldType.STRING)
                                         .description("별칭"),
                                 fieldWithPath("mainAccount").type(JsonFieldType.BOOLEAN)
