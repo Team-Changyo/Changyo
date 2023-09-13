@@ -15,6 +15,7 @@ import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
+import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ import java.util.Map;
 public class QrCodeService {
     private final QrCodeRepository qrCodeRepository;
     private final AccountRepository accountRepository;
+    private final QrCodeQueryRepository qrCodeQueryRepository;
+
     /**
      * QR코드 증록
      *
@@ -48,24 +51,24 @@ public class QrCodeService {
      */
 
     public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
-        try{
+        try {
+            Long lastSaveId = qrCodeQueryRepository.getLastSavedQrCodeId();
             // QR코드 생성
-            String qrCodeBase64 = createQR(dto.getUrl());
+            String url = String.format("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=%s", lastSaveId + 1);
+            String qrCodeBase64 = createQR(url);
 
             // entity 생성
             Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
-            QrCode qrCode = dto.toEntity(qrCodeBase64, findAccount);
 
             // loginID와 계좌번호를 등록한 loginId가 같지 않을 경우
-            if(!findAccount.getMember().getLoginId().equals(dto.getLoginId())){
+            if (!findAccount.getMember().getLoginId().equals(dto.getLoginId())) {
                 throw new IllegalAccessException("잘못된 접근입니다.");
             }
 
-
             // qr코드 등록
-            qrCodeRepository.save(qrCode);
+            QrCode saveQrCode = qrCodeRepository.save(dto.toEntity(url, qrCodeBase64, findAccount));
 
-            return QrCodeDetailResponse.of(qrCode);
+            return QrCodeDetailResponse.of(saveQrCode);
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
@@ -73,14 +76,15 @@ public class QrCodeService {
     }
 
     public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto) {
-        try{
+        try {
             // QR코드 생성
             String qrCodeBase64 = createQR(dto.getUrl());
 
             // entity 생성
-            Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+            Account findAccount = accountRepository.findById(dto.getAccountId())
+                    .orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
 
-            SimpleQrCodeResponse response = SimpleQrCodeResponse.builder()
+            return SimpleQrCodeResponse.builder()
                     .bankCode(findAccount.getBankCode())
                     .accountNumber(findAccount.getAccountNumber())
                     .customerName(findAccount.getCustomerName())
@@ -88,8 +92,6 @@ public class QrCodeService {
                     .base64QrCode(qrCodeBase64)
                     .url(dto.getUrl())
                     .build();
-
-            return response;
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
@@ -98,27 +100,26 @@ public class QrCodeService {
 
 
     /**
-     *
      * @param url : 계좌 url
      * @return QR코드 base64
      * @throws Exception
      */
     public String createQR(String url) throws Exception {
 
-        BitMatrix bitMatrix=null;
-        MatrixToImageConfig matrixToImageConfig=null;
+        BitMatrix bitMatrix = null;
+        MatrixToImageConfig matrixToImageConfig = null;
         // QRCode에 담고 싶은 정보를 문자열로 표시한다. url이든 뭐든 가능하다.
         String codeInformation = url;
 
         // 큐알코드 바코드 및 배경 색상값
-        int onColor =   0xFF2e4e96; // 바코드 색
+        int onColor = 0xFF2e4e96; // 바코드 색
         int offColor = 0xFFFFFFFF; // 배경 색
 
         // 이름 그대로 QRCode 만들때 쓰는 클래스다
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         // 큐알 전경과 배경의 색을 정한다. 값을 넣지 않으면 검정코드에 흰 배경이 기본값이다.
-        matrixToImageConfig = new MatrixToImageConfig(onColor,offColor);
-        Map<EncodeHintType,String> hints =new HashMap<>();
+        matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
+        Map<EncodeHintType, String> hints = new HashMap<>();
         // QRCode 생성시 조건을 넣어서 만들 수 있게 한다.
         // 여기서 Error_Correction의 경우 큐알 코드가 좀더 자글자글하게 만들어 주는 대신 큐알이 가려져도 인식할 가능성이 더욱 높아진다.
 
@@ -130,13 +131,13 @@ public class QrCodeService {
         Q = ~25% correction
         H = ~30% correction
         */
-        hints.put(EncodeHintType.ERROR_CORRECTION,"L");
+        hints.put(EncodeHintType.ERROR_CORRECTION, "L");
 
 
         // QRCode 전체 크기
         // 단위는 fixel
-        int width=200;
-        int height=200;
+        int width = 200;
+        int height = 200;
 
         // 내부에 빈 공간만들 빈 공간 -> oncolor로 만들어진다.
         //int regionWidth=100;
@@ -144,7 +145,7 @@ public class QrCodeService {
 
         try {
             // bitMatrix 형식으로 QRCode를 만든다.
-            bitMatrix = qrCodeWriter.encode(codeInformation, BarcodeFormat.QR_CODE,width, height);
+            bitMatrix = qrCodeWriter.encode(codeInformation, BarcodeFormat.QR_CODE, width, height);
             // QRCode 중간에 빈공간을 만들고 색을 offColor로 바꿔주는 메소드
 //             bitMatrix= emptyQR(bitMatrix,height,width); // QR내부에 빈 공간 만드는 메소드(사용할 경우 hint의 error_correction 을 반드시 높여줘야 합니다)
         } catch (Exception e) {
@@ -176,30 +177,30 @@ public class QrCodeService {
 //        fileOutputStream.write(outputStream.toByteArray());
 //        fileOutputStream.close();
 
-    // byteArray를 base64로 변환한 이유는 프론트에서 파일경로가 아닌 binary 형식으로 전송해서 보여주기 위해서다.
-    // 이렇게 할 경우 DB에 이미지를 저장하지 않고 화면에 보여줄 수 있다.
+        // byteArray를 base64로 변환한 이유는 프론트에서 파일경로가 아닌 binary 형식으로 전송해서 보여주기 위해서다.
+        // 이렇게 할 경우 DB에 이미지를 저장하지 않고 화면에 보여줄 수 있다.
         return Base64.getEncoder().encodeToString(outputStream.toByteArray());
-}
+    }
 
     private BitMatrix emptyQR(BitMatrix bitMatrix, int regionHeight, int regionWidth) {
         // 이 메소드는 bitmatrix에 네모난 공간을 만드는 것이다.
 
         // 빈 공간의 넓이와 높이
-        int width=bitMatrix.getWidth();
-        int height=bitMatrix.getHeight();
+        int width = bitMatrix.getWidth();
+        int height = bitMatrix.getHeight();
 
         // 빈 공간의 위치(중앙으로 설정했다.)
-        int left=(width-regionWidth)/2;
-        int top=(height-regionHeight)/2;
+        int left = (width - regionWidth) / 2;
+        int top = (height - regionHeight) / 2;
 
         // 빈 공간 생성하기(이때 색은 offColor)
-        bitMatrix.setRegion(left,top,regionWidth,regionHeight);
+        bitMatrix.setRegion(left, top, regionWidth, regionHeight);
         // 빈 공간의 색을 배경색으로 반전시킨다.(fixel 단위로 찾아서 색을 뒤집는다.)
-        for (int y = top; y <= top+regionHeight; y++) {
-            for (int x = left; x <= left+regionWidth; x++) {
-                if(bitMatrix.get(x, y)){
-                    bitMatrix.unset(x,y);
-                };
+        for (int y = top; y <= top + regionHeight; y++) {
+            for (int x = left; x <= left + regionWidth; x++) {
+                if (bitMatrix.get(x, y)) {
+                    bitMatrix.unset(x, y);
+                }
             }
         }
         return bitMatrix;
