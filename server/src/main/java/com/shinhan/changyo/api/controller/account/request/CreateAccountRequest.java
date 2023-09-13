@@ -12,24 +12,18 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class CreateAccountRequest {
     @NotBlank
-    private String customerName;
-    @NotBlank
     private String bankCode;
     @NotBlank
     private String accountNumber;
-    @NotBlank
-    private String productName;
     @NotBlank
     private String title;
     @NotNull
     private Boolean mainAccount;
 
     @Builder
-    public CreateAccountRequest(String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
-        this.customerName = customerName;
+    public CreateAccountRequest(String bankCode, String accountNumber, String title, Boolean mainAccount) {
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
-        this.productName = productName;
         this.title = title;
         this.mainAccount = mainAccount;
     }
