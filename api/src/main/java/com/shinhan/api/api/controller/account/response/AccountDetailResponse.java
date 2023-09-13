@@ -1,5 +1,6 @@
 package com.shinhan.api.api.controller.account.response;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ public class AccountDetailResponse {
     private String productName;
     private String customerName;
 
+    @Builder
     public AccountDetailResponse(int balance, String productName, String customerName) {
         this.balance = balance;
         this.productName = productName;
