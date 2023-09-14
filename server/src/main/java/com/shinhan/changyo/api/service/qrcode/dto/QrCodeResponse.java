@@ -13,13 +13,15 @@ public class QrCodeResponse {
     private Long qrCodeId;
     private String title;
     private String accountNumber;
+    private String bankCode;
     private int amount;
 
     @Builder
-    public QrCodeResponse(Long qrCodeId, String title, String accountNumber, int amount) {
+    public QrCodeResponse(Long qrCodeId, String title, String accountNumber, String bankCode, int amount) {
         this.qrCodeId = qrCodeId;
         this.title = title;
         this.accountNumber = accountNumber;
+        this.bankCode = bankCode;
         this.amount = amount;
     }
 }
