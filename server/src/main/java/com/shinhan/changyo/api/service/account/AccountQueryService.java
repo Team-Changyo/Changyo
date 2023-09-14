@@ -6,6 +6,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
 import com.shinhan.changyo.api.service.account.exception.NoAccountException;
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TradeRequest;
 import com.shinhan.changyo.client.response.TradeDetailResponse;
@@ -142,14 +143,14 @@ public class AccountQueryService {
      * @param status 입지 구분 0 : 전체 / 1 : 입금(deposit) / 2 : 출금(withdrawal)
      * @return
      */
+
     private AccountTradeAllResponse getTradeResponse(String loginId, Long accountId, int status){
         // 계좌 조회
         Account findAccount = accountRepository.findById(accountId).orElseThrow(() ->
                 new NoSuchElementException("존재 하지 않는 계좌입니다."));
-
         // 접근 권한 체크
         if(!findAccount.getMember().getLoginId().equals(loginId)){
-            throw new SecurityException("접근 권한이 없습니다.");
+            throw new ForbiddenException("접근 권한이 없습니다.");
         }
 
         // 신한 api 호출
