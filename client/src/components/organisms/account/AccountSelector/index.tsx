@@ -13,7 +13,7 @@ interface IAccountSelectorProps {
 function AccountSelector({ accounts, selected, setSelected }: IAccountSelectorProps) {
 	return (
 		<AccountSelectorContainer>
-			<AccountSelectListItem account={selected} />
+			{selected ? <AccountSelectListItem account={selected} /> : <div />}
 			{/* TODO(0907) : onclick하면 계좌 선택하는 모달 만들기 */}
 			{false ? <AccountSelectList accounts={accounts} setSelected={setSelected} /> : <div />}
 		</AccountSelectorContainer>

@@ -6,15 +6,15 @@ import { ReactComponent as Change } from 'assets/icons/account/change.svg';
 import { AccountSelectListItemContainer } from './style';
 
 function AccountSelectListItem({ account, onlyView }: { account: IAccount; onlyView?: boolean }) {
-	const bankName = formatBankCode(account.bankCode);
+	const bankName = formatBankCode(account?.bankCode);
 
 	return (
 		<AccountSelectListItemContainer>
 			<div className="account">
 				<Shinhan />
-				{account.alias}{' '}
+				{account?.title}
 				<span>
-					{bankName} {account.accountNumber}
+					{bankName} {account?.accountNumber}
 				</span>
 			</div>
 			{onlyView ? (
