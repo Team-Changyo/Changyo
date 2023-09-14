@@ -40,8 +40,10 @@ public class TransferControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "MEMBER")
     void getTransferInfo() throws Exception {
         Long qrCodeId = 1L;
+        Long accountId = 1L;
 
         ClientAccountResponse clientAccount = ClientAccountResponse.builder()
+                .accountId(accountId)
                 .bankCode("088")
                 .accountNumber("110291999999")
                 .productName("입출금통장")
@@ -98,6 +100,8 @@ public class TransferControllerDocsTest extends RestDocsSupport {
                                         .description("입금 계좌 회원명"),
                                 fieldWithPath("data.clientAccount").type(JsonFieldType.OBJECT)
                                         .description("출금 계좌 정보"),
+                                fieldWithPath("data.clientAccount.accountId").type(JsonFieldType.NUMBER)
+                                        .description("출금 계좌 식별키"),
                                 fieldWithPath("data.clientAccount.bankCode").type(JsonFieldType.STRING)
                                         .description("출금 은행코드"),
                                 fieldWithPath("data.clientAccount.accountNumber").type(JsonFieldType.STRING)
