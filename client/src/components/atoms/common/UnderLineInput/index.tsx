@@ -20,10 +20,9 @@ function UnderLineInput<T>(props: IUnderLineInputProps<T>) {
 		setDisplayValue(e.target.value as T);
 	};
 
-	console.log(type);
 	return (
 		<UnderLineInputWrapper $width={width}>
-			<Input type="" value={displayValue} onChange={handleChange} placeholder={placeholder} disabled={disabled} />{' '}
+			<Input type={type} value={displayValue} onChange={handleChange} placeholder={placeholder} disabled={disabled} />
 			{unitText}
 		</UnderLineInputWrapper>
 	);
