@@ -14,9 +14,13 @@ import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
+import com.shinhan.changyo.domain.member.Member;
+import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
+import com.shinhan.changyo.domain.qrcode.SimpleQrCode;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
+import com.shinhan.changyo.domain.qrcode.repository.SimpleQrCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,6 +46,8 @@ public class QrCodeService {
     private final QrCodeRepository qrCodeRepository;
     private final AccountRepository accountRepository;
     private final QrCodeQueryRepository qrCodeQueryRepository;
+    private final SimpleQrCodeRepository simpleQrCodeRepository;
+    private final MemberQueryRepository memberQueryRepository;
 
     /**
      * QR코드 증록
@@ -78,23 +84,17 @@ public class QrCodeService {
         }
     }
 
-    public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto) {
+    public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto, String loginId) {
         try {
+            Member member = memberQueryRepository.getMemberByLoginId(loginId);
+            SimpleQrCode saveQrCode = simpleQrCodeRepository.save(dto.toEntity(member.getName()));
             // QR코드 생성
-            String qrCodeBase64 = createQR(dto.getUrl());
+            String url = String.format("https://j9c205.ssafy.io/remittance/normal?simpleQrCodeId=%s", saveQrCode.getId());
+            String qrCodeBase64 = createQR(url);
+            saveQrCode.editUrlAndQrCodeBase64(url, qrCodeBase64);
 
-            // entity 생성
-            Account findAccount = accountRepository.findById(dto.getAccountId())
-                    .orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+            return SimpleQrCodeResponse.of(saveQrCode);
 
-            return SimpleQrCodeResponse.builder()
-                    .bankCode(findAccount.getBankCode())
-                    .accountNumber(findAccount.getAccountNumber())
-                    .customerName(findAccount.getCustomerName())
-                    .amount(dto.getAmount())
-                    .base64QrCode(qrCodeBase64)
-                    .url(dto.getUrl())
-                    .build();
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
