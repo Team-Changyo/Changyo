@@ -4,7 +4,9 @@ import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
-import com.shinhan.changyo.api.service.member.exception.DuplicateException;
+import com.shinhan.changyo.api.service.account.exception.NoAccountException;
+import com.shinhan.changyo.api.service.util.exception.DuplicateException;
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.request.AccountDetailRequest;
 import com.shinhan.changyo.client.request.BalanceRequest;
 import com.shinhan.changyo.client.response.BalanceResponse;
@@ -16,7 +18,6 @@ import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberRepository;
-import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -163,6 +164,18 @@ public class AccountService {
     }
 
     /**
+     *
+     * @param account 계좌
+     * @param loginId 로그인 아이디
+     */
+    private void checkIsMemberAccount(Account account, String loginId){
+        if(!account.getMember().getLoginId().equals(loginId)){
+            throw new ForbiddenException("접근 권한이 없습니다.");
+        }
+
+    }
+
+    /**
      * 신한은행 계좌 잔액 조회 API 응답 status 확인
      *
      * @param status 응답 status
@@ -186,25 +199,44 @@ public class AccountService {
     }
 
     public AccountEditResponse editTitle(EditAccountTitleDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new NoAccountException("계좌 정보가 없습니다."));
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
         findAccount.editTitle(dto.getTitle());
         return AccountEditResponse.of(findAccount);
     }
 
-    public AccountEditResponse editMainAccount(Long accountId) {
-        List<Account> findAccounts = accountQueryRepository.getAccountsByMainAccountOrId(accountId);
-//        if(findAccounts.size() == 0){
-//            throw new IllegalAccessException("이미 주계좌로 등록되어있습니다.");
-//        }
 
-        for (Account findAccount: findAccounts) {
-            findAccount.editMainAccount();
+    /**
+     *
+     * @param accountId
+     * @param loginId
+     * @return
+     */
+    public AccountEditResponse editMainAccount(Long accountId, String loginId) {
+        Account findAccount = accountRepository.findById(accountId).orElseThrow( () -> new NoAccountException("계좌 정보가 없습니다."));
+
+        checkIsMemberAccount(findAccount, loginId);
+
+        if(findAccount.getMainAccount()){
+            throw new IllegalArgumentException("주 계좌는 변경할 수 없습니다.");
         }
-        return AccountEditResponse.of(findAccounts.get(1));
+        // 주계좌 변경
+        Account mainAccount = accountQueryRepository.getMainAccountsById(findAccount.getMember().getId());
+        mainAccount.editMainAccount();
+
+
+        findAccount.editMainAccount();
+
+
+
+        return AccountEditResponse.of(findAccount);
     }
 
-    public Boolean removeAccount(Long accountId) {
+    public Boolean removeAccount(Long accountId, String loginId) {
         Account findAccount = accountRepository.findById(accountId).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        checkIsMemberAccount(findAccount, loginId);
         findAccount.remove();
         return true;
     }

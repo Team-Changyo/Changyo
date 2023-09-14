@@ -121,7 +121,9 @@ public class AccountController {
     public ApiResponse<AccountEditResponse> editTitle(@PathVariable Long accountId, @RequestBody EditAccountTitleRequest request){
         log.debug("request={}",request);
         log.debug("accountId={}", accountId);
-        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId));
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId, loginId));
         return ApiResponse.found(response);
     }
 
@@ -130,7 +132,9 @@ public class AccountController {
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<AccountEditResponse> editMainAccount(@PathVariable Long accountId){
         log.debug("accountId={}", accountId);
-        AccountEditResponse response = accountService.editMainAccount(accountId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountEditResponse response = accountService.editMainAccount(accountId, loginId);
         return ApiResponse.found(response);
     }
 
@@ -138,7 +142,9 @@ public class AccountController {
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> removeAccount(@PathVariable Long accountId){
         log.debug("accountId={}", accountId);
-        Boolean response = accountService.removeAccount(accountId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        Boolean response = accountService.removeAccount(accountId, loginId);
         return ApiResponse.found(response);
     }
 }

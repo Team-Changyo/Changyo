@@ -7,5 +7,5 @@ import { BANKNAMES_BY_BANKCODES } from 'constants/bankCode';
  * @returns 변환된 금액
  */
 export const formatBankCode = (bankCode: string): string => {
-	return BANKNAMES_BY_BANKCODES.find((el) => el.key === bankCode)!.value;
+	return BANKNAMES_BY_BANKCODES.find((el) => el.key === bankCode)?.value ?? '';
 };

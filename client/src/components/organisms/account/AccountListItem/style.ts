@@ -33,10 +33,12 @@ export const AccountListItemContainer = styled.div`
 		padding-left: 10px;
 
 		.alias {
-			font-size: 0.9rem;
 			color: var(--black-100);
 		}
 
+		.bankname {
+			color: var(--gray-400);
+		}
 		.balance {
 			color: var(--black-500);
 			font-weight: bold;

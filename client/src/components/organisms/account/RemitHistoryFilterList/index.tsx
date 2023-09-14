@@ -11,7 +11,6 @@ interface RemitHistoryFilterListProps {
  * @param setSelcetedMenu 필터 클릭 시 선택된 메뉴(selectedMenu) 변경
  */
 function RemitHistoryFilterList({ selectedMenu, setSelcetedMenu }: RemitHistoryFilterListProps) {
-	// TODO : api 나오면 교체
 	const tmp = [
 		{ key: '1', content: '입금' },
 		{ key: '2', content: '출금' },

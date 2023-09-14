@@ -1,13 +1,13 @@
 import React from 'react';
-import { IHistory } from 'types/account';
 import RemitHistoryListItem from 'components/organisms/account/RemitHistoryListItem';
+import { ITradeHistory } from 'types/account';
 import { RemitHistoryListWrapper } from './style';
 
-function RemitHistoryList({ histories }: { histories: IHistory[] }) {
+function RemitHistoryList({ histories }: { histories: ITradeHistory[] }) {
 	return (
 		<RemitHistoryListWrapper>
 			{histories.map((el) => {
-				return <RemitHistoryListItem key={el.key} history={el} />;
+				return <RemitHistoryListItem key={el.tradeTime} history={el} />;
 			})}
 		</RemitHistoryListWrapper>
 	);

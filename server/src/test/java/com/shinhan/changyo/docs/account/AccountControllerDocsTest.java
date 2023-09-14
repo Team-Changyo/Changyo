@@ -445,6 +445,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("계좌 별칭 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editAccountTitle() throws Exception {
 
         EditAccountTitleRequest request = EditAccountTitleRequest.builder()
@@ -499,6 +500,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("주 계좌 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editAccountMainAccount() throws Exception {
 
         AccountEditResponse response = AccountEditResponse.builder()
@@ -509,7 +511,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .mainAccount(true)
                 .build();
 
-        given(accountService.editMainAccount(anyLong()))
+        given(accountService.editMainAccount(anyLong(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -543,11 +545,12 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("계좌 삭제 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void removeAccount() throws Exception {
 
         Boolean result = true;
 
-        given(accountService.removeAccount(anyLong()))
+        given(accountService.removeAccount(anyLong(), anyString()))
                 .willReturn(result);
 
         mockMvc.perform(

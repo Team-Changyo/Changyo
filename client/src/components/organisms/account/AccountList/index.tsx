@@ -26,7 +26,7 @@ function AccountList({ accountList, selectedCode }: AccountListProps) {
 		<AccountListWrapper>
 			{accounts.length ? (
 				accounts.map((el) => {
-					return <AccountListItem key={el.accountId} isMainAccount={el.mainAccount} />;
+					return <AccountListItem key={el.accountId} account={el} />;
 				})
 			) : (
 				<div>현재 등록된 계좌가 없습니다.</div>
