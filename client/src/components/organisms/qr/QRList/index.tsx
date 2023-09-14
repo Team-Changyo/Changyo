@@ -3,7 +3,7 @@ import ListTotalText from 'components/atoms/common/ListTotalText';
 import { IQRCode } from 'types/qr';
 import { isAxiosError } from 'axios';
 import toast from 'react-hot-toast';
-import { DUMMY_QRLIST } from 'utils/apis/dummy';
+import { findAllQRApi } from 'utils/apis/qr';
 import { QRListWrapper } from './style';
 import QRListItem from '../QRListItem';
 
@@ -11,9 +11,12 @@ function QRList() {
 	const [QRListArray, setQRList] = useState<IQRCode[]>([]);
 
 	const fetchQRList = async () => {
-		// TODO : API 연결 필요
 		try {
-			setQRList(DUMMY_QRLIST);
+			const response = await findAllQRApi();
+
+			if (response.status === 200) {
+				setQRList(response.data.data.qrCodeResponses);
+			}
 		} catch (error) {
 			if (isAxiosError(error)) {
 				console.error(error);
@@ -34,7 +37,7 @@ function QRList() {
 					<QRListItem
 						key={el.qrCodeId}
 						title={el.title}
-						bankCode="088"
+						bankCode={el.bankCode}
 						accountNumber={el.accountNumber}
 						moneyUnit={el.amount}
 					/>
