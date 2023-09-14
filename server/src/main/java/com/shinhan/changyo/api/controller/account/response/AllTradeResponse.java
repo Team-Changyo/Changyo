@@ -15,8 +15,8 @@ public class AllTradeResponse {
 
     @Builder
     public AllTradeResponse(String tradeDate, String tradeTime, String content, int balance, int withdrawalAmount, int depositAmount, int status) {
-        this.tradeDate = tradeDate;
-        this.tradeTime = tradeTime;
+        this.tradeDate = String.format("%s-%s-%s", tradeDate.substring(0, 4), tradeDate.substring(4, 6), tradeDate.substring(6, 8));
+        this.tradeTime = String.format("%s:%s", tradeTime.substring(0, 2), tradeTime.substring(2, 4));
         this.content = content;
         this.balance = balance;
         this.withdrawalAmount = withdrawalAmount;
