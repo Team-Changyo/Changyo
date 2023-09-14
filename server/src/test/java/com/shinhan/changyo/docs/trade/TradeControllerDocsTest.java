@@ -47,6 +47,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 송금 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createTrade() throws Exception {
         CreateTradeRequest request = CreateTradeRequest.builder()
                 .accountId(1L)
@@ -55,15 +56,15 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .qrCodeTitle("럭셔리 글램핑 객실이용")
                 .depositAccountNumber("110054999999")
                 .amount(20000)
-                .content("최영환")
                 .build();
         Long tradeId = 1L;
 
-        given(tradeService.createTrade(any(CreateTradeDto.class)))
+        given(tradeService.createTrade(any(CreateTradeDto.class), anyString()))
                 .willReturn(tradeId);
 
         mockMvc.perform(
                         post("/trade")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -84,9 +85,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
                                         .description("입금 계좌 번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)
-                                        .description("금액"),
-                                fieldWithPath("content").type(JsonFieldType.STRING)
-                                        .description("출금 계좌 회원 이름")
+                                        .description("금액")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)

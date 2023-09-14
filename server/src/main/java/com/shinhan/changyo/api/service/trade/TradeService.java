@@ -9,6 +9,8 @@ import com.shinhan.changyo.client.request.TransferRequest;
 import com.shinhan.changyo.client.response.TransferResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
+import com.shinhan.changyo.domain.member.Member;
+import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
 import com.shinhan.changyo.domain.report.Report;
@@ -48,15 +50,18 @@ public class TradeService {
     private final QrCodeRepository qrCodeRepository;
     private final TradeQueryRepository tradeQueryRepository;
     private final ReportRepository reportRepository;
+    private final MemberQueryRepository memberQueryRepository;
 
     /**
      * 보증금 송금
      *
-     * @param dto 보증금 송금 정보
+     * @param dto     보증금 송금 정보
+     * @param loginId 현재 로그인한 회원 로그인 아이디
      * @return 보증금 거래내역 식별키
      */
-    public Long createTrade(CreateTradeDto dto) {
-        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createReturnTransferRequest(dto));
+    public Long createTrade(CreateTradeDto dto, String loginId) {
+        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createReturnTransferRequest(dto, member.getName()));
 
         Account account = accountRepository.findById(dto.getAccountId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 계좌입니다."));
@@ -129,14 +134,14 @@ public class TradeService {
      * @param dto 보증금 송금 정보
      * @return 신한은행 이체 API 요청 객체
      */
-    private TransferRequest createReturnTransferRequest(CreateTradeDto dto) {
+    private TransferRequest createReturnTransferRequest(CreateTradeDto dto, String memberName) {
         return TransferRequest.builder()
                 .withdrawalAccountNumber(dto.getWithdrawalAccountNumber())
                 .depositBankCode("088")
                 .depositAccountNumber(changyoAccountNumber)
                 .amount(dto.getAmount())
                 .depositMemo(dto.getQrCodeTitle())
-                .withdrawalMemo(dto.getContent())
+                .withdrawalMemo(memberName)
                 .build();
     }
 
