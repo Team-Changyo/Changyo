@@ -35,8 +35,8 @@ public class TransferQueryService {
      * @return 보증금 이체 정보
      */
     public TransferInfoResponse getTransferInfo(Long qrCodeId, String loginId) {
-        ClientAccountResponse clientAccount = transferQueryRepository.getClientAccount(loginId);
-        StoreAccountResponse storeAccount = transferQueryRepository.getStoreAccountByQrCodeId(qrCodeId);
+        ClientAccountResponse clientAccount = getClientAccount(loginId);
+        StoreAccountResponse storeAccount = getStoreAccount(qrCodeId);
 
         return TransferInfoResponse.of(storeAccount, clientAccount);
     }
@@ -49,8 +49,8 @@ public class TransferQueryService {
      * @return 간편송금 이체 정보
      */
     public SimpleTransferInfoResponse getSimpleTransferInfo(Long simpleQrCodeId, String loginId) {
-        SimpleQrCode simpleQrCode = simpleQrCodeRepository.findById(simpleQrCodeId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
+        SimpleQrCode simpleQrCode = getSimpleQrCodeById(simpleQrCodeId);
+
         Duration diff = Duration.between(simpleQrCode.getLastModifiedDate(), LocalDateTime.now());
         log.debug("diff={}", diff.toMinutes());
 
@@ -59,9 +59,49 @@ public class TransferQueryService {
             throw new IllegalArgumentException("유효시간이 만료되었습니다.");
         }
 
-        ClientAccountResponse clientAccount = transferQueryRepository.getClientAccount(loginId);
-        SimpleStoreAccountResponse storeAccount = transferQueryRepository.getStoreAccountBySimpleQrCodeId(simpleQrCodeId);
+        ClientAccountResponse clientAccount = getClientAccount(loginId);
+        SimpleStoreAccountResponse storeAccount = getSimpleStoreAccount(simpleQrCodeId);
+
         return SimpleTransferInfoResponse.of(storeAccount, clientAccount);
+    }
+
+    /**
+     * 로그인한 회원 계좌 정보 조회
+     *
+     * @param loginId 로그인한 회원 로그인 아이디
+     * @return 로그인한 회원 계좌 정보
+     */
+    private ClientAccountResponse getClientAccount(String loginId) {
+        ClientAccountResponse clientAccount = transferQueryRepository.getClientAccount(loginId);
+        if (clientAccount == null) {
+            throw new NoSuchElementException("계좌 정보가 존재하지 않습니다.");
+        }
+        return clientAccount;
+    }
+
+    /**
+     * QR 코드 생성 회원 계좌 정보 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드 생성 회원 계좌 정보
+     */
+    private StoreAccountResponse getStoreAccount(Long qrCodeId) {
+        StoreAccountResponse storeAccount = transferQueryRepository.getStoreAccountByQrCodeId(qrCodeId);
+        if (storeAccount == null) {
+            throw new NoSuchElementException("계좌 정보가 존재하지 않습니다.");
+        }
+        return storeAccount;
+    }
+
+    /**
+     * 간편송금 QR 코드 정보 조회
+     *
+     * @param simpleQrCodeId 간편송금 QR 코드 식별키
+     * @return 간편송금 QR 코드 정보
+     */
+    private SimpleQrCode getSimpleQrCodeById(Long simpleQrCodeId) {
+        return simpleQrCodeRepository.findById(simpleQrCodeId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
     }
 
     /**
@@ -72,5 +112,19 @@ public class TransferQueryService {
      */
     private boolean isExpired(long minutes) {
         return minutes > 3;
+    }
+
+    /**
+     * 간편송금 QR 코드 생성 회원 계좌 정보 조회
+     *
+     * @param simpleQrCodeId 간편송금 QR 코드 식별키
+     * @return 간편송금 QR 코드 생성 회원 계좌 정보
+     */
+    private SimpleStoreAccountResponse getSimpleStoreAccount(Long simpleQrCodeId) {
+        SimpleStoreAccountResponse storeAccount = transferQueryRepository.getStoreAccountBySimpleQrCodeId(simpleQrCodeId);
+        if (storeAccount == null) {
+            throw new NoSuchElementException("계좌 정보가 존재하지 않습니다.");
+        }
+        return storeAccount;
     }
 }
