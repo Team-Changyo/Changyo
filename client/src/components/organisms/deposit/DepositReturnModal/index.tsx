@@ -1,6 +1,6 @@
 import { Input, Modal } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { ISettlement, ISettlementGroup } from 'types/deposit';
+import { ISettlement } from 'types/deposit';
 import UnderLineInput from 'components/atoms/common/UnderLineInput';
 import Button from 'components/organisms/common/Button';
 import { formatMoney } from 'utils/common/formatMoney';
@@ -13,18 +13,18 @@ interface IDepositReturnModalProps {
 	open: boolean;
 	handleClose: () => void;
 	toBeReturned: ISettlement[];
-	settlementGroup: ISettlementGroup;
 	returnDeposit: (returnMoney: number, reason: string, reasonDetail: string) => void;
+	title: string;
+	moneyUnit: number;
 }
 
 function DepositReturnModal(props: IDepositReturnModalProps) {
-	const { open, handleClose, toBeReturned, settlementGroup, returnDeposit } = props;
-	const { moneyUnit } = settlementGroup;
+	const { open, handleClose, toBeReturned, returnDeposit, title, moneyUnit } = props;
 	const [reason, setReason] = useState('선택');
 	const [reasonDetail, setReasonDetail] = useState('');
 	const [returnMoney, setReturnMoney] = useState(moneyUnit);
 	const [showReasonOption, setShowReasonOption] = useState(false);
-	const name = `${toBeReturned[0]?.depositorName}`;
+	const name = `${toBeReturned[0]?.memberName}`;
 	const others = toBeReturned.length >= 2 ? ` 외 ${toBeReturned.length - 1}명` : '';
 	const formattedMoneyUnit = formatMoney(moneyUnit);
 
@@ -56,7 +56,7 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 			<DepositReturnModalContainer>
 				<div className="content">
 					<h2>
-						<b>{settlementGroup.title}</b> 건<br />
+						<b>{title}</b> 건<br />
 						보증금을 반환합니다
 					</h2>
 					<h2>

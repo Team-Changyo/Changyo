@@ -7,7 +7,6 @@ import com.shinhan.changyo.api.controller.qrcode.request.QrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.request.SimpleQrCodeRequest;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeResponses;
-import com.shinhan.changyo.api.service.qrcode.dto.QrCodeResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
 import com.shinhan.changyo.api.service.qrcode.QrCodeQueryService;
 import com.shinhan.changyo.api.service.qrcode.QrCodeService;
@@ -17,13 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.sasl.AuthenticationException;
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("/api/qrcode-management/qrcode")
+@RequestMapping("/qrcode-management/qrcode")
 public class QrCodeController {
 
     private final QrCodeQueryService qrCodeQueryService;
@@ -36,7 +32,7 @@ public class QrCodeController {
      * @return 등록된 QR코드 식별키
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<QrCodeDetailResponse> createQrCode(@RequestBody QrCodeRequest request) {
         log.debug("QrCodeRequest={}", request);
@@ -118,7 +114,7 @@ public class QrCodeController {
      * @return QR코드 목록
      */
 
-    @GetMapping()
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<QrCodeResponses> getQrCodes(){
         String loginId = SecurityUtil.getCurrentLoginId();

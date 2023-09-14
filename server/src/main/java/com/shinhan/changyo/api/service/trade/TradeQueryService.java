@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.shinhan.changyo.domain.trade.SizeConstants.PAGE_SIZE;
@@ -87,6 +88,9 @@ public class TradeQueryService {
      */
     public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastTradeId) {
         QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
+        if (qrCodeTrade == null) {
+            throw new NoSuchElementException("존재하지 않는 보증금 정산내역입니다.");
+        }
 
         int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId);
         int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId);
