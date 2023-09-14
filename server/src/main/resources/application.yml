@@ -1,10 +1,10 @@
 spring:
   # database setting
   datasource:
-    url: jdbc:mariadb://stg-yswa-kr-practice-db-master.mariadb.database.azure.com:3306/S09P22C205?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-    username: S09P22C205
-    password: t47Rd1DnsH
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   # h2 setting
   h2:
     console:
@@ -18,6 +18,7 @@ spring:
         default_batch_fetch_size: 100
         format_sql: true
     open-in-view: true
+    defer-datasource-initialization: true
 
 # log setting
 logging:
@@ -29,5 +30,4 @@ jwt:
   secret: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 changyo-account:
-  id: 1
   accountNumber: 110291999999
