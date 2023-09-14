@@ -15,17 +15,15 @@ public class CreateTradeDto {
     private String qrCodeTitle;
     private String depositAccountNumber;
     private int amount;
-    private String content;
 
     @Builder
-    public CreateTradeDto(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String qrCodeTitle, String depositAccountNumber, int amount, String content) {
+    public CreateTradeDto(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String qrCodeTitle, String depositAccountNumber, int amount) {
         this.accountId = accountId;
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.qrCodeId = qrCodeId;
         this.qrCodeTitle = qrCodeTitle;
         this.depositAccountNumber = depositAccountNumber;
         this.amount = amount;
-        this.content = content;
     }
 
     public Trade toEntity(Account account, QrCode qrCode) {
@@ -33,7 +31,7 @@ public class CreateTradeDto {
                 .summary("이체")
                 .withdrawalAmount(this.amount)
                 .depositAmount(this.amount)
-                .content(this.content)
+                .content(account.getMember().getName())
                 .balance(account.getBalance())
                 .status(TradeStatus.WAIT)
                 .dealershipName("챙겨요")

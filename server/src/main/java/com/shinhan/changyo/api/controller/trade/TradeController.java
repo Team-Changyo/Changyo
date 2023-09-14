@@ -40,8 +40,10 @@ public class TradeController {
     public ApiResponse<Long> createTrade(@Valid @RequestBody CreateTradeRequest request) {
         log.debug("TradeController#createTrade call");
         log.debug("CreateTradeRequest={}", request);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
 
-        Long saveId = tradeService.createTrade(request.toCreateTradeDto());
+        Long saveId = tradeService.createTrade(request.toCreateTradeDto(), loginId);
         log.debug("saveId={}", saveId);
 
         return ApiResponse.ok(saveId);
