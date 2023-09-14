@@ -20,7 +20,7 @@ function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
 			</div>
 			<div className="history-money-info">
 				<span className="price">
-					{history.status === 1 ? formatMoney(history.depositAmount) : formatMoney(history.withdrawalAmount)}원
+					{history.status === 1 ? formatMoney(history.depositAmount) : `-${formatMoney(history.withdrawalAmount)}`}원
 				</span>
 				<span className="balance">{formatMoney(history.balance)}원</span>
 			</div>
