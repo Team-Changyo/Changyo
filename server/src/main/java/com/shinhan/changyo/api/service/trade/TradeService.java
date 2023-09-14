@@ -4,6 +4,7 @@ import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
 import com.shinhan.changyo.api.service.trade.dto.ReturnDepositDto;
 import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
+import com.shinhan.changyo.api.service.trade.dto.SimpleTradeDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TransferRequest;
 import com.shinhan.changyo.client.response.TransferResponse;
@@ -72,6 +73,23 @@ public class TradeService {
         Trade trade = dto.toEntity(account, qrCode);
 
         return tradeRepository.save(trade).getId();
+    }
+
+    /**
+     * 간편 송금
+     *
+     * @param dto     간편 송금 요청 정보
+     * @param loginId 현재 로그인한 사용자 로그인 아이디
+     */
+    public void simpleTrade(SimpleTradeDto dto, String loginId) {
+        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+
+        TransferRequest request = dto.toTransferRequest(member.getName());
+
+        ApiResponse<TransferResponse> response = shinHanApiClient.transfer(request);
+        Account account = accountRepository.findById(dto.getAccountId())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 계좌입니다."));
+        withdrawal(response, account);
     }
 
     /**
