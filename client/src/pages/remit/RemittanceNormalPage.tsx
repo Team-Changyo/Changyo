@@ -44,7 +44,11 @@ function RemittanceNormalPage() {
 				ToAccountInfoTitle={<OptionTitleText text="입금할 계좌" />}
 				ToAccountInfo={<ToAccountInfo />}
 				FromAccountInfoTitle={<OptionTitleText text="출금할 내 계좌" />}
-				FromAccountInfo={<FromAccountInfo />}
+				FromAccountInfo={
+					<FromAccountInfo
+						account={{ accountId: 0, accountNumber: '', balance: 0, bankCode: '', mainAccount: false, title: '' }}
+					/>
+				}
 				MoneyUnitTitle={<OptionTitleText text="보낼 금액" />}
 				MoneyUnit={<LargeMoneyText money={20000} />}
 				RemittanceGuideText={<GuideText text="예금주와 금액을 한번 더 확인하세요" />}
