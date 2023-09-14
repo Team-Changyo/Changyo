@@ -69,4 +69,9 @@ public class QrCode extends TimeBaseEntity {
     public void remove() {
         this.active = false;
     }
+
+    public void editUrlAndQrCodeBase64(String url, String base64QrCode) {
+        this.url = url;
+        this.base64QrCode = base64QrCode;
+    }
 }
