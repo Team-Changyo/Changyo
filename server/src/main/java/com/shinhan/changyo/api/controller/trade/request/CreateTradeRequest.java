@@ -23,18 +23,15 @@ public class CreateTradeRequest {
     @NotBlank
     private String depositAccountNumber;
     private int amount;
-    @NotBlank
-    private String content;
 
     @Builder
-    public CreateTradeRequest(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String qrCodeTitle, String depositAccountNumber, int amount, String content) {
+    public CreateTradeRequest(Long accountId, String withdrawalAccountNumber, Long qrCodeId, String qrCodeTitle, String depositAccountNumber, int amount) {
         this.accountId = accountId;
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.qrCodeId = qrCodeId;
         this.qrCodeTitle = qrCodeTitle;
         this.depositAccountNumber = depositAccountNumber;
         this.amount = amount;
-        this.content = content;
     }
 
     public CreateTradeDto toCreateTradeDto() {
@@ -45,7 +42,6 @@ public class CreateTradeRequest {
                 .qrCodeTitle(this.qrCodeTitle)
                 .depositAccountNumber(this.depositAccountNumber)
                 .amount(this.amount)
-                .content(this.content)
                 .build();
     }
 }
