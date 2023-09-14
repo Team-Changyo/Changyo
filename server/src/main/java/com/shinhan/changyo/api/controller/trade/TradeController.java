@@ -44,6 +44,10 @@ public class TradeController {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
+        if (request.getWithdrawalAccountNumber().equals(request.getDepositAccountNumber())) {
+            throw new IllegalArgumentException("동일한 계좌 번호입니다.");
+        }
+
         Long saveId = tradeService.createTrade(request.toCreateTradeDto(), loginId);
         log.debug("saveId={}", saveId);
 
