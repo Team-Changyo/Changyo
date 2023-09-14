@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tab, Tabs } from '@mui/material';
-import { ISettlement, ISettlementGroup } from 'types/deposit';
+import { ISettlement } from 'types/deposit';
 import { SettlementSubtabContainer } from './style';
 import SettlementList from '../SettlementList';
 
@@ -18,11 +18,14 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 	);
 }
 
-function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGroup }) {
+function SettlementSubtab(props: {
+	waitSettlement: ISettlement[];
+	doneSettlement: ISettlement[];
+	title: string;
+	moneyUnit: number;
+}) {
+	const { waitSettlement, doneSettlement, title, moneyUnit } = props;
 	const [value, setValue] = React.useState(0);
-
-	// TODO : API 나오면 통합 (보증금 정산관리 상세 조회)
-	const settlements: ISettlement[] = [{ tradeId: 1, memberName: '전인혁', status: 'WAIT', tradeDate: '2023' }];
 
 	return (
 		<SettlementSubtabContainer>
@@ -36,20 +39,12 @@ function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGro
 			<div className="tab-panels">
 				{/* 반환 전 탭 */}
 				<TabPanel value={value} index={0}>
-					<SettlementList
-						settlements={settlements.filter((el) => !el.status)}
-						isReturned={false}
-						settlementGroup={settlementGroup}
-					/>
+					<SettlementList settlements={waitSettlement} isReturned={false} title={title} moneyUnit={moneyUnit} />
 				</TabPanel>
 
 				{/* 반환 완료 탭 */}
 				<TabPanel value={value} index={1}>
-					<SettlementList
-						settlements={settlements.filter((el) => el.status)}
-						isReturned
-						settlementGroup={settlementGroup}
-					/>
+					<SettlementList settlements={doneSettlement} isReturned title={title} moneyUnit={moneyUnit} />
 				</TabPanel>
 			</div>
 		</SettlementSubtabContainer>

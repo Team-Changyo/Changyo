@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
-import { ISettlement, ISettlementGroup } from 'types/deposit';
+import { ISettlement } from 'types/deposit';
 import ListTotalText from 'components/atoms/common/ListTotalText';
 import { SettlementListContainer } from './style';
 import SettlementListItem from '../SettlementListItem';
@@ -9,11 +9,12 @@ import DepositReturnModal from '../DepositReturnModal';
 
 interface ISettlementListProps {
 	settlements: ISettlement[];
-	settlementGroup: ISettlementGroup;
 	isReturned: boolean;
+	title: string;
+	moneyUnit: number;
 }
 
-function SettlementList({ settlements, isReturned, settlementGroup }: ISettlementListProps) {
+function SettlementList({ settlements, isReturned, title, moneyUnit }: ISettlementListProps) {
 	const [isMultiReturnMode, setIsMultiReturnMode] = useState(false);
 	const [activeMultiReturnMenu, setActiveMultiReturnMenu] = useState(false);
 	const [toBeReturned, setToBeReturned] = useState<ISettlement[]>([]);
@@ -76,7 +77,7 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 	return (
 		<SettlementListContainer>
 			<div className="top">
-				<ListTotalText text={!isReturned ? '반환 전' : '반환 완료'} totalCnt={settlements.length} />
+				<ListTotalText text={!isReturned ? '반환 전' : '반환 완료'} totalCnt={settlements?.length} />
 				{/* 반환 전/반환 완료 탭에 따라 버튼 메뉴 출력 */}
 				{!isReturned ? (
 					// '반환 전' 탭
@@ -101,16 +102,20 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 			</div>
 
 			{/* 정산 사항 리스트 */}
-			{settlements.map((el) => (
-				<SettlementListItem
-					key={el.tradeId}
-					addToBeReturned={addToBeReturned}
-					isMultiReturnMode={isMultiReturnMode}
-					openReturnModal={openReturnModal}
-					settlement={el}
-					toBeReturned={toBeReturned}
-				/>
-			))}
+			{settlements?.length ? (
+				settlements.map((el) => (
+					<SettlementListItem
+						key={el.tradeId}
+						addToBeReturned={addToBeReturned}
+						isMultiReturnMode={isMultiReturnMode}
+						openReturnModal={openReturnModal}
+						settlement={el}
+						toBeReturned={toBeReturned}
+					/>
+				))
+			) : (
+				<div>정산사항이 없습니다.</div>
+			)}
 
 			{/* 여러건 반환 하단 메뉴 */}
 			{activeMultiReturnMenu ? (
@@ -128,8 +133,9 @@ function SettlementList({ settlements, isReturned, settlementGroup }: ISettlemen
 				open={modalOpen}
 				handleClose={closeReturnModal}
 				toBeReturned={toBeReturned}
-				settlementGroup={settlementGroup}
 				returnDeposit={returnDeposit}
+				title={title}
+				moneyUnit={moneyUnit}
 			/>
 		</SettlementListContainer>
 	);

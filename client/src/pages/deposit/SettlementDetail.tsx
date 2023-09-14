@@ -8,26 +8,28 @@ import { useParams } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { findAllSettlementApi } from 'utils/apis/deposit';
-import { ISettlementGroup } from 'types/deposit';
+import { ISettlement } from 'types/deposit';
 
 function SettlementDetail() {
 	const location = useParams();
-	const [settlementGroup, setSettlementGroup] = useState<ISettlementGroup>({
-		qrCodeId: 0,
-		amount: 0,
-		qrCodeTitle: '',
-		remainCount: 0,
-		remainTotal: 0,
-	});
+	const [title, setTitle] = useState('');
+	const [moneyUnit, setMoneyUnit] = useState(0);
+	const [totalMoney, setTotalMoney] = useState(0);
+	const [waitSettlement, setWaitSettlement] = useState<ISettlement[]>([]);
+	const [doneSettlement, setDoneSettlement] = useState<ISettlement[]>([]);
 
 	const fetchSettlementGroup = async () => {
 		try {
 			if (location.sid) {
-				const response = await findAllSettlementApi(location.sid);
+				const response = await findAllSettlementApi(location.sid, '0');
 
+				console.log(response);
 				if (response.status === 200) {
-					setSettlementGroup(response.data.data);
-					console.log(response);
+					setTitle(response.data.data.qrCodeTitle);
+					setMoneyUnit(response.data.data.amount);
+					setTotalMoney(response.data.data.totalAmount);
+					setWaitSettlement(response.data.data.waitDetails);
+					setDoneSettlement(response.data.data.doneDetails);
 				}
 			}
 		} catch (error) {
@@ -46,8 +48,15 @@ function SettlementDetail() {
 		<PageLayout>
 			<SettlementDetailLayout
 				Navbar={<SubTabNavbar text="보증금 정산관리 상세" type="back" />}
-				SettlementInfo={<SettlementGroupInfo settlementGroup={settlementGroup} />}
-				SubTab={<SettlementSubtab settlementGroup={settlementGroup} />}
+				SettlementInfo={<SettlementGroupInfo title={title} moneyUnit={moneyUnit} totalMoney={totalMoney} />}
+				SubTab={
+					<SettlementSubtab
+						waitSettlement={waitSettlement}
+						doneSettlement={doneSettlement}
+						title={title}
+						moneyUnit={moneyUnit}
+					/>
+				}
 			/>
 		</PageLayout>
 	);
