@@ -11,7 +11,6 @@ import { findAllSettlementGroupApi } from 'utils/apis/deposit';
 import { isAxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { ISettlementGroup } from 'types/deposit';
-import { DUMMY_SETTLEMENT_GROUP_LIST } from 'utils/apis/dummy';
 
 function DepositPage() {
 	const [memberInfo] = useRecoilState(memberInfoState);
@@ -26,10 +25,9 @@ function DepositPage() {
 	const fetchSettlementGroupsData = async () => {
 		try {
 			const response = await findAllSettlementGroupApi();
-
+			console.log(response);
 			if (response.status === 200) {
-				// setSettlementGroups(response.data.data.depositOverviews);
-				setSettlementGroups(DUMMY_SETTLEMENT_GROUP_LIST);
+				setSettlementGroups(response.data.data.depositOverviews);
 			}
 		} catch (error) {
 			if (isAxiosError(error)) {
