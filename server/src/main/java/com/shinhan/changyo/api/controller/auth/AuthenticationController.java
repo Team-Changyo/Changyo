@@ -22,27 +22,23 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping
-    public ApiResponse<String> authenticationAccount(@Valid @RequestBody AuthenticationRequest jsonRequest, HttpServletRequest request) {
-        String authenticationNumber = authenticationService.generateAuthenticationNumber(jsonRequest.getBankCode(), jsonRequest.getAccountNumber());
+    public ApiResponse<String> authenticationAccount(@Valid @RequestBody AuthenticationRequest request) {
+        log.debug("call AuthenticationController#authenticationAccount");
+        log.debug("AuthenticationRequest={}", request);
 
-        HttpSession session = request.getSession();
-        session.setAttribute("authenticationNumber", authenticationNumber);
-        session.setMaxInactiveInterval(180);
+        String authenticationNumber = authenticationService.generateAuthenticationNumber(request.getBankCode(), request.getAccountNumber());
+        log.debug("authenticationNumber={}", authenticationNumber);
 
         return ApiResponse.ok(authenticationNumber);
     }
 
     @PostMapping("/check")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<?> checkAuthenticationNumber(@Valid @RequestBody CheckAuthenticationRequest jsonRequest, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String authenticationNumber = (String) session.getAttribute("authenticationNumber");
+    public ApiResponse<?> checkAuthenticationNumber(@Valid @RequestBody CheckAuthenticationRequest request) {
+        log.debug("call AuthenticationController#checkAuthenticationNumber");
+        log.debug("CheckAuthenticationRequest={}", request);
 
-        if (!jsonRequest.getAuthenticationNumber().equals(authenticationNumber)) {
-            throw new IllegalArgumentException("인증에 실패했습니다.");
-        }
-
-        session.invalidate();
+        authenticationService.checkAuthenticationNumber(request.getAccountNumber(), request.getAuthenticationNumber());
 
         return ApiResponse.ok(null);
     }
