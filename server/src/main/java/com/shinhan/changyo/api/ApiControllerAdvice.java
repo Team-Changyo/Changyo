@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api;
 
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -54,9 +55,19 @@ public class ApiControllerAdvice {
         );
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(SecurityException.class)
     public ApiResponse<Object> securityException(SecurityException e){
+        return ApiResponse.of(
+                HttpStatus.UNAUTHORIZED,
+                e.getMessage(),
+                null
+        );
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiResponse<Object> forbiddenException(ForbiddenException e){
         return ApiResponse.of(
                 HttpStatus.FORBIDDEN,
                 e.getMessage(),

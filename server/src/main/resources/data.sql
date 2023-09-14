@@ -41,7 +41,7 @@ create table if not exists account
     balance            int                not null,
     product_name       varchar(20)        not null,
     customer_name      varchar(20)        not null,
-    title              varchar(50) unique,
+    title              varchar(50)        not null,
     main_account       tinyint            not null,
     active             tinyint            not null,
     created_date       timestamp          not null default now(),

@@ -67,18 +67,6 @@ public class AccountQueryRepository {
                 .fetchFirst().intValue();
     }
 
-    public List<Account> getAccountsByMainAccountOrId(Long accountId) {
-        BooleanExpression condition = account.mainAccount.eq(true)
-                .or(account.id.eq(accountId));
-
-        return queryFactory
-                .select(account)
-                .from(account)
-                .where(condition,
-                        account.active.eq(true))
-                .orderBy(account.mainAccount.desc())
-                .fetch();
-    }
 
     public Account getMainAccountsById(Long id) {
         return queryFactory
