@@ -82,7 +82,7 @@ function AppRouter() {
 
 								<Route path="/" element={<PrivateRoute />}>
 									<Route path="/account" element={<AccountPage />} />
-									<Route path="/account/:aid" element={<AccountDetailPage />} />
+									<Route path="/account/:accountId" element={<AccountDetailPage />} />
 									<Route path="/account/register" element={<AccountRegisterPage />} />
 									<Route path="/qr" element={<QRPage />} />
 									<Route path="/qr/normal" element={<ViewQRPageNormal />} />
