@@ -47,6 +47,7 @@ public class AccountQueryRepository {
                 .join(account.member, member)
                 .where(account.member.loginId.eq(loginId),
                         account.active.eq(true))
+                .orderBy(account.mainAccount.desc())
                 .fetch();
     }
 
@@ -86,5 +87,13 @@ public class AccountQueryRepository {
                 .where(account.mainAccount.eq(true),
                         account.member.id.eq(id))
                 .fetchOne();
+    }
+
+    public Boolean checkIsExistByAccountNumber(String accountNumber) {
+        return queryFactory
+                .selectOne()
+                .from(account)
+                .where(account.accountNumber.eq(accountNumber))
+                .fetchFirst() != null;
     }
 }
