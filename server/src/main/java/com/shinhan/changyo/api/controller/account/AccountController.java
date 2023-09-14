@@ -142,7 +142,9 @@ public class AccountController {
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> removeAccount(@PathVariable Long accountId){
         log.debug("accountId={}", accountId);
-        Boolean response = accountService.removeAccount(accountId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        Boolean response = accountService.removeAccount(accountId, loginId);
         return ApiResponse.found(response);
     }
 }

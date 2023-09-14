@@ -234,8 +234,9 @@ public class AccountService {
         return AccountEditResponse.of(findAccount);
     }
 
-    public Boolean removeAccount(Long accountId) {
+    public Boolean removeAccount(Long accountId, String loginId) {
         Account findAccount = accountRepository.findById(accountId).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        checkIsMemberAccount(findAccount, loginId);
         findAccount.remove();
         return true;
     }

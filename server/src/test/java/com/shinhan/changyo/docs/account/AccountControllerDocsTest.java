@@ -549,7 +549,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
         Boolean result = true;
 
-        given(accountService.removeAccount(anyLong()))
+        given(accountService.removeAccount(anyLong(), anyString()))
                 .willReturn(result);
 
         mockMvc.perform(
