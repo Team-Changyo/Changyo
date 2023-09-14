@@ -18,10 +18,11 @@ public class EditAccountTitleRequest {
         this.title = title;
     }
 
-    public EditAccountTitleDto toEditAccountTitleDto(Long accountId){
+    public EditAccountTitleDto toEditAccountTitleDto(Long accountId, String loginId){
         return EditAccountTitleDto.builder()
                 .title(this.title)
                 .accountId(accountId)
+                .loginId(loginId)
                 .build();
     }
 }

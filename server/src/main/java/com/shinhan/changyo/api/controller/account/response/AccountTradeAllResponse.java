@@ -14,7 +14,6 @@ public class AccountTradeAllResponse {
     private String bankCode;
     private String title;
     private Map<String, List<AllTradeResponse>> allTradeResponses;
-//    private List<AllTradeResponses> allTradeResponses;
 
     @Builder
     public AccountTradeAllResponse(Long accountId, String accountNumber, int balance, String bankCode, String title, Map<String, List<AllTradeResponse>> allTradeResponses) {

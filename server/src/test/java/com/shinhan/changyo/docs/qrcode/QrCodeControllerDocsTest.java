@@ -116,27 +116,31 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("단순송금 QR코드 생성 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createSimpleQr() throws Exception {
         SimpleQrCodeRequest request = SimpleQrCodeRequest.builder()
-                .url("www.naver.com")
-                .accountId(1L)
+                .accountNumber("111123123456")
+                .bankCode("088")
                 .amount(20000)
                 .build();
 
         SimpleQrCodeResponse response = SimpleQrCodeResponse.builder()
-                .bankCode("088")
+                .simpleQrCodeId(1L)
+                .url("https://temp/url")
+                .base64QrCode("base64base64base64")
+                .memberName("홍진식")
                 .accountNumber("11345678915")
-                .customerName("홍진식")
+                .bankCode("088")
                 .amount(20000)
-                .base64QrCode("123123123")
-                .url("www.naver.com")
+                .createdDate("2023-09-14 23:42")
                 .build();
 
-        given(qrCodeService.createSimpleQrcode(any(SimpleQrCodeDto.class)))
+        given(qrCodeService.createSimpleQrcode(any(SimpleQrCodeDto.class), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
                         post("/qrcode-management/qrcode/simple")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -146,10 +150,10 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL"),
-                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
-                                        .description("계좌 식별 키"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("입금받을 계좌번호"),
+                                fieldWithPath("bankCode").type(JsonFieldType.STRING)
+                                        .description("입금받을 계좌 은행번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)
                                         .description("금액")
                         ),
@@ -160,18 +164,24 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
-                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
-                                        .description("은행 코드"),
-                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
-                                        .description("계좌 번호"),
-                                fieldWithPath("data.customerName").type(JsonFieldType.STRING)
-                                        .description("계좌번호 실명"),
-                                fieldWithPath("data.amount").type(JsonFieldType.NUMBER)
-                                        .description("금액"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.simpleQrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("간편송금 QR 식별키"),
+                                fieldWithPath("data.url").type(JsonFieldType.STRING)
+                                        .description("간편송금 URL"),
                                 fieldWithPath("data.base64QrCode").type(JsonFieldType.STRING)
                                         .description("QR코드 base64"),
-                                fieldWithPath("data.url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL")
+                                fieldWithPath("data.memberName").type(JsonFieldType.STRING)
+                                        .description("회원이름"),
+                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌번호"),
+                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행코드"),
+                                fieldWithPath("data.amount").type(JsonFieldType.NUMBER)
+                                        .description("금액"),
+                                fieldWithPath("data.createdDate").type(JsonFieldType.STRING)
+                                        .description("생성일")
                         )
                 ));
     }

@@ -8,15 +8,18 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
+import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.api.service.qrcode.dto.EditTitleDto;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
-import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
+import com.shinhan.changyo.domain.member.Member;
+import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
-import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
+import com.shinhan.changyo.domain.qrcode.SimpleQrCode;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
+import com.shinhan.changyo.domain.qrcode.repository.SimpleQrCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +44,8 @@ import java.util.Map;
 public class QrCodeService {
     private final QrCodeRepository qrCodeRepository;
     private final AccountRepository accountRepository;
-    private final QrCodeQueryRepository qrCodeQueryRepository;
+    private final SimpleQrCodeRepository simpleQrCodeRepository;
+    private final MemberQueryRepository memberQueryRepository;
 
     /**
      * QR코드 증록
@@ -52,24 +56,20 @@ public class QrCodeService {
 
     public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
         try {
-            Long lastSaveId = qrCodeQueryRepository.getLastSavedQrCodeId();
-            if (lastSaveId == null) {
-                lastSaveId = 0L;
-            }
-            // QR코드 생성
-            String url = String.format("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=%s", lastSaveId + 1);
-            String qrCodeBase64 = createQR(url);
+            StringBuilder url = new StringBuilder("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=");
+            String qrCodeBase64 = createQR(url.toString());
 
-            // entity 생성
-            Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+            Account findAccount = accountRepository.findById(dto.getAccountId())
+                    .orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
 
-            // loginID와 계좌번호를 등록한 loginId가 같지 않을 경우
             if (!findAccount.getMember().getLoginId().equals(dto.getLoginId())) {
                 throw new IllegalAccessException("잘못된 접근입니다.");
             }
 
-            // qr코드 등록
-            QrCode saveQrCode = qrCodeRepository.save(dto.toEntity(url, qrCodeBase64, findAccount));
+            QrCode saveQrCode = qrCodeRepository.save(dto.toEntity(url.toString(), qrCodeBase64, findAccount));
+            url.append(saveQrCode.getQrCodeId());
+            qrCodeBase64 = createQR(url.toString());
+            saveQrCode.editUrlAndQrCodeBase64(url.toString(), qrCodeBase64);
 
             return QrCodeDetailResponse.of(saveQrCode);
         } catch (Exception e) {
@@ -78,23 +78,16 @@ public class QrCodeService {
         }
     }
 
-    public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto) {
+    public SimpleQrCodeResponse createSimpleQrcode(SimpleQrCodeDto dto, String loginId) {
         try {
-            // QR코드 생성
-            String qrCodeBase64 = createQR(dto.getUrl());
+            Member member = memberQueryRepository.getMemberByLoginId(loginId);
+            SimpleQrCode saveQrCode = simpleQrCodeRepository.save(dto.toEntity(member.getName()));
+            String url = String.format("https://j9c205.ssafy.io/remittance/normal?simpleQrCodeId=%s", saveQrCode.getId());
+            String qrCodeBase64 = createQR(url);
+            saveQrCode.editUrlAndQrCodeBase64(url, qrCodeBase64);
 
-            // entity 생성
-            Account findAccount = accountRepository.findById(dto.getAccountId())
-                    .orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+            return SimpleQrCodeResponse.of(saveQrCode);
 
-            return SimpleQrCodeResponse.builder()
-                    .bankCode(findAccount.getBankCode())
-                    .accountNumber(findAccount.getAccountNumber())
-                    .customerName(findAccount.getCustomerName())
-                    .amount(dto.getAmount())
-                    .base64QrCode(qrCodeBase64)
-                    .url(dto.getUrl())
-                    .build();
         } catch (Exception e) {
             log.debug(e.toString());
             throw new RuntimeException(e);
@@ -110,21 +103,13 @@ public class QrCodeService {
     public String createQR(String url) throws Exception {
 
         BitMatrix bitMatrix = null;
-        MatrixToImageConfig matrixToImageConfig = null;
-        // QRCode에 담고 싶은 정보를 문자열로 표시한다. url이든 뭐든 가능하다.
         String codeInformation = url;
-
-        // 큐알코드 바코드 및 배경 색상값
         int onColor = 0xFF2e4e96; // 바코드 색
         int offColor = 0xFFFFFFFF; // 배경 색
 
-        // 이름 그대로 QRCode 만들때 쓰는 클래스다
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        // 큐알 전경과 배경의 색을 정한다. 값을 넣지 않으면 검정코드에 흰 배경이 기본값이다.
-        matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
+        MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
         Map<EncodeHintType, String> hints = new HashMap<>();
-        // QRCode 생성시 조건을 넣어서 만들 수 있게 한다.
-        // 여기서 Error_Correction의 경우 큐알 코드가 좀더 자글자글하게 만들어 주는 대신 큐알이 가려져도 인식할 가능성이 더욱 높아진다.
 
        /*
  	https://zxing.github.io/zxing/apidocs/com/google/zxing/qrcode/decoder/ErrorCorrectionLevel.html

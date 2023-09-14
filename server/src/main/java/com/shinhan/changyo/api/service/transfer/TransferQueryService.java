@@ -35,4 +35,15 @@ public class TransferQueryService {
 
         return TransferInfoResponse.of(storeAccount, clientAccount);
     }
+
+    /**
+     * 간편송금 이체 정보 조회
+     *
+     * @param simpleQrCodeId 간편송금 QR 코드 식별키
+     * @param loginId        현재 로그인 중인 회원 로그인 아이디
+     * @return 간편송금 이체 정보
+     */
+    public TransferInfoResponse getSimpleTransferInfo(Long simpleQrCodeId, String loginId) {
+        return null;
+    }
 }

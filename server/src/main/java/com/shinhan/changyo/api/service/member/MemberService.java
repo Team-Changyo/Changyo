@@ -3,7 +3,7 @@ package com.shinhan.changyo.api.service.member;
 import com.shinhan.changyo.api.controller.member.response.JoinMemberResponse;
 import com.shinhan.changyo.api.controller.member.response.MemberResponse;
 import com.shinhan.changyo.api.service.member.dto.JoinMemberDto;
-import com.shinhan.changyo.api.service.member.exception.DuplicateException;
+import com.shinhan.changyo.api.service.util.exception.DuplicateException;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.domain.member.repository.MemberRepository;
