@@ -4,7 +4,9 @@ import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
+import com.shinhan.changyo.api.service.account.exception.NoAccountException;
 import com.shinhan.changyo.api.service.util.exception.DuplicateException;
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.request.AccountDetailRequest;
 import com.shinhan.changyo.client.request.BalanceRequest;
 import com.shinhan.changyo.client.response.BalanceResponse;
@@ -162,6 +164,18 @@ public class AccountService {
     }
 
     /**
+     *
+     * @param account 계좌
+     * @param loginId 로그인 아이디
+     */
+    private void checkIsMemberAccount(Account account, String loginId){
+        if(!account.getMember().getLoginId().equals(loginId)){
+            throw new ForbiddenException("접근 권한이 없습니다.");
+        }
+
+    }
+
+    /**
      * 신한은행 계좌 잔액 조회 API 응답 status 확인
      *
      * @param status 응답 status
@@ -185,7 +199,10 @@ public class AccountService {
     }
 
     public AccountEditResponse editTitle(EditAccountTitleDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new NoAccountException("계좌 정보가 없습니다."));
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
         findAccount.editTitle(dto.getTitle());
         return AccountEditResponse.of(findAccount);
     }

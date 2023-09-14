@@ -121,7 +121,9 @@ public class AccountController {
     public ApiResponse<AccountEditResponse> editTitle(@PathVariable Long accountId, @RequestBody EditAccountTitleRequest request){
         log.debug("request={}",request);
         log.debug("accountId={}", accountId);
-        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId));
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId, loginId));
         return ApiResponse.found(response);
     }
 
