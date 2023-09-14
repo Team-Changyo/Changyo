@@ -11,13 +11,15 @@ public class AccountDetailResponse {
     private int balance;
     private String bankCode;
     private Boolean mainAccount;
+    private String title;
 
     @Builder
-    public AccountDetailResponse(Long accountId, String accountNumber, int balance, String bankCode, Boolean mainAccount) {
+    public AccountDetailResponse(Long accountId, String accountNumber, int balance, String bankCode, Boolean mainAccount, String title) {
         this.accountId = accountId;
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.bankCode = bankCode;
         this.mainAccount = mainAccount;
+        this.title = title;
     }
 }
