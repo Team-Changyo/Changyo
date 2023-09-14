@@ -6,19 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import { QRListItemContainer } from './style';
 
 interface IQRListItemProps {
+	qrCodeId: number;
 	title: string;
 	bankCode: string;
 	accountNumber: string;
 	moneyUnit: number;
 }
 
-function QRListItem({ title, bankCode, accountNumber, moneyUnit }: IQRListItemProps) {
+function QRListItem({ qrCodeId, title, bankCode, accountNumber, moneyUnit }: IQRListItemProps) {
 	const bankName = formatBankCode(bankCode);
 	const formattedMoneyUnit = formatMoney(moneyUnit);
 	const navigate = useNavigate();
 
 	return (
-		<QRListItemContainer onClick={() => navigate('/qr/deposit/1')}>
+		<QRListItemContainer onClick={() => navigate(`/qr/deposit/${qrCodeId}`)}>
 			<div className="qr-logo">
 				<QR />
 			</div>

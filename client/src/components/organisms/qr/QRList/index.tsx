@@ -36,6 +36,7 @@ function QRList() {
 				QRListArray.map((el) => (
 					<QRListItem
 						key={el.qrCodeId}
+						qrCodeId={el.qrCodeId}
 						title={el.title}
 						bankCode={el.bankCode}
 						accountNumber={el.accountNumber}
