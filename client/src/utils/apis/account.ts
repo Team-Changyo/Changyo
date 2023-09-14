@@ -13,9 +13,21 @@ export const findAllAccountApi = async () => {
 	return response;
 };
 
-// 계좌 상세조회
-export const findAccountApi = async (accountId: number) => {
+// 계좌 상세조회 (전체)
+export const findAccountAllApi = async (accountId: string) => {
 	const response = await instance.get(`/account/${accountId}`);
+	return response;
+};
+
+// 계좌 상세조회 (입금)
+export const findAccountInApi = async (accountId: string) => {
+	const response = await instance.get(`/account/deposit/${accountId}`);
+	return response;
+};
+
+// 계좌 상세조회 (출금)
+export const findAccountOutApi = async (accountId: string) => {
+	const response = await instance.get(`/account/withdrawal/${accountId}`);
 	return response;
 };
 
