@@ -86,7 +86,7 @@ function AppRouter() {
 									<Route path="/account/register" element={<AccountRegisterPage />} />
 									<Route path="/qr" element={<QRPage />} />
 									<Route path="/qr/normal" element={<ViewQRPageNormal />} />
-									<Route path="/qr/deposit/:qid" element={<ViewQRPageDeposit />} />
+									<Route path="/qr/deposit/:qrCodeId" element={<ViewQRPageDeposit />} />
 									<Route path="/qr/create" element={<CreateQRPage />} />
 									<Route path="/deposit" element={<DepositPage />} />
 									<Route path="/deposit/settlement/:sid" element={<SettlementDetail />} />
