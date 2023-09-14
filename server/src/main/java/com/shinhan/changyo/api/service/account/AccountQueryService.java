@@ -166,6 +166,9 @@ public class AccountQueryService {
         if(trades.size() != 0){
             allTradeResponses = createGroupByDateTime(trades, status);
         }
+        Map<String, List<AllTradeResponse>> sortedAllTradeResponses =
+                sortMapByDateDescending(allTradeResponses);
+
 
         AccountTradeAllResponse response = AccountTradeAllResponse.builder()
                 .accountId(accountId)
@@ -173,9 +176,16 @@ public class AccountQueryService {
                 .balance(findAccount.getBalance())
                 .bankCode(findAccount.getBankCode())
                 .title(findAccount.getTitle())
-                .allTradeResponses(allTradeResponses)
+                .allTradeResponses(sortedAllTradeResponses)
                 .build();
 
         return response;
+    }
+
+    public Map<String, List<AllTradeResponse>> sortMapByDateDescending(Map<String, List<AllTradeResponse>> unsortedMap) {
+        return unsortedMap.entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByKey())) // 키를 내림차순으로 정렬
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 }

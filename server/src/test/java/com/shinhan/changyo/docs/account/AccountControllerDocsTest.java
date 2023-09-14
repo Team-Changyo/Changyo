@@ -545,6 +545,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("계좌 삭제 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void removeAccount() throws Exception {
 
         Boolean result = true;
