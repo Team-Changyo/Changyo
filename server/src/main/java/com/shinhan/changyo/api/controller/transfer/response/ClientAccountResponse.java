@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class ClientAccountResponse {
+    private Long accountId;
     private String bankCode;
     private String accountNumber;
     private String productName;
@@ -12,7 +13,8 @@ public class ClientAccountResponse {
     private int balance;
 
     @Builder
-    public ClientAccountResponse(String bankCode, String accountNumber, String productName, String memberName, int balance) {
+    public ClientAccountResponse(Long accountId, String bankCode, String accountNumber, String productName, String memberName, int balance) {
+        this.accountId = accountId;
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
         this.productName = "입출금통장";

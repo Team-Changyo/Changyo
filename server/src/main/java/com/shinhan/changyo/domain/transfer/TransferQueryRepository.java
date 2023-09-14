@@ -34,6 +34,7 @@ public class TransferQueryRepository {
     public ClientAccountResponse getClientAccount(String loginId) {
         return queryFactory
                 .select(Projections.constructor(ClientAccountResponse.class,
+                        account.id,
                         account.bankCode,
                         account.accountNumber,
                         account.productName,

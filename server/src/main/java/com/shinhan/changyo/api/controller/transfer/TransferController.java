@@ -43,4 +43,24 @@ public class TransferController {
 
         return ApiResponse.ok(response);
     }
+
+    /**
+     * 간편송금 정보 조회 API
+     *
+     * @param simpleQrCodeId 간편송금 QR 코드 식별키
+     * @return 간편송금 이체 정보
+     */
+    @GetMapping("/simple")
+    public ApiResponse<TransferInfoResponse> getSimpleTransferInfo(@RequestParam Long simpleQrCodeId) {
+        log.debug("TransferController#getSimpleQrTransferInfo call");
+        log.debug("simpleQrCodeId={}", simpleQrCodeId);
+
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        TransferInfoResponse response = transferQueryService.getSimpleTransferInfo(simpleQrCodeId, loginId);
+        log.debug("TransferInfoResponse={}", response);
+
+        return ApiResponse.ok(response);
+    }
 }
