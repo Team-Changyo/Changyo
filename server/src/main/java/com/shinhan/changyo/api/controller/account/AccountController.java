@@ -132,7 +132,9 @@ public class AccountController {
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<AccountEditResponse> editMainAccount(@PathVariable Long accountId){
         log.debug("accountId={}", accountId);
-        AccountEditResponse response = accountService.editMainAccount(accountId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+        AccountEditResponse response = accountService.editMainAccount(accountId, loginId);
         return ApiResponse.found(response);
     }
 

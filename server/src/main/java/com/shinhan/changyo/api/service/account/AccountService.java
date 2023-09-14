@@ -207,16 +207,31 @@ public class AccountService {
         return AccountEditResponse.of(findAccount);
     }
 
-    public AccountEditResponse editMainAccount(Long accountId) {
-        List<Account> findAccounts = accountQueryRepository.getAccountsByMainAccountOrId(accountId);
-//        if(findAccounts.size() == 0){
-//            throw new IllegalAccessException("이미 주계좌로 등록되어있습니다.");
-//        }
 
-        for (Account findAccount: findAccounts) {
-            findAccount.editMainAccount();
+    /**
+     *
+     * @param accountId
+     * @param loginId
+     * @return
+     */
+    public AccountEditResponse editMainAccount(Long accountId, String loginId) {
+        Account findAccount = accountRepository.findById(accountId).orElseThrow( () -> new NoAccountException("계좌 정보가 없습니다."));
+
+        checkIsMemberAccount(findAccount, loginId);
+
+        if(findAccount.getMainAccount()){
+            throw new IllegalArgumentException("주 계좌는 변경할 수 없습니다.");
         }
-        return AccountEditResponse.of(findAccounts.get(1));
+        // 주계좌 변경
+        Account mainAccount = accountQueryRepository.getMainAccountsById(findAccount.getMember().getId());
+        mainAccount.editMainAccount();
+
+
+        findAccount.editMainAccount();
+
+
+
+        return AccountEditResponse.of(findAccount);
     }
 
     public Boolean removeAccount(Long accountId) {
