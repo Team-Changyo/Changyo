@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
 import SubTextButton from 'components/atoms/common/SubTextButton';
 import Button from 'components/organisms/common/Button';
@@ -7,23 +7,47 @@ import QRGuideText from 'components/organisms/qr/QRGuideText';
 import PageLayout from 'layouts/common/PageLayout';
 import ViewQRPageLayout from 'layouts/page/qr/ViewQRPageLayout';
 import RemittanceRequestInfo from 'components/organisms/qr/RemittanceRequestInfo';
+import { useParams } from 'react-router-dom';
+import { findQRApi } from 'utils/apis/qr';
+import { formatBankCode } from 'utils/common/formatBankCode';
 
 function ViewDepositQRPage() {
+	const { qrCodeId } = useParams();
+	const [title, setTitle] = useState('');
+	const [accountInfo, setAccountInfo] = useState('');
+	const [base64QrCode, setBase64QrCode] = useState('');
+	const [moneyUnit, setMoneyUnit] = useState(0);
+
+	const fetchData = async () => {
+		try {
+			if (qrCodeId) {
+				const response = await findQRApi(qrCodeId);
+				console.log(response);
+
+				if (response.status === 200) {
+					const resObj = response.data.data;
+					setTitle(resObj.title);
+					setAccountInfo(`${formatBankCode(resObj.bankCode)} ${resObj.accountNumber} (${resObj.customerName})`);
+					setBase64QrCode(resObj.base64QrCode);
+					setMoneyUnit(resObj.amount);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+	useEffect(() => {
+		fetchData();
+	}, []);
 	return (
 		<PageLayout>
 			<ViewQRPageLayout
 				Navbar={<SubTabNavbar text="송금 QR 상세보기" type="close" closePath="/qr" />}
 				RemittanceRequestInfo={
-					<RemittanceRequestInfo
-						accountInfo="신한 15168542165 (전인혁)"
-						isDepositRequest
-						depositTitle="럭셔리 글램핑 객실이용"
-					/>
+					<RemittanceRequestInfo accountInfo={accountInfo} isDepositRequest depositTitle={title} />
 				}
-				MoneyUnit={<LargeMoneyText money={30000} />}
-				QRImage={
-					<img src="https://img1.bizhows.com/bhfile01/__CM_FILE_DATA/201708/07/17/536998_1502092980542.png" alt="" />
-				}
+				MoneyUnit={<LargeMoneyText money={moneyUnit} />}
+				QRImage={<img src={`data:image/jpeg;base64,${base64QrCode}`} alt="" />}
 				GuideText={<QRGuideText isDepositRequest />}
 				QRShareBtn={<Button type="Primary" handleClick={() => {}} text="QR 공유하기" />}
 				LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />}
