@@ -24,4 +24,8 @@ public class Authentication extends TimeBaseEntity {
         this.accountNumber = accountNumber;
         this.authenticationNumber = authenticationNumber;
     }
+
+    public void editNumber(String authenticationNumber) {
+        this.authenticationNumber = authenticationNumber;
+    }
 }
