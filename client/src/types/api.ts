@@ -20,13 +20,21 @@ export interface WithdrawalApiBody {
 }
 
 // - account
-export interface RegisterAccountApi {
+export interface RegisterAccountApiBody {
 	bankCode: string;
 	accountNumber: string;
 	title: string;
 	mainAccount: boolean;
 }
 
+export interface AuthRequestAccountApiBody {
+	bankCode: string;
+	accountNumber: string;
+}
+
+export interface CheckAuthAccountApiBody {
+	authenticationNumber: string;
+}
 // - remit
 export interface RemitApiBody {}
 
