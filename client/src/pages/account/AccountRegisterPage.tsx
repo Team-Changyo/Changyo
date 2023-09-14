@@ -24,6 +24,7 @@ function AccountRegisterPage() {
 	const [certified, setCertified] = useState(false);
 	const navigate = useNavigate();
 
+	// 계좌 등록
 	const confirmRegister = async () => {
 		if (isDone) {
 			try {
@@ -50,24 +51,29 @@ function AccountRegisterPage() {
 		}
 	};
 
+	// 계좌 인증번호 요청
 	const sendCertRequest = async () => {
 		if (!bankCode) {
 			toast.error('은행을 선택해주세요');
 		} else if (!accountNumber) {
 			toast.error('계좌번호를 입력해주세요');
 		} else if (window.confirm('1원 이체 인증을 요청하시겠습니까?')) {
-			// TODO : 계좌가 유효한지 검증로직 추가 (해커톤때는 안할듯)
-			// 유효하다면 모달 오픈
-			const body = {
-				bankCode,
-				accountNumber,
-			};
+			try {
+				const body = {
+					bankCode,
+					accountNumber,
+				};
 
-			const response = await authRequestAccountApi(body);
-			if (response.status === 200) {
-				console.log(response.data);
+				const response = await authRequestAccountApi(body);
+
+				if (response.status === 200) {
+					console.log(response.data);
+					setModalOpen(true);
+				}
+			} catch (error) {
+				console.log(error);
+				toast.error('계좌인증 요청에 실패했습니다. \n잠시 후 다시 시도하세요.');
 			}
-			setModalOpen(true);
 		}
 	};
 
@@ -83,6 +89,7 @@ function AccountRegisterPage() {
 			setIsDone(false);
 		}
 	}, [certified, alias]);
+
 	return (
 		<PageLayout>
 			<AccountRegisterPageLayout
