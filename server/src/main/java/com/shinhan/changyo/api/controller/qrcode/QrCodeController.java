@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -38,9 +40,7 @@ public class QrCodeController {
         log.debug("QrCodeRequest={}", request);
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-//        if(loginId.equals("anonymousUser")){ // 로그인 안할경우 에러 처리
-//
-//        }
+
         QrCodeDetailResponse response = qrCodeService.createQrcode(request.toQrCodeDto(loginId));
         return ApiResponse.created(response);
     }
@@ -52,9 +52,12 @@ public class QrCodeController {
      * @return 단숭 송금 QR 상세 정보
      */
     @PostMapping("/simple")
-    public ApiResponse<SimpleQrCodeResponse> createSimpleQrCode(@RequestBody SimpleQrCodeRequest request){
+    public ApiResponse<SimpleQrCodeResponse> createSimpleQrCode(@Valid @RequestBody SimpleQrCodeRequest request){
         log.debug("SimpleQrCodeRequest={}", request);
-        SimpleQrCodeResponse response = qrCodeService.createSimpleQrcode(request.toSimpleQrCodeDto());
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        SimpleQrCodeResponse response = qrCodeService.createSimpleQrcode(request.toSimpleQrCodeDto(), loginId);
         return ApiResponse.ok(response);
     }
 

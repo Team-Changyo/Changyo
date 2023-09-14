@@ -1,38 +1,45 @@
 package com.shinhan.changyo.api.controller.qrcode.response;
 
+import com.shinhan.changyo.domain.qrcode.SimpleQrCode;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.format.DateTimeFormatter;
+
 @Data
 public class SimpleQrCodeResponse {
-    /**
-     * 은행 코드
-     * 계좌번호
-     * 계좌명
-     * 금액
-     * qr코드
-     * url
-     * 생성시간(?)-> 고민 필요
-     */
-    private String bankCode;
-
-    private String accountNumber;
-
-    private String customerName; // TODO: 2023-09-09 홍진식 : 고객 실명 조회 api 사용 ?
-
-    private int amount;
-
-    private String base64QrCode;
-
+    private Long simpleQrCodeId;
     private String url;
+    private String base64QrCode;
+    private String memberName;
+    private String accountNumber;
+    private String bankCode;
+    private int amount;
+    private String createdDate;
 
     @Builder
-    public SimpleQrCodeResponse(String bankCode, String accountNumber, String customerName, int amount, String base64QrCode, String url) {
-        this.bankCode = bankCode;
-        this.accountNumber = accountNumber;
-        this.customerName = customerName;
-        this.amount = amount;
-        this.base64QrCode = base64QrCode;
+    public SimpleQrCodeResponse(Long simpleQrCodeId, String url, String base64QrCode, String memberName, String accountNumber, String bankCode, int amount, String createdDate) {
+        this.simpleQrCodeId = simpleQrCodeId;
         this.url = url;
+        this.base64QrCode = base64QrCode;
+        this.memberName = memberName;
+        this.accountNumber = accountNumber;
+        this.bankCode = bankCode;
+        this.amount = amount;
+        this.createdDate = createdDate;
+    }
+
+    public static SimpleQrCodeResponse of(SimpleQrCode saveQrCode) {
+        return SimpleQrCodeResponse.builder()
+                .simpleQrCodeId(saveQrCode.getId())
+                .url(saveQrCode.getUrl())
+                .base64QrCode(saveQrCode.getBase64QrCode())
+                .memberName(saveQrCode.getMemberName())
+                .accountNumber(saveQrCode.getAccountNumber())
+                .bankCode(saveQrCode.getBankCode())
+                .amount(saveQrCode.getAmount())
+                .createdDate(saveQrCode.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                .build();
+
     }
 }
