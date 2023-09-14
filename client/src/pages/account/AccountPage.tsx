@@ -35,7 +35,7 @@ function AccountPage() {
 	useEffect(() => {
 		fetchAccountData();
 	}, []);
-	// TODO : api 연결 후 수정
+
 	return (
 		<PageLayout>
 			<AccountPageLayout
