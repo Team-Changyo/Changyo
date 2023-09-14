@@ -31,7 +31,7 @@ function RemittanceDepositPage() {
 		try {
 			if (qrCodeId) {
 				const response = await findRemitInfoApi(qrCodeId as string);
-
+				console.log(response);
 				if (response.status === 200) {
 					const resObj = response.data.data;
 					setStoreAccount(resObj.storeAccount);
