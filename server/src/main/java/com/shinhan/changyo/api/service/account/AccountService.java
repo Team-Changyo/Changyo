@@ -53,6 +53,10 @@ public class AccountService {
                 createAccountDetailRequest(request.getAccountNumber())
         );
 
+        if(response == null){
+            throw new NoSuchElementException("계좌 정보가 없습니다.");
+        }
+
 
         CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 

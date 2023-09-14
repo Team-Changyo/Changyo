@@ -40,7 +40,8 @@ public class AccountQueryRepository {
                         account.accountNumber,
                         account.balance,
                         account.bankCode,
-                        account.mainAccount
+                        account.mainAccount,
+                        account.title
                 ))
                 .from(account)
                 .join(account.member, member)
