@@ -12,15 +12,17 @@ public class AccountTradeAllResponse {
     private String accountNumber;
     private int balance;
     private String bankCode;
+    private String title;
     private Map<String, List<AllTradeResponse>> allTradeResponses;
 //    private List<AllTradeResponses> allTradeResponses;
 
     @Builder
-    public AccountTradeAllResponse(Long accountId, String accountNumber, int balance, String bankCode, Map<String, List<AllTradeResponse>> allTradeResponses) {
+    public AccountTradeAllResponse(Long accountId, String accountNumber, int balance, String bankCode, String title, Map<String, List<AllTradeResponse>> allTradeResponses) {
         this.accountId = accountId;
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.bankCode = bankCode;
+        this.title = title;
         this.allTradeResponses = allTradeResponses;
     }
 }

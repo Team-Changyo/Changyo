@@ -48,6 +48,7 @@ public class AccountQueryService {
         int totalBalance = accounts.stream()
                 .mapToInt(AccountDetailResponse::getBalance)
                 .sum();
+
         Set<String> bankCodes = accounts.stream()
                 .map(AccountDetailResponse::getBankCode)
                 .collect(Collectors.toSet());
@@ -170,6 +171,7 @@ public class AccountQueryService {
                 .accountNumber(findAccount.getAccountNumber())
                 .balance(findAccount.getBalance())
                 .bankCode(findAccount.getBankCode())
+                .title(findAccount.getTitle())
                 .allTradeResponses(allTradeResponses)
                 .build();
 

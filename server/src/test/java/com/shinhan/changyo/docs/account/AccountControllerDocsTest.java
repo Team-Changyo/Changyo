@@ -100,6 +100,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .balance(200501)
                 .bankCode("088")
                 .mainAccount(true)
+                .title("메인계좌 1")
                 .build();
 
         AccountDetailResponse account2 = AccountDetailResponse.builder()
@@ -108,6 +109,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .balance(0)
                 .bankCode("088")
                 .mainAccount(false)
+                .title("메인계좌 2")
                 .build();
 
         List<AccountDetailResponse> accounts = List.of(account1, account2);
@@ -157,7 +159,9 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.accountDetailResponses[].bankCode").type(JsonFieldType.STRING)
                                         .description("은행코드"),
                                 fieldWithPath("data.accountDetailResponses[].mainAccount").type(JsonFieldType.BOOLEAN)
-                                        .description("주계좌여부")
+                                        .description("주계좌여부"),
+                                fieldWithPath("data.accountDetailResponses[].title").type(JsonFieldType.STRING)
+                                        .description("계좌 별칭")
                         )
                 ));
     }
@@ -197,6 +201,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .accountNumber("12345612")
                 .balance(341147)
                 .bankCode("088")
+                .title("메인계좌 1")
                 .allTradeResponses(allTradeResponses)
 
                 .build();
@@ -226,6 +231,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("잔액"),
                                 fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
                                         .description("은행 코드"),
+                                fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                        .description("계좌 별칭"),
                                 fieldWithPath("data.allTradeResponses").type(JsonFieldType.OBJECT)
                                         .description("거래 날짜 별 거래내역 List를 담은 Map"),
                                 fieldWithPath("data.allTradeResponses.*").type(JsonFieldType.ARRAY)
@@ -285,6 +292,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .accountNumber("12345612")
                 .balance(341147)
                 .bankCode("088")
+                .title("메인계좌 1")
                 .allTradeResponses(allTradeResponses)
 
                 .build();
@@ -314,6 +322,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("잔액"),
                                 fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
                                         .description("은행 코드"),
+                                fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                        .description("계좌 별칭"),
                                 fieldWithPath("data.allTradeResponses").type(JsonFieldType.OBJECT)
                                         .description("거래 날짜 별 거래내역 List를 담은 Map"),
                                 fieldWithPath("data.allTradeResponses.*").type(JsonFieldType.ARRAY)
@@ -374,6 +384,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .accountNumber("12345612")
                 .balance(341147)
                 .bankCode("088")
+                .title("메인계좌 1")
                 .allTradeResponses(allTradeResponses)
 
                 .build();
@@ -403,6 +414,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("잔액"),
                                 fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
                                         .description("은행 코드"),
+                                fieldWithPath("data.title").type(JsonFieldType.STRING)
+                                        .description("계좌 별칭"),
                                 fieldWithPath("data.allTradeResponses").type(JsonFieldType.OBJECT)
                                         .description("거래 날짜 별 거래내역 List를 담은 Map"),
                                 fieldWithPath("data.allTradeResponses.*").type(JsonFieldType.ARRAY)

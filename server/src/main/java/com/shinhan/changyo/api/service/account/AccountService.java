@@ -4,6 +4,7 @@ import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
+import com.shinhan.changyo.api.service.member.exception.DuplicateException;
 import com.shinhan.changyo.client.request.AccountDetailRequest;
 import com.shinhan.changyo.client.request.BalanceRequest;
 import com.shinhan.changyo.client.response.BalanceResponse;
@@ -15,6 +16,7 @@ import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberRepository;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -53,6 +55,14 @@ public class AccountService {
                 createAccountDetailRequest(request.getAccountNumber())
         );
 
+
+        if(response.getData() == null){
+            throw new NoSuchElementException("계좌 정보가 없습니다.");
+        }
+
+        if(accountQueryRepository.checkIsExistByAccountNumber(request.getAccountNumber())){ // 존재하면
+            throw new DuplicateException("계좌가 이미 등록되었습니다"); // TODO: 2023-09-14 홍진식 : member 쪽 Exception 사용중 수정 필요
+        }
 
         CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 
