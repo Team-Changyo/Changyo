@@ -53,6 +53,9 @@ public class QrCodeService {
     public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
         try {
             Long lastSaveId = qrCodeQueryRepository.getLastSavedQrCodeId();
+            if (lastSaveId == null) {
+                lastSaveId = 0L;
+            }
             // QR코드 생성
             String url = String.format("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=%s", lastSaveId + 1);
             String qrCodeBase64 = createQR(url);
