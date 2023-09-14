@@ -2,7 +2,18 @@
 
 ==== HTTP Request
 include::{snippets}/search-transfer/http-request.adoc[]
+include::{snippets}/search-transfer/request-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/search-transfer/http-response.adoc[]
 include::{snippets}/search-transfer/response-fields.adoc[]
+
+=== 간편 송금 정보 조회
+
+==== HTTP Request
+include::{snippets}/search-simple-transfer/http-request.adoc[]
+include::{snippets}/search-simple-transfer/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/search-simple-transfer/http-response.adoc[]
+include::{snippets}/search-simple-transfer/response-fields.adoc[]

@@ -1,14 +1,17 @@
 package com.shinhan.changyo.docs.trade;
 
+import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnRequest;
+import com.shinhan.changyo.api.controller.trade.request.SimpleTradeRequest;
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
 import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
+import com.shinhan.changyo.api.service.trade.dto.SimpleTradeDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +26,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -96,6 +99,59 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.NUMBER)
                                         .description("거래내역 식별키")
+                        )
+                ));
+    }
+
+    @DisplayName("간편 송금 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void simpleTrade() throws Exception {
+        SimpleTradeRequest request = SimpleTradeRequest.builder()
+                .accountId(1L)
+                .withdrawalAccountNumber("110184999999")
+                .bankCode("088")
+                .amount(20000)
+                .depositAccountNumber("110054999999")
+                .depositMemberName("홍진식")
+                .build();
+
+        mockMvc.perform(
+                        post("/trade/simple")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("simple-trade",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("출금 계좌 식별키"),
+                                fieldWithPath("withdrawalAccountNumber").type(JsonFieldType.STRING)
+                                        .description("출금 계좌 번호"),
+                                fieldWithPath("bankCode").type(JsonFieldType.STRING)
+                                        .description("은행코드"),
+                                fieldWithPath("depositMemberName").type(JsonFieldType.STRING)
+                                        .description("입금 계좌 코드 이름"),
+                                fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
+                                        .description("입금 계좌 번호"),
+                                fieldWithPath("depositMemberName").type(JsonFieldType.STRING)
+                                        .description("입금 계좌 번호"),
+                                fieldWithPath("amount").type(JsonFieldType.NUMBER)
+                                        .description("금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL)
+                                        .description("응답 데이터")
                         )
                 ));
     }

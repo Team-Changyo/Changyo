@@ -12,26 +12,25 @@ public class SimpleTradeDto {
     private String bankCode;
     private String depositAccountNumber;
     private int amount;
-    private String qrCodeTitle;
+    private String depositMemberName;
 
     @Builder
-    public SimpleTradeDto(Long accountId, String withdrawalAccountNumber, String bankCode, String depositAccountNumber, int amount, String qrCodeTitle) {
+    public SimpleTradeDto(Long accountId, String withdrawalAccountNumber, String bankCode, String depositAccountNumber, int amount, String depositMemberName) {
         this.accountId = accountId;
         this.withdrawalAccountNumber = withdrawalAccountNumber;
         this.bankCode = bankCode;
         this.depositAccountNumber = depositAccountNumber;
         this.amount = amount;
-        this.qrCodeTitle = qrCodeTitle;
     }
 
-    public TransferRequest toTransferRequest(String memberName) {
+    public TransferRequest toTransferRequest(String withdrawalMemberName) {
         return TransferRequest.builder()
                 .withdrawalAccountNumber(this.withdrawalAccountNumber)
                 .depositBankCode(this.bankCode)
                 .depositAccountNumber(this.depositAccountNumber)
                 .amount(this.amount)
-                .depositMemo(memberName)
-                .withdrawalMemo(this.qrCodeTitle)
+                .depositMemo(this.depositAccountNumber)
+                .withdrawalMemo(withdrawalMemberName)
                 .build();
     }
 }
