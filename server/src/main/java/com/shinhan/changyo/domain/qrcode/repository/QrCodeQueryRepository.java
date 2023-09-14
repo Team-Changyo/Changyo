@@ -27,6 +27,7 @@ public class QrCodeQueryRepository {
                         qrCode.qrCodeId,
                         qrCode.title,
                         qrCode.account.accountNumber,
+                        qrCode.account.bankCode,
                         qrCode.amount
                 ))
                 .from(qrCode)
