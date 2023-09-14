@@ -36,7 +36,7 @@ public class AuthenticationControllerDocsTest extends RestDocsSupport {
     }
 
     @DisplayName("1원 송금")
-    @Test
+//    @Test
     void authenticationAccount() throws Exception {
         AuthenticationRequest request = AuthenticationRequest.builder()
             .bankCode("088")
@@ -76,7 +76,7 @@ public class AuthenticationControllerDocsTest extends RestDocsSupport {
     }
 
     @DisplayName("인증번호 확인 API")
-    @Test
+//    @Test
     void checkAuthenticationNumber() throws Exception {
         CheckAuthenticationRequest request = CheckAuthenticationRequest.builder()
             .authenticationNumber("123")

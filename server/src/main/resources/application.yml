@@ -9,6 +9,8 @@ spring:
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
   # jpa setting
   jpa:
     hibernate:
@@ -31,3 +33,4 @@ jwt:
 
 changyo-account:
   accountNumber: 110291999999
+
