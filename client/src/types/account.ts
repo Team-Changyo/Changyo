@@ -4,6 +4,7 @@ export interface IAccount {
 	balance: number;
 	bankCode: string;
 	mainAccount: boolean;
+	title: string;
 }
 
 export interface IHistory {

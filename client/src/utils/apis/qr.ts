@@ -26,7 +26,7 @@ export const findAllQRApi = async () => {
 };
 
 // 보증금 QR 상세 조회
-export const findQRApi = async (qrCodeId: number) => {
+export const findQRApi = async (qrCodeId: string) => {
 	const response = await instance.get(`/qrcode-management/qrcode/${qrCodeId}`);
 	return response;
 };
