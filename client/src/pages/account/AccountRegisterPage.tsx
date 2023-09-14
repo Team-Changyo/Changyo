@@ -11,7 +11,7 @@ import CheckText from 'components/atoms/common/CheckText';
 import CertModal from 'components/organisms/account/CertModal';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { registerAccountApi } from 'utils/apis/account';
+import { authRequestAccountApi, registerAccountApi } from 'utils/apis/account';
 import { isAxiosError } from 'axios';
 
 function AccountRegisterPage() {
@@ -50,7 +50,7 @@ function AccountRegisterPage() {
 		}
 	};
 
-	const sendCertRequest = () => {
+	const sendCertRequest = async () => {
 		if (!bankCode) {
 			toast.error('은행을 선택해주세요');
 		} else if (!accountNumber) {
@@ -58,6 +58,15 @@ function AccountRegisterPage() {
 		} else if (window.confirm('1원 이체 인증을 요청하시겠습니까?')) {
 			// TODO : 계좌가 유효한지 검증로직 추가 (해커톤때는 안할듯)
 			// 유효하다면 모달 오픈
+			const body = {
+				bankCode,
+				accountNumber,
+			};
+
+			const response = await authRequestAccountApi(body);
+			if (response.status === 200) {
+				console.log(response.data);
+			}
 			setModalOpen(true);
 		}
 	};
