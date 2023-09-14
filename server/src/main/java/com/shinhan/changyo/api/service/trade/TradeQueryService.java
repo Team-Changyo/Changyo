@@ -92,11 +92,12 @@ public class TradeQueryService {
 
         int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId);
         int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId);
+        int totalAmount = tradeQueryRepository.getTotalAmountByQrCodeId(qrCodeId);
 
         List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId, lastTradeId);
         log.debug("deposits={}", deposits);
 
-        return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount);
+        return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount, totalAmount);
     }
 
     /**
@@ -120,9 +121,10 @@ public class TradeQueryService {
      * @param deposits    보증금 입금내역
      * @param waitCount   반환대기 목록 전체개수
      * @param doneCount   반환완료 목록 전체개수
+     * @param totalAmount 총 금액
      * @return 보증금 정산관리 상세조회 목록
      */
-    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount) {
+    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount, int totalAmount) {
         List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
         List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
         boolean hasNextPage = checkHasNextPage(deposits);
@@ -131,7 +133,7 @@ public class TradeQueryService {
                 .hasNextPage(hasNextPage)
                 .qrCodeTitle(qrCodeTrade.getTitle())
                 .amount(qrCodeTrade.getAmount())
-                .totalAmount(qrCodeTrade.getAmount() * deposits.size())
+                .totalAmount(totalAmount)
                 .waitCount(waitCount)
                 .doneCount(doneCount)
                 .waitDetails(waitDetails)

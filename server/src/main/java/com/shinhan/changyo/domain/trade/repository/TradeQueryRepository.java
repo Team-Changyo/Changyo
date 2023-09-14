@@ -299,6 +299,20 @@ public class TradeQueryRepository {
     }
 
     /**
+     * QR 코드 식별키가 일치하는 모든 거래내역의 금액 총합 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return 거래내역 금액 총합
+     */
+    public int getTotalAmountByQrCodeId(Long qrCodeId) {
+        return Objects.requireNonNull(queryFactory
+                .select(trade.depositAmount.sum())
+                .from(trade)
+                .where(trade.qrCode.qrCodeId.eq(qrCodeId))
+                .fetchOne());
+    }
+
+    /**
      * 입금자 (QR 코드 소유 회원) 계좌 정보 조회
      *
      * @param tradeId 보증금 거래내역 식별키
