@@ -2,12 +2,11 @@ package com.shinhan.changyo.domain.trade.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shinhan.changyo.api.controller.trade.response.DoneWithdrawalDetailResponse;
-import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
+import com.shinhan.changyo.api.controller.trade.response.DoneWithdrawalDetailResponse;
 import com.shinhan.changyo.api.controller.trade.response.WaitWithdrawalDetailResponse;
+import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
 import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.springframework.stereotype.Repository;
@@ -167,7 +166,7 @@ public class TradeQueryRepository {
      * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 해당 회원의 보증금 입금내역 목록
      */
-    public List<DepositOverviewResponse> getDepositTrades(String loginId, Long lastQrCodeId) {
+    public List<DepositOverviewResponse> getDepositTradeOverviews(String loginId, Long lastQrCodeId) {
         List<Long> accountIds = getAccountIdsByLoginId(loginId);
 
         if (accountIds == null || accountIds.isEmpty()) {
@@ -185,13 +184,14 @@ public class TradeQueryRepository {
                         qrCode.qrCodeId,
                         qrCode.title,
                         trade.depositAmount,
-                        new CaseBuilder().when(trade.status.eq(TradeStatus.WAIT)).then(trade.depositAmount).otherwise(0).sum(),
-                        new CaseBuilder().when(trade.status.eq(TradeStatus.WAIT)).then(trade.depositAmount).otherwise(0).count().intValue()
+                        trade.depositAmount.sum(),
+                        trade.countDistinct().intValue()
                 ))
                 .from(trade)
                 .join(trade.qrCode, qrCode)
                 .where(
                         qrCode.qrCodeId.in(qrCodeIds),
+                        trade.status.eq(TradeStatus.WAIT),
                         isLagerThanLastQrCodeId(lastQrCodeId)
                 )
                 .groupBy(qrCode.qrCodeId, trade.createdDate)
