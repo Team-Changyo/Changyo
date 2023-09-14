@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.service.member.exception;
+package com.shinhan.changyo.api.service.util.exception;
 
 public class DuplicateException extends IllegalArgumentException {
     public DuplicateException() {
