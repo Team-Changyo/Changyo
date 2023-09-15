@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.controller.transfer;
 
 import com.shinhan.changyo.api.ApiResponse;
+import com.shinhan.changyo.api.controller.transfer.response.SimpleTransferInfoResponse;
 import com.shinhan.changyo.api.controller.transfer.response.TransferInfoResponse;
 import com.shinhan.changyo.api.service.transfer.TransferQueryService;
 import com.shinhan.changyo.security.SecurityUtil;
@@ -51,15 +52,15 @@ public class TransferController {
      * @return 간편송금 이체 정보
      */
     @GetMapping("/simple")
-    public ApiResponse<TransferInfoResponse> getSimpleTransferInfo(@RequestParam Long simpleQrCodeId) {
+    public ApiResponse<SimpleTransferInfoResponse> getSimpleTransferInfo(@RequestParam Long simpleQrCodeId) {
         log.debug("TransferController#getSimpleQrTransferInfo call");
         log.debug("simpleQrCodeId={}", simpleQrCodeId);
 
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        TransferInfoResponse response = transferQueryService.getSimpleTransferInfo(simpleQrCodeId, loginId);
-        log.debug("TransferInfoResponse={}", response);
+        SimpleTransferInfoResponse response = transferQueryService.getSimpleTransferInfo(simpleQrCodeId, loginId);
+        log.debug("SimpleTransferInfoResponse={}", response);
 
         return ApiResponse.ok(response);
     }

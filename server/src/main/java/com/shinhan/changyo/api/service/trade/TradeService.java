@@ -99,51 +99,27 @@ public class TradeService {
      * @return 반환여부
      */
     public Boolean returnDeposits(List<ReturnDepositDto> dtos) {
-        // TODO: 2023-09-12 최영환 리팩토링 해야함
         List<Report> reports = new ArrayList<>();
-        for (ReturnDepositDto dto : dtos) {
-            Trade trade = tradeRepository.findById(dto.getTradeId())
-                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 거래내역 입니다."));
-            if (!isWithReason(dto.getReason())) {
-                MemberAccountDto depositAccount = tradeQueryRepository.getDepositAccount(dto.getTradeId());
-                returnDeposit(depositAccount, dto.getFee());
-                trade.editStatus(TradeStatus.FEE);
 
+        for (ReturnDepositDto dto : dtos) {
+            Trade trade = getTradeById(dto.getTradeId());
+
+            if (!isWithReason(dto)) {
+                MemberAccountDto depositAccount = getDepositAccount(dto.getTradeId());
+                returnDeposit(depositAccount, dto.getFee());
+
+                trade.editStatus(TradeStatus.FEE);
                 reports.add(dto.toReport());
             } else {
                 trade.editStatus(TradeStatus.DONE);
             }
-            MemberAccountDto withdrawalAccount = tradeQueryRepository.getWithdrawalAccount(dto.getTradeId());
+
+            MemberAccountDto withdrawalAccount = getWithdrawalAccount(dto.getTradeId());
             returnDeposit(withdrawalAccount, dto.getAmount());
         }
         reportRepository.saveAll(reports);
 
         return true;
-    }
-
-    /**
-     * 사유 존재 여부
-     *
-     * @param reason 반환금액 변동사유
-     * @return true: 반환금액이 빈 문자열인 경우 false: 반환금액이 빈 문자열이 아닌 경우
-     */
-    private boolean isWithReason(String reason) {
-        return reason.isEmpty();
-    }
-
-    /**
-     * 보증금 반환 실행
-     *
-     * @param dto    반환받을 회원의 계좌 정보
-     * @param amount 반환 금액
-     */
-    private void returnDeposit(MemberAccountDto dto, int amount) {
-        TransferRequest transferRequest = createReturnTransferRequest(dto, amount);
-        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(transferRequest);
-
-        Account account = accountRepository.findById(dto.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("해당하는 계좌가 없습니다."));
-        withdrawal(transferResponse, account);
     }
 
     /**
@@ -184,6 +160,62 @@ public class TradeService {
      */
     private boolean checkIsOk(HttpStatus status) {
         return status.equals(HttpStatus.OK);
+    }
+
+    /**
+     * 거래내역 조회
+     *
+     * @param tradeId 거래내역 식별키
+     * @return 조회된 거래내역
+     */
+    private Trade getTradeById(Long tradeId) {
+        return tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 거래내역 입니다."));
+    }
+
+    /**
+     * 사유 존재 여부
+     *
+     * @param dto 반환정보
+     * @return true: 반환금액이 빈 문자열인 경우 false: 반환금액이 빈 문자열이 아닌 경우
+     */
+    private boolean isWithReason(ReturnDepositDto dto) {
+        return dto.getReason().isEmpty();
+    }
+
+    /**
+     * 출금 계좌 정보 조회
+     *
+     * @param tradeId 거래내역 식별키
+     * @return 조회된 출금 계좌 정보
+     */
+    private MemberAccountDto getWithdrawalAccount(Long tradeId) {
+        return tradeQueryRepository.getWithdrawalAccount(tradeId);
+    }
+
+    /**
+     * 입금 계좌 정보 조회
+     *
+     * @param tradeId 거래내역 식별키
+     * @return 조회된 입금 계좌 정보
+     */
+    private MemberAccountDto getDepositAccount(Long tradeId) {
+        return tradeQueryRepository.getDepositAccount(tradeId);
+    }
+
+    /**
+     * 보증금 반환 실행
+     *
+     * @param dto    반환받을 회원의 계좌 정보
+     * @param amount 반환 금액
+     */
+    private void returnDeposit(MemberAccountDto dto, int amount) {
+        TransferRequest transferRequest = createReturnTransferRequest(dto, amount);
+        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(transferRequest);
+
+        Account account = accountRepository.findById(dto.getAccountId())
+                .orElseThrow(() -> new NoSuchElementException("해당하는 계좌가 없습니다."));
+        withdrawal(transferResponse, account);
     }
 
     /**
