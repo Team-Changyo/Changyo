@@ -34,7 +34,7 @@ export const HistoryListItemContainer = styled.div<{ $isDone: boolean }>`
 		padding-left: 10px;
 
 		.title {
-			color: var(--gray-500);
+			color: var(--main-color);
 		}
 
 		.time {

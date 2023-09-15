@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ListTotalText from 'components/atoms/common/ListTotalText';
-import { findAllWaitRemitHistoryApi } from 'utils/apis/deposit';
+import { findAllDoneRemitHistoryApi, findAllWaitRemitHistoryApi } from 'utils/apis/deposit';
 import { IDepositHistory } from 'types/deposit';
 import { DepositHistoryListStackContainer } from './style';
 import DepositHistoryList from '../DepositHistoryList';
@@ -24,11 +24,11 @@ function DepositHistoryListStack() {
 
 	const fetchDoneData = async () => {
 		try {
-			const response = await findAllWaitRemitHistoryApi();
+			const response = await findAllDoneRemitHistoryApi();
 
 			console.log('done', response);
 			if (response.status === 200) {
-				setDoneHistories(response.data.data.waitWithdrawals);
+				setDoneHistories(response.data.data.doneWithdrawals);
 			}
 		} catch (error) {
 			console.error(error);

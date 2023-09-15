@@ -36,7 +36,6 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 	};
 
 	const returnCancel = () => {
-		// TODO : 토스트로 교체하기
 		toast.error('보증금 반환을 취소합니다');
 		setReturnMoney(moneyUnit);
 		setReason('선택');
