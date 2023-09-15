@@ -2,14 +2,14 @@ import { CreateDepositQRApiBody, CreateQRApiBody } from 'types/api';
 import instance from './instance';
 
 // 간편 송금 QR 생성
-export const createQRApi = async (body: CreateQRApiBody) => {
-	const response = await instance.post('/qrcode-management/qrcode', body);
+export const createNormalQRApi = async (body: CreateQRApiBody) => {
+	const response = await instance.post('/qrcode-management/qrcode/simple', body);
 	return response;
 };
 
 // 보증금 QR 생성
 export const createDepositQRApi = async (body: CreateDepositQRApiBody) => {
-	const response = await instance.post('/qrcode-management/qrcode/simple', body);
+	const response = await instance.post('/qrcode-management/qrcode', body);
 	return response;
 };
 

@@ -13,9 +13,9 @@ export const remitDepositApi = async (body: RemitDepositApiBody) => {
 	return response;
 };
 
-// TODO 보증금 반환
+// 보증금 반환
 export const returnDepositApi = async (body: ReturnDepositApiBody) => {
-	const response = await instance.post('/trade', body);
+	const response = await instance.post('/trade/deposit', body);
 	return response;
 };
 

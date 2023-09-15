@@ -7,8 +7,8 @@ export const findAllWaitRemitHistoryApi = async () => {
 };
 
 // 보증금 송금내역 전체조회
-export const findAllDoneRemitHistoryApi = async (lastTradeId: string) => {
-	const response = await instance.get(`/trade/withdrawal/done?lastTradeId=${lastTradeId}`);
+export const findAllDoneRemitHistoryApi = async () => {
+	const response = await instance.get(`/trade/withdrawal/done`);
 	return response;
 };
 
@@ -19,7 +19,7 @@ export const findAllSettlementGroupApi = async () => {
 };
 
 // 보증금 정산관리 상세조회
-export const findAllSettlementApi = async (qrCodeId: string, lastTradeId: string) => {
-	const response = await instance.get(`/trade/deposit/detail?qrCodeId=${qrCodeId}&lastTradeId=${lastTradeId}`);
+export const findAllSettlementApi = async (qrCodeId: string) => {
+	const response = await instance.get(`/trade/deposit/detail?qrCodeId=${qrCodeId}`);
 	return response;
 };
