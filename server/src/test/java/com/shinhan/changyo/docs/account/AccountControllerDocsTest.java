@@ -4,8 +4,10 @@ import com.shinhan.changyo.api.controller.account.AccountController;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
 import com.shinhan.changyo.api.controller.account.response.*;
+import com.shinhan.changyo.api.controller.trade.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
+import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.docs.qrcode.QrCodeControllerDocsTest;
@@ -19,7 +21,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -34,6 +37,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
     private final AccountService accountService = mock(AccountService.class);
     private final AccountQueryService accountQueryService = mock(AccountQueryService.class);
+
     @Override
     protected Object initController() {
         return new AccountController(accountService, accountQueryService);
@@ -57,6 +61,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         post("/account")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -95,7 +100,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
         Long memberId = 1L;
 
         AccountDetailResponse account1 = AccountDetailResponse.builder()
-                .accountId(1l)
+                .accountId(1L)
                 .accountNumber("110184999999")
                 .balance(200501)
                 .bankCode("088")
@@ -104,7 +109,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .build();
 
         AccountDetailResponse account2 = AccountDetailResponse.builder()
-                .accountId(2l)
+                .accountId(2L)
                 .accountNumber("110185999999")
                 .balance(0)
                 .bankCode("088")
@@ -127,12 +132,12 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/account")
+                                .header("Authentication", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-account",
                         preprocessResponse(prettyPrint()),
-
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -172,6 +177,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailAll() throws Exception {
         Long accountId = 1L;
 
+        AccountRequest request = createAccountRequest(accountId);
+
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
                 .tradeTime("023753")
@@ -206,16 +213,24 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(anyString(), anyLong()))
+        given(accountQueryService.getAccountTradeAll(any(AccountDto.class)))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/account/1")
+                        post("/account/detail")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-account-detail-all",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -263,6 +278,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailDeposit() throws Exception {
         Long accountId = 1L;
 
+        AccountRequest request = createAccountRequest(accountId);
+
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
                 .tradeTime("023753")
@@ -297,16 +314,24 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
                 .build();
 
-        given(accountQueryService.getAccountTradeDeposit(anyString(), anyLong()))
+        given(accountQueryService.getAccountTradeDeposit(any(AccountDto.class)))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/account/deposit/1")
+                        post("/account/deposit")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-account-detail-deposit",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -355,6 +380,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailWithdrawal() throws Exception {
         Long accountId = 1L;
 
+        AccountRequest request = createAccountRequest(accountId);
+
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
                 .tradeTime("023753")
@@ -386,19 +413,26 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .bankCode("088")
                 .title("메인계좌 1")
                 .allTradeResponses(allTradeResponses)
-
                 .build();
 
-        given(accountQueryService.getAccountTradeWithdrawal(anyString(), anyLong()))
+        given(accountQueryService.getAccountTradeWithdrawal(any(AccountDto.class)))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/account/withdrawal/1")
+                        post("/account/withdrawal")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("search-account-detail-withdrawal",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -441,18 +475,18 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     }
 
 
-
-
     @DisplayName("계좌 별칭 변경 API")
     @Test
     @WithMockUser(roles = "MEMBER")
     void editAccountTitle() throws Exception {
 
         EditAccountTitleRequest request = EditAccountTitleRequest.builder()
+                .accountId(1L)
                 .title("변경이다.")
                 .build();
 
         AccountEditResponse response = AccountEditResponse.builder()
+                .accountId(1L)
                 .accountNumber("123456123")
                 .balance(800000)
                 .bankCode("088")
@@ -464,15 +498,19 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/account/title/1")
+                        patch("/account/title")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andDo(document("edit-account-title",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키"),
                                 fieldWithPath("title").type(JsonFieldType.STRING)
                                         .description("변경할 별칭")
                         ),
@@ -483,6 +521,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
+                                fieldWithPath("data.accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌식별키"),
                                 fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
                                 fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
@@ -503,7 +543,10 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "MEMBER")
     void editAccountMainAccount() throws Exception {
 
+        AccountRequest request = createAccountRequest(1L);
+
         AccountEditResponse response = AccountEditResponse.builder()
+                .accountId(1L)
                 .accountNumber("123456123")
                 .balance(800000)
                 .bankCode("088")
@@ -511,16 +554,24 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .mainAccount(true)
                 .build();
 
-        given(accountService.editMainAccount(anyLong(), anyString()))
+        given(accountService.editMainAccount(any(AccountDto.class)))
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/account/main-account/{accountId}", 1L)
+                        patch("/account/main-account")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andDo(document("edit-account-main",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -528,6 +579,8 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
+                                fieldWithPath("data.accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키"),
                                 fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
                                         .description("계좌번호"),
                                 fieldWithPath("data.balance").type(JsonFieldType.NUMBER)
@@ -548,18 +601,28 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "MEMBER")
     void removeAccount() throws Exception {
 
+        AccountRequest request = createAccountRequest(1L);
+
         Boolean result = true;
 
-        given(accountService.removeAccount(anyLong(), anyString()))
+        given(accountService.removeAccount(any(AccountDto.class)))
                 .willReturn(result);
 
         mockMvc.perform(
-                        delete("/account/{accountId}", 1L)
+                        post("/account/disable")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andDo(document("delete-account",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("계좌 식별키")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -571,5 +634,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("삭제 결과: true 또는 false")
                         )
                 ));
+    }
+
+    private AccountRequest createAccountRequest(Long accountId) {
+        return AccountRequest.builder()
+                .accountId(accountId)
+                .build();
     }
 }
