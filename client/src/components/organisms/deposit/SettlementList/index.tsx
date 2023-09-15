@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
-import { ISettlement } from 'types/deposit';
+import { IReturnSettlement, ISettlement } from 'types/deposit';
 import ListTotalText from 'components/atoms/common/ListTotalText';
+import { returnDepositApi } from 'utils/apis/trade';
+import toast from 'react-hot-toast';
 import { SettlementListContainer } from './style';
 import SettlementListItem from '../SettlementListItem';
 import SettlementMultiReturnMenu from '../SettlementMultiReturnMenu';
@@ -32,15 +34,37 @@ function SettlementList({ settlements, isReturned, title, moneyUnit }: ISettleme
 	};
 
 	// 최종 반환 함수
-	const returnDeposit = (returnMoney: number, reason: string, reasonDetail: string) => {
-		// TODO : 반환 API 나오면 처리할 것.
+	const returnDeposit = async (returnMoney: number, reason: string, reasonDetail: string) => {
+		const returnArr: IReturnSettlement[] = [];
 
-		console.log(toBeReturned);
-		console.log(returnMoney);
-		console.log(reason);
-		console.log(reasonDetail);
+		if (toBeReturned.length) {
+			toBeReturned.forEach((el) => {
+				const tmp: IReturnSettlement = {
+					tradeId: el.tradeId,
+					amount: moneyUnit,
+					reason,
+					description: reasonDetail,
+					fee: moneyUnit - returnMoney,
+				};
+				returnArr.push(tmp);
+			});
 
-		setIsMultiReturnMode(false);
+			try {
+				const body = {
+					returnRequests: returnArr,
+				};
+				const response = await returnDepositApi(body);
+
+				if (response.status === 200) {
+					toast.success('보증금 반환이 완료되었습니다.');
+					returnArr.length = 0;
+					toBeReturned.length = 0;
+					setIsMultiReturnMode(false);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}
 	};
 
 	// 전체 선택 버튼 클릭 시
