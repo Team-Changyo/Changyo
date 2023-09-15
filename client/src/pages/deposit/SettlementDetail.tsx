@@ -21,7 +21,7 @@ function SettlementDetail() {
 	const fetchSettlementGroup = async () => {
 		try {
 			if (location.sid) {
-				const response = await findAllSettlementApi(location.sid, '0');
+				const response = await findAllSettlementApi(location.sid);
 
 				console.log(response);
 				if (response.status === 200) {

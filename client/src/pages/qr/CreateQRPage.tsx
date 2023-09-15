@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as QR } from 'assets/icons/qr/qr-default-icon.svg';
 import CreateQRPageLayout from 'layouts/page/qr/CreateQRPageLayout';
 import PageLayout from 'layouts/common/PageLayout';
@@ -10,9 +10,10 @@ import UnderLineInput from 'components/atoms/common/UnderLineInput';
 import AccountSelector from 'components/organisms/account/AccountSelector';
 import { IAccount } from 'types/account';
 import useAccountList from 'hooks/useAccountList';
-import { createQRApi } from 'utils/apis/qr';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { createDepositQRApi, createNormalQRApi } from 'utils/apis/qr';
+import { getExpiredTime } from 'utils/common/getExpiredTime';
 
 function CreateQRPage() {
 	const accountList = useAccountList();
@@ -27,28 +28,45 @@ function CreateQRPage() {
 		{ idx: 1, title: '보증금 송금', handleClick: () => setRemittanceType(1), selected: remittanceType },
 	];
 
-	const createQRRequest = async () => {
+	// 간편송금 요청
+	const createNormalQRRequest = async () => {
+		try {
+			const body = {
+				bankCode: accountList[0].bankCode,
+				accountNumber: accountList[0].accountNumber,
+				amount: moneyUnit,
+			};
+			const response = await createNormalQRApi(body);
+			console.log(response);
+			if (response.status === 200) {
+				toast.success(' 간편 송금 QR 생성이 완료되었습니다.');
+				sessionStorage.setItem('normalQRInfo', JSON.stringify(response.data.data));
+				sessionStorage.setItem('qrExpiredTime', getExpiredTime(3).toString());
+				navigate(`/qr/normal`);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	// 보증금 송금 요청
+	const createDepositQRRequest = async () => {
 		try {
 			const body = {
 				accountId: accountList[0].accountId,
 				amount: moneyUnit,
 				title: alias,
 			};
-			const response = await createQRApi(body);
+			const response = await createDepositQRApi(body);
 			console.log(response);
 			if (response.status === 201) {
-				toast.success('송금 QR 생성이 완료되었습니다.');
+				toast.success('보증금 송금 QR 생성이 완료되었습니다.');
 				navigate(`/qr/deposit/${response.data.data.qrCodeId}`);
 			}
 		} catch (error) {
 			console.error(error);
 		}
-		console.log(remittanceType);
 	};
-
-	useEffect(() => {
-		console.log(accountList);
-	}, [accountList]);
 
 	return (
 		<PageLayout>
@@ -71,7 +89,14 @@ function CreateQRPage() {
 						type="number"
 					/>
 				}
-				CreateQRBtn={<Button handleClick={createQRRequest} text="송금 QR 만들기" type="Primary" icon={<QR />} />}
+				CreateQRBtn={
+					<Button
+						handleClick={remittanceType ? createDepositQRRequest : createNormalQRRequest}
+						text="송금 QR 만들기"
+						type="Primary"
+						icon={<QR />}
+					/>
+				}
 				DisplayNameTitle={remittanceType ? <OptionTitleText text="요청 표시명을 입력하세요" /> : <div />}
 				InputDisplayName={
 					remittanceType ? (
