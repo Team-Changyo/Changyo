@@ -20,3 +20,11 @@ export interface ISettlement {
 	memberName: string;
 	tradeDate: string;
 }
+
+export interface IReturnSettlement {
+	tradeId: number;
+	amount: number;
+	fee: number;
+	reason: string;
+	description: string;
+}

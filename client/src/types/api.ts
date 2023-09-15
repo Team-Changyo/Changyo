@@ -1,5 +1,7 @@
 // REQUEST
 
+import { IReturnSettlement } from './deposit';
+
 // - member
 export interface LoginApiBody {
 	loginId: string;
@@ -48,18 +50,20 @@ export interface RemitDepositApiBody {
 	content: string;
 }
 
-export interface ReturnDepositApiBody {}
+export interface ReturnDepositApiBody {
+	returnRequests: IReturnSettlement[];
+}
 
 // - qr
 export interface CreateQRApiBody {
-	accountId: number;
+	accountNumber: string;
 	amount: number;
-	title: string;
 }
 
 export interface CreateDepositQRApiBody {
 	accountId: number;
 	amount: number;
+	title: string;
 }
 
 // RESPONSE
