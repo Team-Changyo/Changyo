@@ -6,16 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class EditAccountTitleDto {
-    private String title;
+public class AccountDto {
+
     private Long accountId;
     private String loginId;
 
     @Builder
-    public EditAccountTitleDto(String title, Long accountId, String loginId) {
-        this.title = title;
+    public AccountDto(Long accountId, String loginId) {
         this.accountId = accountId;
         this.loginId = loginId;
     }
-
 }

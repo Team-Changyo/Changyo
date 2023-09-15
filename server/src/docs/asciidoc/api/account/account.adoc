@@ -15,7 +15,6 @@ include::{snippets}/create-account/response-fields.adoc[]
 ==== HTTP Request
 include::{snippets}/search-account/http-request.adoc[]
 
-
 ==== HTTP Response
 include::{snippets}/search-account/http-response.adoc[]
 include::{snippets}/search-account/response-fields.adoc[]
@@ -36,6 +35,7 @@ include::{snippets}/edit-account-title/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/edit-account-main/http-request.adoc[]
+include::{snippets}/edit-account-main/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/edit-account-main/http-response.adoc[]
@@ -47,6 +47,7 @@ include::{snippets}/edit-account-main/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/delete-account/http-request.adoc[]
+include::{snippets}/delete-account/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/delete-account/http-response.adoc[]
@@ -57,6 +58,7 @@ include::{snippets}/delete-account/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/search-account-detail-all/http-request.adoc[]
+include::{snippets}/search-account-detail-all/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/search-account-detail-all/http-response.adoc[]
@@ -67,6 +69,7 @@ include::{snippets}/search-account-detail-all/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/search-account-detail-deposit/http-request.adoc[]
+include::{snippets}/search-account-detail-deposit/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/search-account-detail-deposit/http-response.adoc[]
@@ -78,6 +81,7 @@ include::{snippets}/search-account-detail-deposit/response-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/search-account-detail-withdrawal/http-request.adoc[]
+include::{snippets}/search-account-detail-withdrawal/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/search-account-detail-withdrawal/http-response.adoc[]
