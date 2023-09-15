@@ -25,7 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +52,7 @@ public class QrCodeService {
     private final SimpleQrCodeRepository simpleQrCodeRepository;
     private final MemberQueryRepository memberQueryRepository;
 
+    static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
     /**
      * QR코드 증록
      *
@@ -103,95 +109,64 @@ public class QrCodeService {
     public String createQR(String url) throws Exception {
 
         BitMatrix bitMatrix = null;
+        BufferedImage combined = null;
         String codeInformation = url;
-        int onColor = 0xFF2e4e96; // 바코드 색
+        int onColor = 0xFF000000; // 바코드 색
         int offColor = 0xFFFFFFFF; // 배경 색
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
         Map<EncodeHintType, String> hints = new HashMap<>();
 
-       /*
- 	https://zxing.github.io/zxing/apidocs/com/google/zxing/qrcode/decoder/ErrorCorrectionLevel.html
-        Enum Constants
-        L = ~7% correction
-        M = ~15% correction
-        Q = ~25% correction
-        H = ~30% correction
-        */
         hints.put(EncodeHintType.ERROR_CORRECTION, "L");
 
+        // 이미지 파일을 BufferedImage로 로드
+        BufferedImage logoImage = loadImage(LOGO_PATH);
 
         // QRCode 전체 크기
         // 단위는 fixel
         int width = 200;
         int height = 200;
 
-        // 내부에 빈 공간만들 빈 공간 -> oncolor로 만들어진다.
-        //int regionWidth=100;
-        //int regionHeight=100;
-
         try {
             // bitMatrix 형식으로 QRCode를 만든다.
             bitMatrix = qrCodeWriter.encode(codeInformation, BarcodeFormat.QR_CODE, width, height);
-            // QRCode 중간에 빈공간을 만들고 색을 offColor로 바꿔주는 메소드
-//             bitMatrix= emptyQR(bitMatrix,height,width); // QR내부에 빈 공간 만드는 메소드(사용할 경우 hint의 error_correction 을 반드시 높여줘야 합니다)
+
+            // Logo 삽입
+            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+            BufferedImage overly = logoImage;
+
+            int deltaHeight = qrImage.getHeight() - overly.getHeight();
+            int deltaWidth = qrImage.getWidth() - overly.getWidth();
+
+            combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) combined.getGraphics();
+
+            g.drawImage(qrImage, 0, 0, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            // QR코드 이미지의 정중앙 위치에 덮음.
+            g.drawImage(overly, (int) Math.round(deltaWidth / 2), (int) Math.round(deltaHeight / 2), null);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream, matrixToImageConfig);
+        ImageIO.write(combined, "png", outputStream);
 
-        // 이제 만들어본 QRCode를 저장해보자
-//        String savePath = "c:\test\";
-//        String saveFileName = "qrImage.png";
-//        File file = new File(savePath);
-//        if(!file.exists()) {
-//            file.mkdirs();
-//            // 리눅스 서버에 저장하는 경우 파일 접근 권한을 줘야 한다.
-//        }
-        // 파일은 저장하고 싶은대로 저장하면 된다.
-        // buffer나 stream는 공부를 더 해봐야 하는 부분이다.
-
-//        // bufferedImage 를 이용한 파일 저장 -> 방식 1
-//        BufferedImage bufferedImage=null;
-//        bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix,matrixToImageConfig);
-//        File saveFile=new File(savePath+qrName);
-//        ImageIO.write(bufferedImage, "png", saveFile);
-//
-//        // fileOutputStream 을 이용한 파일 저장 -> 방식 2
-//        FileOutputStream fileOutputStream=new FileOutputStream(new File(savePath+qrName));
-//        fileOutputStream.write(outputStream.toByteArray());
-//        fileOutputStream.close();
-
-        // byteArray를 base64로 변환한 이유는 프론트에서 파일경로가 아닌 binary 형식으로 전송해서 보여주기 위해서다.
-        // 이렇게 할 경우 DB에 이미지를 저장하지 않고 화면에 보여줄 수 있다.
-        return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        byte[] imageBytes = outputStream.toByteArray();
+        String base64QRCode = Base64.getEncoder().encodeToString(imageBytes);
+        return base64QRCode;
     }
 
-    private BitMatrix emptyQR(BitMatrix bitMatrix, int regionHeight, int regionWidth) {
-        // 이 메소드는 bitmatrix에 네모난 공간을 만드는 것이다.
-
-        // 빈 공간의 넓이와 높이
-        int width = bitMatrix.getWidth();
-        int height = bitMatrix.getHeight();
-
-        // 빈 공간의 위치(중앙으로 설정했다.)
-        int left = (width - regionWidth) / 2;
-        int top = (height - regionHeight) / 2;
-
-        // 빈 공간 생성하기(이때 색은 offColor)
-        bitMatrix.setRegion(left, top, regionWidth, regionHeight);
-        // 빈 공간의 색을 배경색으로 반전시킨다.(fixel 단위로 찾아서 색을 뒤집는다.)
-        for (int y = top; y <= top + regionHeight; y++) {
-            for (int x = left; x <= left + regionWidth; x++) {
-                if (bitMatrix.get(x, y)) {
-                    bitMatrix.unset(x, y);
-                }
-            }
+    public static BufferedImage loadImage(String filePath) {
+        try {
+            File file = new File(filePath);
+            return ImageIO.read(file);
+        } catch (IOException e) {
+            log.debug("message={}", e.getMessage());
+            throw new IllegalArgumentException("QR코드 생성 실페 - 내부 서버 문제");
         }
-        return bitMatrix;
     }
 
     public QrCodeDetailResponse editAmount(EditAmountDto dto) {
