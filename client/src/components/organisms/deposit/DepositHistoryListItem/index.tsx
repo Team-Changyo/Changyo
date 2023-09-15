@@ -16,13 +16,13 @@ function DepositHistoryItem({ history, isDone }: IDepositHistoryItemProps) {
 			</div>
 			<div className="history-info">
 				<div>
-					<span className="title">{history.title}</span>
+					<span className="title">{history.qrCodeTitle}</span>
 				</div>
 				<div>
-					송금처 <span>{history.remitDestination}</span>
+					송금처 <span>{history.memberName}</span>
 				</div>
 				<div>
-					반환일시 <span className="return-datetime">{history.returnDateTime}</span>
+					반환일시 <span className="return-datetime">{history.tradeDate}</span>
 				</div>
 			</div>
 			<div className="history-money-info">
