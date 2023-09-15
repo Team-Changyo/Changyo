@@ -21,7 +21,7 @@ public class ReturnDepositDto {
         this.description = description;
     }
 
-    public Report toReport() {
+    public Report toEntity() {
         return Report.builder()
                 .reason(this.reason)
                 .description(this.description)

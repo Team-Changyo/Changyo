@@ -1,28 +1,25 @@
 package com.shinhan.changyo.api.controller.account;
 
-import com.shinhan.changyo.api.ApiControllerAdvice;
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
-import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
+import com.shinhan.changyo.api.controller.trade.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
-import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 /**
  * 계좌 관련 API 컨트롤러
- * 
+ *
  * @author 최영환
  */
 @Slf4j
@@ -35,7 +32,7 @@ public class AccountController {
     private final AccountQueryService accountQueryService;
 
     /**
-     * 계좌 등록
+     * 계좌 등록 API
      *
      * @param request 등록할 계좌정보
      * @return 등록된 계좌 식별키
@@ -45,8 +42,10 @@ public class AccountController {
     public ApiResponse<Long> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         log.debug("AccountController#createAccount called");
         log.debug("CreateAccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
+
         Long saveId = accountService.createAccount(request, loginId);
         log.debug("saveId={}", saveId);
 
@@ -54,97 +53,138 @@ public class AccountController {
     }
 
     /**
-     * 회원별 계좌 전체 조회
-     *
+     * 회원별 계좌 전체 조회 API
      *
      * @return 계좌 개수, 계좌 정보 목록
      */
-    @GetMapping()
+    @GetMapping
     public ApiResponse<AccountResponse> getAccounts() {
         log.debug("AccountController#getAccounts called");
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
+
         AccountResponse response = accountQueryService.getAccounts(loginId);
         log.debug("response={}", response);
-        return ApiResponse.ok(response); // -> 성공 코드
+
+        return ApiResponse.ok(response);
     }
 
     /**
-     * 계좌내역 상세 전체 조회(내역 조회)
+     * 계좌내역 상세 전체 조회(내역 조회) API
      *
-     * @param accountId
-     * @return
+     * @param request 계좌정보
+     * @return 계좌내역 상세 목록
      */
-    @GetMapping("/{accountId}")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@PathVariable Long accountId){
+    @PostMapping("/detail")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@RequestBody AccountRequest request) {
         log.debug("AccountController#getAccountDetailAll called");
+        log.debug("AccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(loginId,accountId);
+
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId));
+
         return ApiResponse.ok(response);
     }
 
     /**
-     * 입금 계좌내역 상세 전체 조회(내역 조회)
+     * 입금 계좌내역 상세 전체 조회(내역 조회) API
      *
-     * @param accountId
-     * @return
+     * @param request 계좌 정보
+     * @return 입금 계좌내역 상세
      */
-    @GetMapping("/deposit/{accountId}")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailDeposit(@PathVariable Long accountId){
+    @PostMapping("/deposit")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailDeposit(@RequestBody AccountRequest request) {
         log.debug("AccountController#getAccountDetailDeposit called");
+        log.debug("AccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeDeposit(loginId,accountId);
+
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeDeposit(request.toAccountDto(loginId));
+
         return ApiResponse.ok(response);
     }
 
     /**
-     * 출금 계좌내역 상세 전체 조회(내역 조회)
+     * 출금 계좌내역 상세 전체 조회(내역 조회) API
      *
-     * @param accountId
-     * @return
+     * @param request 게좌 정보
+     * @return 출금 계좌내역 상세 목록
      */
-
-    @GetMapping("/withdrawal/{accountId}")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailWithdrawal(@PathVariable Long accountId){
+    @PostMapping("/withdrawal")
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailWithdrawal(@RequestBody AccountRequest request) {
         log.debug("AccountController#getAccountDetailWithdrawal called");
+        log.debug("AccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeWithdrawal(loginId,accountId);
+
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeWithdrawal(request.toAccountDto(loginId));
+
         return ApiResponse.ok(response);
     }
 
 
-    @PatchMapping("/title/{accountId}")
+    /**
+     * 계좌 별명 수정 API
+     *
+     * @param request 수정 계좌 정보
+     * @return 수정된 계좌 정보
+     */
+    @PatchMapping("/title")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<AccountEditResponse> editTitle(@PathVariable Long accountId, @RequestBody EditAccountTitleRequest request){
-        log.debug("request={}",request);
-        log.debug("accountId={}", accountId);
+    public ApiResponse<AccountEditResponse> editTitle(@RequestBody EditAccountTitleRequest request) {
+        log.debug("AccountController#editTitle called");
+        log.debug("EditAccountTitleRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(accountId, loginId));
+
+        AccountEditResponse response = accountService.editTitle(request.toEditAccountTitleDto(loginId));
+
         return ApiResponse.found(response);
     }
 
 
-    @PatchMapping("/main-account/{accountId}")
+    /**
+     * 주계좌 여부 수정 API
+     *
+     * @param request 수정 계좌 정보
+     * @return 수정된 계좌 정보
+     */
+    @PatchMapping("/main-account")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<AccountEditResponse> editMainAccount(@PathVariable Long accountId){
-        log.debug("accountId={}", accountId);
+    public ApiResponse<AccountEditResponse> editMainAccount(@RequestBody AccountRequest request) {
+        log.debug("AccountController#editMainAccount called");
+        log.debug("AccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        AccountEditResponse response = accountService.editMainAccount(accountId, loginId);
+
+        AccountEditResponse response = accountService.editMainAccount(request.toAccountDto(loginId));
+
         return ApiResponse.found(response);
     }
 
-    @DeleteMapping("/{accountId}")
+    /**
+     * 계좌 삭제 API
+     *
+     * @param request 삭제 계좌 정보
+     * @return true: 삭제 성공 시 false: 삭제 실패시
+     */
+    @PostMapping("/disable")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<Boolean> removeAccount(@PathVariable Long accountId){
-        log.debug("accountId={}", accountId);
+    public ApiResponse<Boolean> removeAccount(@RequestBody AccountRequest request) {
+        log.debug("AccountController#removeAccount called");
+        log.debug("AccountRequest={}", request);
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
-        Boolean response = accountService.removeAccount(accountId, loginId);
-        return ApiResponse.found(response);
+
+        Boolean result = accountService.removeAccount(request.toAccountDto(loginId));
+
+        return ApiResponse.found(result);
     }
 }
