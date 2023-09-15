@@ -53,17 +53,17 @@ public class TradeQueryRepository {
                 .select(Projections.constructor(WaitWithdrawalDetailResponse.class,
                         trade.id,
                         qrCode.title,
-                        member.name,
+                        account.member.name,
                         trade.withdrawalAmount,
                         trade.status
                 ))
                 .from(trade)
                 .join(trade.account, account)
+                .join(account.member, member)
                 .join(trade.qrCode, qrCode)
                 .join(qrCode.account, account)
-                .join(account.member, member)
                 .where(
-                        account.id.in(accountIds),
+                        trade.account.id.in(accountIds),
                         trade.status.eq(TradeStatus.WAIT)
                 )
                 .orderBy(trade.createdDate.desc())
@@ -91,7 +91,7 @@ public class TradeQueryRepository {
                 .join(qrCode.account, account)
                 .join(account.member, member)
                 .where(
-                        account.id.in(accountIds),
+                        trade.account.id.in(accountIds),
                         trade.status.ne(TradeStatus.WAIT)
                 )
                 .fetchOne();
@@ -115,17 +115,17 @@ public class TradeQueryRepository {
                 .select(Projections.constructor(DoneWithdrawalDetailResponse.class,
                         trade.id,
                         qrCode.title,
-                        member.name,
+                        account.member.name,
                         trade.withdrawalAmount,
                         trade.lastModifiedDate
                 ))
                 .from(trade)
                 .join(trade.account, account)
+                .join(account.member, member)
                 .join(trade.qrCode, qrCode)
                 .join(qrCode.account, account)
-                .join(account.member, member)
                 .where(
-                        account.id.in(accountIds),
+                        trade.account.id.in(accountIds),
                         trade.status.ne(TradeStatus.WAIT),
                         isLagerThanLastTradeId(lastTradeId)
                 )
