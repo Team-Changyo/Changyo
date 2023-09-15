@@ -6,6 +6,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
 import com.shinhan.changyo.api.service.account.exception.NoAccountException;
+import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TradeRequest;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * 계좌 쿼리 서비스
- * 
+ *
  * @author 최영환
  */
 @Slf4j
@@ -72,45 +73,43 @@ public class AccountQueryService {
         }
     }
 
-    public AccountTradeAllResponse getAccountTradeAll(String loginId, Long accountId)  {
-        return getTradeResponse(loginId, accountId, 0);
+    public AccountTradeAllResponse getAccountTradeAll(AccountDto dto) {
+        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 0);
     }
 
 
-    public AccountTradeAllResponse getAccountTradeDeposit(String loginId, Long accountId) {
-        return getTradeResponse(loginId, accountId, 1);
+    public AccountTradeAllResponse getAccountTradeDeposit(AccountDto dto) {
+        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 1);
     }
 
-    public AccountTradeAllResponse getAccountTradeWithdrawal(String loginId, Long accountId){
-        return getTradeResponse(loginId, accountId, 2);
+    public AccountTradeAllResponse getAccountTradeWithdrawal(AccountDto dto) {
+        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 2);
     }
 
 
-    private TradeRequest createTradeRequest(String accountNumber){
+    private TradeRequest createTradeRequest(String accountNumber) {
         return TradeRequest.builder()
                 .accountNumber(accountNumber)
                 .build();
     }
 
 
-
-
-    private Map<String, List<AllTradeResponse>> createGroupByDateTime(List<TradeDetailResponse> trades, int status){
+    private Map<String, List<AllTradeResponse>> createGroupByDateTime(List<TradeDetailResponse> trades, int status) {
 
         // 필요한 정보만 뽑아서 list 화
         List<AllTradeResponse> allTradeResponses = trades.stream()
                 .filter(trade -> {
-                    if(status == 0){
+                    if (status == 0) {
                         return true;
-                    }else if(status == 1){
+                    } else if (status == 1) {
                         return trade.getStatus() == 1;
-                    }else if(status == 2){
+                    } else if (status == 2) {
                         return trade.getStatus() == 2;
-                    }else{
+                    } else {
                         return false;
                     }
                 })
-                .map(trade-> {
+                .map(trade -> {
                     AllTradeResponse tmp = AllTradeResponse.builder()
                             .tradeDate(trade.getTradeDate())
                             .tradeTime(trade.getTradeTime())
@@ -137,19 +136,18 @@ public class AccountQueryService {
 
 
     /**
-     *
-     * @param loginId 로그인 아이디
+     * @param loginId   로그인 아이디
      * @param accountId 계좌 식별키
-     * @param status 입지 구분 0 : 전체 / 1 : 입금(deposit) / 2 : 출금(withdrawal)
+     * @param status    입지 구분 0 : 전체 / 1 : 입금(deposit) / 2 : 출금(withdrawal)
      * @return
      */
 
-    private AccountTradeAllResponse getTradeResponse(String loginId, Long accountId, int status){
+    private AccountTradeAllResponse getTradeResponse(String loginId, Long accountId, int status) {
         // 계좌 조회
         Account findAccount = accountRepository.findById(accountId).orElseThrow(() ->
                 new NoSuchElementException("존재 하지 않는 계좌입니다."));
         // 접근 권한 체크
-        if(!findAccount.getMember().getLoginId().equals(loginId)){
+        if (!findAccount.getMember().getLoginId().equals(loginId)) {
             throw new ForbiddenException("접근 권한이 없습니다.");
         }
 
@@ -163,7 +161,7 @@ public class AccountQueryService {
 
         Map<String, List<AllTradeResponse>> allTradeResponses = null;
         // 거래내역이 없는 경우
-        if(trades.size() != 0){
+        if (trades.size() != 0) {
             allTradeResponses = createGroupByDateTime(trades, status);
         }
         Map<String, List<AllTradeResponse>> sortedAllTradeResponses =
