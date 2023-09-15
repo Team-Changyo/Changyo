@@ -2,8 +2,8 @@ package com.shinhan.changyo.api.service.trade;
 
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
-import com.shinhan.changyo.api.service.trade.dto.ReturnDepositDto;
 import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
+import com.shinhan.changyo.api.service.trade.dto.ReturnDepositDto;
 import com.shinhan.changyo.api.service.trade.dto.SimpleTradeDto;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TransferRequest;
@@ -14,7 +14,6 @@ import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.member.repository.MemberQueryRepository;
 import com.shinhan.changyo.domain.qrcode.QrCode;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeRepository;
-import com.shinhan.changyo.domain.report.Report;
 import com.shinhan.changyo.domain.report.repository.ReportRepository;
 import com.shinhan.changyo.domain.trade.Trade;
 import com.shinhan.changyo.domain.trade.TradeStatus;
@@ -27,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -99,8 +97,6 @@ public class TradeService {
      * @return 반환여부
      */
     public Boolean returnDeposits(List<ReturnDepositDto> dtos) {
-        List<Report> reports = new ArrayList<>();
-
         for (ReturnDepositDto dto : dtos) {
             Trade trade = getTradeById(dto.getTradeId());
 
@@ -109,7 +105,7 @@ public class TradeService {
                 returnDeposit(depositAccount, dto.getFee());
 
                 trade.editStatus(TradeStatus.FEE);
-                reports.add(dto.toReport());
+                reportRepository.save(dto.toEntity());
             } else {
                 trade.editStatus(TradeStatus.DONE);
             }
@@ -117,7 +113,6 @@ public class TradeService {
             MemberAccountDto withdrawalAccount = getWithdrawalAccount(dto.getTradeId());
             returnDeposit(withdrawalAccount, dto.getAmount());
         }
-        reportRepository.saveAll(reports);
 
         return true;
     }
