@@ -11,7 +11,7 @@ function useAccountList() {
 	const fetchData = async () => {
 		try {
 			const response = await findAllAccountApi();
-			console.log(response);
+
 			if (response.status === 200) {
 				setAccountList(response.data.data.accountDetailResponses);
 			}
