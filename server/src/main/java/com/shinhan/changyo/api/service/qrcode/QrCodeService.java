@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,8 @@ public class QrCodeService {
     private final SimpleQrCodeRepository simpleQrCodeRepository;
     private final MemberQueryRepository memberQueryRepository;
 
+
+    static final String LOGO_URL = "http://localhost:8080/images/changyoLogo.png";
     static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
 
     /**
@@ -127,7 +130,8 @@ public class QrCodeService {
         hints.put(EncodeHintType.ERROR_CORRECTION, "L");
 
         // 이미지 파일을 BufferedImage로 로드
-        BufferedImage logoImage = loadImage(LOGO_PATH);
+//        BufferedImage logoImage = loadImage(LOGO_PATH);
+        BufferedImage logoImage = loadImage(LOGO_URL);
 
         // QRCode 전체 크기
         // 단위는 fixel
@@ -168,8 +172,11 @@ public class QrCodeService {
 
     public static BufferedImage loadImage(String filePath) {
         try {
-            File file = new File(filePath);
-            return ImageIO.read(file);
+            URL url = new URL(filePath);
+            return ImageIO.read(url);
+
+//            File file = new File(filePath);
+//            return ImageIO.read(file);
         } catch (IOException e) {
             log.debug("message={}", e.getMessage());
             throw new IllegalArgumentException("QR코드 생성 실페 - 내부 서버 문제");
