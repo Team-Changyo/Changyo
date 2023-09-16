@@ -56,7 +56,7 @@ public class QrCodeService {
     private final SimpleQrCodeRepository simpleQrCodeRepository;
     private final MemberQueryRepository memberQueryRepository;
 
-
+    static final String QR_URL = "https://j9c205.p.ssafy.io/remittance/";
     static final String LOGO_URL = "http://localhost:8080/images/changyoLogo.png";
     static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
 
@@ -69,7 +69,7 @@ public class QrCodeService {
 
     public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
         try {
-            StringBuilder url = new StringBuilder("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=");
+            StringBuilder url = new StringBuilder(QR_URL);
             String qrCodeBase64 = url.toString();
 
             Account findAccount = accountRepository.findById(dto.getAccountId())
@@ -82,7 +82,7 @@ public class QrCodeService {
             QrCode saveQrCode = qrCodeRepository.save(dto.toEntity(url.toString(), qrCodeBase64, findAccount));
 
             // ID를 추가해서 QR코드 생성
-            url.append(saveQrCode.getQrCodeId());
+            url.append("deposit?qrCodeId=").append(saveQrCode.getQrCodeId());
             qrCodeBase64 = createQR(url.toString());
             saveQrCode.editUrlAndQrCodeBase64(url.toString(), qrCodeBase64);
 
@@ -97,7 +97,7 @@ public class QrCodeService {
         try {
             Member member = memberQueryRepository.getMemberByLoginId(loginId);
             SimpleQrCode saveQrCode = simpleQrCodeRepository.save(dto.toEntity(member.getName()));
-            String url = String.format("https://j9c205.ssafy.io/remittance/normal?simpleQrCodeId=%s", saveQrCode.getId());
+            String url = String.format(QR_URL + "/normal?simpleQrCodeId=%s", saveQrCode.getId());
             String qrCodeBase64 = createQR(url);
             saveQrCode.editUrlAndQrCodeBase64(url, qrCodeBase64);
 
