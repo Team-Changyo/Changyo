@@ -15,19 +15,19 @@ export const findAllAccountApi = async () => {
 
 // 계좌 상세조회 (전체)
 export const findAccountAllApi = async (accountId: string) => {
-	const response = await instance.post(`/account/detail`, { accountId });
+	const response = await instance.post(`/account/detail`, { accountId, startDate: '', endDate: '' });
 	return response;
 };
 
 // 계좌 상세조회 (입금)
 export const findAccountInApi = async (accountId: string) => {
-	const response = await instance.post(`/account/deposit`, { accountId });
+	const response = await instance.post(`/account/deposit`, { accountId, startDate: '', endDate: '' });
 	return response;
 };
 
 // 계좌 상세조회 (출금)
 export const findAccountOutApi = async (accountId: string) => {
-	const response = await instance.post(`/account/withdrawal`, { accountId });
+	const response = await instance.post(`/account/withdrawal`, { accountId, startDate: '', endDate: '' });
 	return response;
 };
 
