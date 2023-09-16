@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { ReactComponent as Coin } from 'assets/icons/account/coin.svg';
 import { ISettlement } from 'types/deposit';
