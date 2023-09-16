@@ -12,4 +12,14 @@ export const MainTabNavbarContainer = styled.div`
 		font-size: 1.5rem;
 		font-weight: bold;
 	}
+
+	.drop-down-menu {
+		padding: 0;
+		margin: 0;
+
+		h1 {
+			font-size: 1.5rem;
+			font-weight: bold;
+		}
+	}
 `;
