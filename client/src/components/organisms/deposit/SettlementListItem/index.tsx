@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
 import { ReactComponent as Coin } from 'assets/icons/account/coin.svg';
 import { ISettlement } from 'types/deposit';
@@ -14,7 +14,7 @@ interface ISettlementListItemProps {
 
 function SettlementListItem(props: ISettlementListItemProps) {
 	const { addToBeReturned, isMultiReturnMode, openReturnModal, settlement, toBeReturned } = props;
-	const isReturn = settlement.status === 'DONE';
+	const isReturn = settlement.status !== 'WAIT';
 
 	const handleReturn = () => {
 		toBeReturned.length = 0;
