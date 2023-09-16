@@ -172,8 +172,7 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.qrCode.qrCodeId.eq(qrCodeId),
-                        trade.status.eq(TradeStatus.WAIT),
-                        qrCode.active.eq(true)
+                        trade.status.eq(TradeStatus.WAIT)
                 )
                 .fetchOne();
     }
