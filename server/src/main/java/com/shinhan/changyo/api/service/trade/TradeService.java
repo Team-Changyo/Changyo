@@ -101,11 +101,13 @@ public class TradeService {
     /**
      * 보증금 반환
      *
-     * @param dtos 보증금 반환 객체 리스트
+     * @param dtos    보증금 반환 객체 리스트
+     * @param loginId 로그인한 회원 로그인 아이디
      * @return 반환여부
      */
-    public Boolean returnDeposits(List<ReturnDepositDto> dtos) {
+    public Boolean returnDeposits(List<ReturnDepositDto> dtos, String loginId) {
         List<Report> reports = new ArrayList<>();
+        Member member = memberQueryRepository.getMemberByLoginId(loginId);
         for (ReturnDepositDto dto : dtos) {
             Trade trade = getTradeById(dto.getTradeId());
 
@@ -114,7 +116,7 @@ public class TradeService {
                 returnDeposit(depositAccount, dto.getFee());
 
                 trade.editStatus(TradeStatus.FEE);
-                reports.add(dto.toEntity());
+                reports.add(dto.toEntity(trade, member));
             } else {
                 trade.editStatus(TradeStatus.DONE);
             }

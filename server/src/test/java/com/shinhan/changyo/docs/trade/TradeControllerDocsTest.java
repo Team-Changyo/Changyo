@@ -434,6 +434,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 반환 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void returnDeposit() throws Exception {
         ReturnDepositRequest request1 = ReturnDepositRequest.builder()
                 .tradeId(1L)
@@ -456,11 +457,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .returnRequests(requests)
                 .build();
 
-        given(tradeService.returnDeposits(anyList()))
+        given(tradeService.returnDeposits(anyList(), anyString()))
                 .willReturn(true);
 
         mockMvc.perform(
                         post("/trade/deposit")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
