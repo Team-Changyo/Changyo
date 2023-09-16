@@ -26,6 +26,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import { memberInfoState } from 'store/member';
 import { isAxiosError } from 'axios';
 import { findMemberInfo } from 'utils/apis/auth';
+import PageNotFound from 'pages/etc/PageNotFound';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
@@ -96,6 +97,7 @@ function AppRouter() {
 									<Route path="/success" element={<SuccessPage />} />
 									<Route path="/fail" element={<FailPage />} />
 								</Route>
+								<Route path="/*" element={<PageNotFound />} />
 							</Routes>
 							<Tabbar />
 						</>
