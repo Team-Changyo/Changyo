@@ -57,7 +57,7 @@ public class QrCodeService {
     private final MemberQueryRepository memberQueryRepository;
 
     static final String QR_URL = "https://j9c205.p.ssafy.io/remittance/";
-    static final String LOGO_URL = "http://localhost:8080/images/changyoLogo.png";
+    static final String LOGO_URL = "http://j9c205.p.ssafy.io:8083/images/changyoLogo.png";
     static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
 
     /**
