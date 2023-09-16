@@ -30,7 +30,7 @@ function CertModal(props: ICertModalProps) {
 
 			const response = await checkAuthAccountApi(body);
 
-			if (response.status === 200) {
+			if (response.status === 204) {
 				toast.success('계좌 인증에 성공했습니다!');
 				handleClose();
 				setCertified(true);

@@ -11,6 +11,7 @@ interface RemitHistoryListItemProps {
 function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
 	const formattedMoney = formatMoney(history.balance);
 
+	console.log(history.withdrawalAmount);
 	return (
 		<RemitHistoryListItemContainer>
 			<div className="history-logo">
@@ -21,7 +22,7 @@ function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
 				<span className="time">{history.tradeTime}</span>
 			</div>
 			<div className="history-money-info">
-				{history.status === 1 ? (
+				{history.withdrawalAmount === 0 ? (
 					<span className="price primary">{`${formatMoney(history.depositAmount)}원`}</span>
 				) : (
 					<span className="price">-{`${formatMoney(history.withdrawalAmount)}원`}</span>
