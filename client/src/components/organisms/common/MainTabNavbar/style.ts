@@ -11,6 +11,7 @@ export const MainTabNavbarContainer = styled.div`
 	h1 {
 		font-size: 1.5rem;
 		font-weight: bold;
+		color: var(--black-500);
 	}
 
 	.drop-down-menu {
