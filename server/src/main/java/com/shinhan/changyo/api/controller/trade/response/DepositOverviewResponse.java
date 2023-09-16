@@ -19,4 +19,10 @@ public class DepositOverviewResponse {
         this.remainTotal = remainTotal;
         this.remainCount = remainCount;
     }
+
+    public DepositOverviewResponse(Long qrCodeId, String qrCodeTitle, int amount) {
+        this.qrCodeId = qrCodeId;
+        this.qrCodeTitle = qrCodeTitle;
+        this.amount = amount;
+    }
 }

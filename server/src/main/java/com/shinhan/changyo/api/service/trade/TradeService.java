@@ -185,7 +185,7 @@ public class TradeService {
      * @return 조회된 출금 계좌 정보
      */
     private MemberAccountDto getWithdrawalAccount(Long tradeId) {
-        return tradeQueryRepository.getWithdrawalAccount(tradeId);
+        return tradeQueryRepository.getWithdrawalAccountByTradeId(tradeId);
     }
 
     /**
@@ -195,7 +195,7 @@ public class TradeService {
      * @return 조회된 입금 계좌 정보
      */
     private MemberAccountDto getDepositAccount(Long tradeId) {
-        return tradeQueryRepository.getDepositAccount(tradeId);
+        return tradeQueryRepository.getDepositAccountByTradeId(tradeId);
     }
 
     /**
