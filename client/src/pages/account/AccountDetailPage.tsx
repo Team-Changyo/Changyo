@@ -8,11 +8,14 @@ import AccountDetailPageLayout from 'layouts/page/account/AccountDetailPageLayou
 import { useParams } from 'react-router-dom';
 import { findAccountAllApi, findAccountInApi, findAccountOutApi } from 'utils/apis/account';
 import { IDetailInfo } from 'types/account';
+import LargeMoneySkeleton from 'components/atoms/skeleton/LargeMoneySkeleton';
+import AccountHistoryListSkeleton from 'components/atoms/skeleton/AccountHIstoryListSkeleton';
 
 function AccountDetailPage() {
 	const [selectedMenu, setSelcetedMenu] = useState('0');
 	const [detailInfo, setDetailInfo] = useState<IDetailInfo>();
 	const { accountId } = useParams();
+	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchData = async () => {
 		try {
@@ -37,6 +40,9 @@ function AccountDetailPage() {
 				}
 				if (response.status === 200) {
 					setDetailInfo(response.data.data);
+					setTimeout(() => {
+						setIsLoading(false);
+					}, 300);
 				}
 				console.log(response);
 			}
@@ -54,16 +60,28 @@ function AccountDetailPage() {
 			<AccountDetailPageLayout
 				Navbar={<SubTabNavbar text={detailInfo?.title as string} type="back" />}
 				AccountSummary={
-					<AccountSummary
-						bankCode={detailInfo?.bankCode as string}
-						accountNumber={detailInfo?.accountNumber as string}
-						totalMoney={detailInfo?.balance as number}
-					/>
+					isLoading ? (
+						<LargeMoneySkeleton />
+					) : (
+						<AccountSummary
+							bankCode={detailInfo?.bankCode as string}
+							accountNumber={detailInfo?.accountNumber as string}
+							totalMoney={detailInfo?.balance as number}
+						/>
+					)
 				}
 				RemitHistoryFilterList={
 					<RemitHistoryFilterList selectedMenu={selectedMenu} setSelcetedMenu={setSelcetedMenu} />
 				}
-				RemitHistoryList={detailInfo ? <RemitHistoryListStack detailInfo={detailInfo} /> : <div>내역이 없습니다.</div>}
+				RemitHistoryList={
+					isLoading ? (
+						<AccountHistoryListSkeleton />
+					) : detailInfo ? (
+						<RemitHistoryListStack detailInfo={detailInfo} />
+					) : (
+						<div>내역이 없습니다.</div>
+					)
+				}
 			/>
 		</PageLayout>
 	);

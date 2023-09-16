@@ -21,7 +21,6 @@ function AccountList({ accountList, selectedCode }: AccountListProps) {
 		}
 	}, [accountList, selectedCode]);
 
-	// TODO api 나오면 데이터 교체
 	return (
 		<AccountListWrapper>
 			{accounts.length ? (

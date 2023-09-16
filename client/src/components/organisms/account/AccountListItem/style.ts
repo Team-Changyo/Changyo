@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 
 export const AccountListItemContainer = styled.div`
-	height: 3rem;
+	height: 4rem;
 	max-height: 64px;
 	display: flex;
 	flex-direction: row;

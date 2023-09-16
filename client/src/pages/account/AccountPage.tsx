@@ -11,6 +11,8 @@ import { findAllAccountApi } from 'utils/apis/account';
 import { isAxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { IAccount } from 'types/account';
+import AccountListSkeleton from 'components/atoms/skeleton/AccountListSkeleton';
+import LargeMoneySkeleton from 'components/atoms/skeleton/LargeMoneySkeleton';
 
 function AccountPage() {
 	const [selectedCode, setSelectedCode] = useState('000'); // 은행구분
@@ -18,6 +20,7 @@ function AccountPage() {
 	const [totalMoney, setTotalMoney] = useState(0);
 	const [bankList, setBankList] = useState<string[]>([]);
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchAccountData = async () => {
 		try {
@@ -33,6 +36,9 @@ function AccountPage() {
 				setBankList([...set]);
 				setAccountList(response.data.data.accountDetailResponses);
 				setTotalMoney(response.data.data.accountTotalBalance);
+				setTimeout(() => {
+					setIsLoading(false);
+				}, 300);
 			}
 		} catch (error) {
 			if (isAxiosError(error)) {
@@ -54,11 +60,19 @@ function AccountPage() {
 						navBtn={<UnderlineButton text="계좌 등록하기" handleClick={() => navigate('register')} type="Primary" />}
 					/>
 				}
-				AccountSummary={<AccountTotalSummary accountCnt={accountList.length} totalMoney={totalMoney} />}
+				AccountSummary={
+					isLoading ? (
+						<LargeMoneySkeleton />
+					) : (
+						<AccountTotalSummary accountCnt={accountList.length} totalMoney={totalMoney} />
+					)
+				}
 				AccountFilterList={
 					<AccountFilterList bankCodes={bankList} selectedCode={selectedCode} setSelectedCode={setSelectedCode} />
 				}
-				AccountList={<AccountList accountList={accountList} selectedCode={selectedCode} />}
+				AccountList={
+					isLoading ? <AccountListSkeleton /> : <AccountList accountList={accountList} selectedCode={selectedCode} />
+				}
 			/>
 		</PageLayout>
 	);
