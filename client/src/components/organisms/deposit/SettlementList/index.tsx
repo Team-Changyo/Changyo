@@ -105,16 +105,16 @@ function SettlementList({ settlements, isReturned, title, moneyUnit }: ISettleme
 				{/* 반환 전/반환 완료 탭에 따라 버튼 메뉴 출력 */}
 				{!isReturned ? (
 					// '반환 전' 탭
-					<div className="multi-return-btn">
+					<div className="tab-option">
 						{/* 단일건 반환 모드일 경우, 여러건 반환 버튼  */}
 						{!isMultiReturnMode ? (
-							<div onClick={multiReturn} role="presentation">
+							<div onClick={multiReturn} role="presentation" className="multi-return-btn">
 								<Check />
 								<span>여러건 반환</span>
 							</div>
 						) : (
 							// 여러건 반환 모드일 경우, 전체선택 버튼
-							<span onClick={selectAll} role="presentation">
+							<span onClick={selectAll} role="presentation" className="select-all">
 								전체선택
 							</span>
 						)}

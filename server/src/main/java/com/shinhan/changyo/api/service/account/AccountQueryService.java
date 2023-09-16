@@ -5,7 +5,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
-import com.shinhan.changyo.api.service.account.dto.AccountDto;
+import com.shinhan.changyo.api.service.account.dto.AccountTradeDto;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.client.ShinHanApiClient;
@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,7 +67,7 @@ public class AccountQueryService {
      * @param status 입지구분 (0: 전체, 1: 입금, 2: 출금)
      * @return 입지 구분별 계좌내역
      */
-    public AccountTradeAllResponse getAccountTrade(AccountDto dto, int status) {
+    public AccountTradeAllResponse getAccountTradeAll(AccountTradeDto dto, int status) {
         // 계좌 조회
         Account findAccount = getAccount(dto.getAccountId());
         // 활성화 체크
@@ -74,6 +76,17 @@ public class AccountQueryService {
         checkAccessibility(dto.getLoginId(), findAccount);
         // 신한 api 호출
         List<TradeDetailResponse> trades = getTradeDetailResponses(findAccount);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = dto.getStartDate();
+        LocalDate endDate = dto.getEndDate();
+
+        trades = trades.stream().filter(response ->
+                {
+                    LocalDate tradeDateTime = getFormattedLocalDate(dateTimeFormatter, response.getTradeDate());
+                    return tradeDateTime.isBefore(endDate) && tradeDateTime.isAfter(startDate);
+                }
+        ).collect(Collectors.toList());
 
         // 거래 일자별로 정렬된 Map(Key: 거래일자 value: 해당 일자의 거래내역)
         Map<String, List<AllTradeResponse>> sortedAllTradeResponses = getSortedAllTradeResponses(status, trades);
@@ -88,6 +101,11 @@ public class AccountQueryService {
                 .build();
     }
 
+
+    private LocalDate getFormattedLocalDate(DateTimeFormatter dateTimeFormatter, String tradeDate) {
+        tradeDate = String.format("%s-%s-%s", tradeDate.substring(0, 4), tradeDate.substring(4, 6), tradeDate.substring(6, 8));
+        return LocalDate.parse(tradeDate, dateTimeFormatter);
+    }
     /**
      * account Id로 계좌 찾기
      *

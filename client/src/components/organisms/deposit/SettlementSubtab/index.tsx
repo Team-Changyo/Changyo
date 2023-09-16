@@ -30,7 +30,7 @@ function SettlementSubtab(props: {
 	return (
 		<SettlementSubtabContainer>
 			<div className="tab-selector">
-				<Tabs value={value} onChange={(e, nv) => setValue(nv)}>
+				<Tabs value={value} onChange={(_e, nv) => setValue(nv)}>
 					<Tab label="반환 전" />
 					<Tab label="반환 완료" />
 				</Tabs>

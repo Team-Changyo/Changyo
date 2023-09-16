@@ -70,7 +70,7 @@ public class TradeService {
 
         checkAccountEqual(account, qrCode);
 
-        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createReturnTransferRequest(account, qrCode, member.getName()));
+        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createTransferRequest(account, qrCode, member.getName()));
         withdrawal(transferResponse, account);
 
         Trade trade = dto.toEntity(account, qrCode, member);
@@ -101,30 +101,28 @@ public class TradeService {
     /**
      * 보증금 반환
      *
-     * @param dtos 보증금 반환 객체 리스트
+     * @param dtos    보증금 반환 객체 리스트
+     * @param loginId 로그인한 회원 로그인 아이디
      * @return 반환여부
      */
-    public Boolean returnDeposits(List<ReturnDepositDto> dtos) {
+    public Boolean returnDeposits(List<ReturnDepositDto> dtos, String loginId) {
         List<Report> reports = new ArrayList<>();
+        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+
         for (ReturnDepositDto dto : dtos) {
             Trade trade = getTradeById(dto.getTradeId());
 
-            if (!isWithReason(dto)) {
-                MemberAccountDto depositAccount = getDepositAccount(dto.getTradeId());
-                returnDeposit(depositAccount, dto.getFee());
-
-                trade.editStatus(TradeStatus.FEE);
-                reports.add(dto.toEntity());
-            } else {
-                trade.editStatus(TradeStatus.DONE);
-            }
-
+            MemberAccountDto depositAccount = getDepositAccount(dto.getTradeId());
             MemberAccountDto withdrawalAccount = getWithdrawalAccount(dto.getTradeId());
-            returnDeposit(withdrawalAccount, dto.getAmount());
+
+            if (!isWithReason(dto)) {
+                returnWithReason(reports, member, dto, trade, depositAccount, withdrawalAccount);
+            } else {
+                returnWithoutReason(dto, trade, withdrawalAccount);
+            }
         }
 
         reportRepository.saveAll(reports);
-
         return true;
     }
 
@@ -192,7 +190,7 @@ public class TradeService {
      * @param memberName 송금 회원 이름
      * @return 신한은행 이체 API 요청 객체
      */
-    private TransferRequest createReturnTransferRequest(Account account, QrCode qrCode, String memberName) {
+    private TransferRequest createTransferRequest(Account account, QrCode qrCode, String memberName) {
         return TransferRequest.builder()
                 .withdrawalAccountNumber(account.getAccountNumber())
                 .depositBankCode("088")
@@ -277,8 +275,7 @@ public class TradeService {
         TransferRequest transferRequest = createReturnTransferRequest(dto, amount);
         ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(transferRequest);
 
-        Account account = accountRepository.findById(dto.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("해당하는 계좌가 없습니다."));
+        Account account = getAccountById(dto.getAccountId());
         withdrawal(transferResponse, account);
     }
 
@@ -298,5 +295,35 @@ public class TradeService {
                 .depositMemo(dto.getMemberName())
                 .withdrawalMemo("챙겨요")
                 .build();
+    }
+
+    /**
+     * 사유가 존재하는 반환 (수수료 제외하고 반환)
+     *
+     * @param reports           저장될 사유 목록
+     * @param member            보증금을 반환 할 회원
+     * @param dto               반환 정보
+     * @param trade             거래내역
+     * @param depositAccount    보증금을 반환 할 회원
+     * @param withdrawalAccount 보증금을 보냈던 회원
+     */
+    private void returnWithReason(List<Report> reports, Member member, ReturnDepositDto dto, Trade trade, MemberAccountDto depositAccount, MemberAccountDto withdrawalAccount) {
+        returnDeposit(depositAccount, dto.getFee());
+        returnDeposit(withdrawalAccount, dto.getAmount() - dto.getFee());
+
+        trade.editStatus(TradeStatus.FEE);
+        reports.add(dto.toEntity(trade, member));
+    }
+
+    /**
+     * 사유가 존재하지 않는 반환 (원금 반환)
+     *
+     * @param dto               반환 정보
+     * @param trade             거래내역
+     * @param withdrawalAccount 반환받을 계좌
+     */
+    private void returnWithoutReason(ReturnDepositDto dto, Trade trade, MemberAccountDto withdrawalAccount) {
+        returnDeposit(withdrawalAccount, dto.getAmount());
+        trade.editStatus(TradeStatus.DONE);
     }
 }

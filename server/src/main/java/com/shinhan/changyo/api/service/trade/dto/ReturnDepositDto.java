@@ -1,6 +1,8 @@
 package com.shinhan.changyo.api.service.trade.dto;
 
+import com.shinhan.changyo.domain.member.Member;
 import com.shinhan.changyo.domain.report.Report;
+import com.shinhan.changyo.domain.trade.Trade;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,12 +23,14 @@ public class ReturnDepositDto {
         this.description = description;
     }
 
-    public Report toEntity() {
+    public Report toEntity(Trade trade, Member member) {
         return Report.builder()
                 .reason(this.reason)
                 .description(this.description)
                 .fee(this.fee)
                 .amount(this.amount)
+                .member(member)
+                .trade(trade)
                 .build();
     }
 }
