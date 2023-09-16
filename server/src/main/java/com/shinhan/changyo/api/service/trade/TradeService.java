@@ -74,7 +74,9 @@ public class TradeService {
         checkDuplicatedTrade(qrCode.getQrCodeId(), account.getId());
         checkAccountEqual(account, qrCode);
 
-        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createTransferRequest(account, qrCode, member.getName()));
+        ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(
+            createTransferRequest(account, qrCode, member.getName()));
+
         withdrawal(transferResponse, account);
 
         Trade trade = dto.toEntity(account, qrCode, member);

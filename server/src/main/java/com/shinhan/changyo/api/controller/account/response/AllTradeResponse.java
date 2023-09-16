@@ -21,6 +21,6 @@ public class AllTradeResponse {
         this.balance = balance;
         this.withdrawalAmount = withdrawalAmount;
         this.depositAmount = depositAmount;
-        this.status = status;
+        this.status = withdrawalAmount == 0 ? 2 : 1;
     }
 }

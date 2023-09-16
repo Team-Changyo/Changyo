@@ -36,3 +36,12 @@ jwt:
 
 changyo-account:
   accountNumber: 110112999999
+
+sns:
+  apiKey: NCSNNJIFY6SN91GA
+  apiSecretKey: 5ZC5XQFL0I9TXCAPKX3OKNVW67UBZGFC
+  from: 010-8472-5498
+
+
+server:
+  port: 8083

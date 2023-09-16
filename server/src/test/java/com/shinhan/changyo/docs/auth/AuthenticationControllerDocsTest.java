@@ -4,6 +4,7 @@ import com.shinhan.changyo.api.controller.auth.AuthenticationController;
 import com.shinhan.changyo.api.controller.auth.request.AuthenticationRequest;
 import com.shinhan.changyo.api.controller.auth.request.CheckAuthenticationRequest;
 import com.shinhan.changyo.api.service.auth.AccountAuthenticationService;
+import com.shinhan.changyo.api.service.auth.PhoneAuthenticationService;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.MediaType;
@@ -25,10 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthenticationControllerDocsTest extends RestDocsSupport {
 
     private final AccountAuthenticationService authenticationService = mock(AccountAuthenticationService.class);
+    private final PhoneAuthenticationService phoneAuthenticationService = mock(PhoneAuthenticationService.class);
 
     @Override
     protected Object initController() {
-        return new AuthenticationController(authenticationService);
+        return new AuthenticationController(authenticationService, phoneAuthenticationService);
     }
 
     @DisplayName("1원 송금")
