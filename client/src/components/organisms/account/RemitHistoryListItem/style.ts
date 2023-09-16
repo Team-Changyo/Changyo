@@ -45,6 +45,10 @@ export const RemitHistoryListItemContainer = styled.div`
 
 		.price {
 			color: var(--gray-500);
+
+			&.primary {
+				color: var(--main-color);
+			}
 		}
 
 		.balance {
