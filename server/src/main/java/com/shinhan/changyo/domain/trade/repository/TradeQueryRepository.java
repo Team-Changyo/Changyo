@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.shinhan.changyo.domain.account.QAccount.account;
 import static com.shinhan.changyo.domain.member.QMember.member;
@@ -138,27 +137,6 @@ public class TradeQueryRepository {
 
     private BooleanExpression isLagerThanLastTradeId(Long tradeId) {
         return tradeId == null ? null : trade.id.lt(tradeId);
-    }
-
-    /**
-     * 보증금 정산관리 목록 개수 조회
-     *
-     * @param loginId 현재 로그인한 회원 로그인아이디
-     * @return 보증금 정산관리 내역 총 개수
-     */
-    public int getDepositTradesTotalCount(String loginId) {
-        List<Long> accountIds = accountQueryRepository.getAccountIdsByLoginId(loginId);
-
-        if (accountIds == null || accountIds.isEmpty()) {
-            return 0;
-        }
-
-        return Objects.requireNonNull(queryFactory
-                .select(qrCode.count())
-                .from(qrCode)
-                .join(qrCode.account, account)
-                .where(account.id.in(accountIds))
-                .fetchOne()).intValue();
     }
 
     /**

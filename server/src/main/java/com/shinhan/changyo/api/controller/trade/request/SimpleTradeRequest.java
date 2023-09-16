@@ -5,10 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 public class SimpleTradeRequest {
+
+    @NotNull
     private Long accountId;
+    @NotNull
     private Long simpleQrCodeId;
 
     @Builder

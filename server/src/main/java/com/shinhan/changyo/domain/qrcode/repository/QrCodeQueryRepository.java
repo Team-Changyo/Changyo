@@ -114,8 +114,35 @@ public class QrCodeQueryRepository {
                 .fetch();
     }
 
-    private BooleanExpression isLagerThanLastQrCodeId(Long qrCodeId) {
-        return qrCodeId == null ? null : qrCode.qrCodeId.lt(qrCodeId);
+    /**
+     * 현재 QR 코드 식별키가 마지막으로 조회된 QR 코드 식별키보다 큰지 확인
+     *
+     * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
+     * @return null: null 인 경우 true: 더 큰 경우 false: 더 작은 경우
+     */
+    private BooleanExpression isLagerThanLastQrCodeId(Long lastQrCodeId) {
+        return lastQrCodeId == null ? null : qrCode.qrCodeId.lt(lastQrCodeId);
+    }
+
+    /**
+     * 보증금 정산관리 목록 개수 조회
+     *
+     * @param loginId 현재 로그인한 회원 로그인아이디
+     * @return 보증금 정산관리 내역 총 개수
+     */
+    public Long getDepositTradesTotalCount(String loginId) {
+        List<Long> accountIds = accountQueryRepository.getAccountIdsByLoginId(loginId);
+
+        if (accountIds == null || accountIds.isEmpty()) {
+            return 0L;
+        }
+
+        return queryFactory
+                .select(qrCode.count())
+                .from(qrCode)
+                .join(qrCode.account, account)
+                .where(account.id.in(accountIds))
+                .fetchOne();
     }
 
 }

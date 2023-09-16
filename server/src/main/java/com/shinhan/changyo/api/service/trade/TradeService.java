@@ -62,15 +62,11 @@ public class TradeService {
      * @return 보증금 거래내역 식별키
      */
     public Long createTrade(CreateTradeDto dto, String loginId) {
-        Account account = accountRepository.findById(dto.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 계좌입니다."));
-        QrCode qrCode = qrCodeRepository.findById(dto.getQrCodeId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
-        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+        Account account = getAccountById(dto.getAccountId());
+        QrCode qrCode = getQrCodeById(dto.getQrCodeId());
+        Member member = getMemberByLoginId(loginId);
 
-        if (account.getAccountNumber().equals(qrCode.getAccount().getAccountNumber())) {
-            throw new IllegalArgumentException("동일한 계좌 번호입니다.");
-        }
+        checkAccountEqual(account, qrCode);
 
         ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createReturnTransferRequest(account, qrCode, member.getName()));
         withdrawal(transferResponse, account);
@@ -87,11 +83,9 @@ public class TradeService {
      * @param loginId 현재 로그인한 사용자 로그인 아이디
      */
     public Boolean simpleTrade(SimpleTradeDto dto, String loginId) {
-        Account account = accountRepository.findById(dto.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 계좌입니다."));
-        SimpleQrCode simpleQrCode = simpleQrCodeRepository.findById(dto.getSimpleQrCodeId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
-        Member member = memberQueryRepository.getMemberByLoginId(loginId);
+        Account account = getAccountById(dto.getAccountId());
+        SimpleQrCode simpleQrCode = getSimpleQrCodeById(dto.getSimpleQrCodeId());
+        Member member = getMemberByLoginId(loginId);
 
         TransferRequest request = dto.toTransferRequest(account, simpleQrCode, member.getName());
 
@@ -127,6 +121,62 @@ public class TradeService {
         }
 
         return true;
+    }
+
+    /**
+     * 계좌 정보 조회
+     *
+     * @param accountId 계좌 식별키
+     * @return 계좌 정보
+     */
+    private Account getAccountById(Long accountId) {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 계좌입니다."));
+    }
+
+    /**
+     * QR 코드 정보 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드 정보
+     */
+    private QrCode getQrCodeById(Long qrCodeId) {
+        return qrCodeRepository.findById(qrCodeId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
+    }
+
+    /**
+     * 간편 송금 QR 코드 정보 조회
+     *
+     * @param simpleQrCodeId 간편 송금 QR 코드 식별키
+     * @return 간편 송금 QR 코드 정보
+     */
+    private SimpleQrCode getSimpleQrCodeById(Long simpleQrCodeId) {
+        return simpleQrCodeRepository.findById(simpleQrCodeId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 QR 코드입니다."));
+    }
+
+    /**
+     * 로그인 아이디로 회원 정보 조회
+     *
+     * @param loginId 현재 로그인 중인 회원의 로그인 아이디
+     * @return 회원 정보
+     */
+    private Member getMemberByLoginId(String loginId) {
+        return memberQueryRepository.getMemberByLoginId(loginId);
+    }
+
+    /**
+     * 동일 계좌 여부 확인
+     *
+     * @param account 계좌
+     * @param qrCode  QR 코드
+     * @throws IllegalArgumentException 송금 계좌와 입금 계좌가 동일한 경우
+     */
+    private void checkAccountEqual(Account account, QrCode qrCode) {
+        if (account.getAccountNumber().equals(qrCode.getAccount().getAccountNumber())) {
+            throw new IllegalArgumentException("동일한 계좌 번호입니다.");
+        }
     }
 
     /**
