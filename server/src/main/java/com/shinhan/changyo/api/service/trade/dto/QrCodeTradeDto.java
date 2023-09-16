@@ -4,13 +4,15 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class QRCodeTradeDto {
+public class QrCodeTradeDto {
 
+    private Long qrCodeId;
     private String title;
     private int amount;
 
     @Builder
-    public QRCodeTradeDto(String title, int amount) {
+    public QrCodeTradeDto(Long qrCodeId, String title, int amount) {
+        this.qrCodeId = qrCodeId;
         this.title = title;
         this.amount = amount;
     }

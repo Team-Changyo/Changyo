@@ -3,9 +3,8 @@ package com.shinhan.changyo.domain.qrcode.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shinhan.changyo.api.controller.trade.response.DepositOverviewResponse;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeResponse;
-import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
+import com.shinhan.changyo.api.service.trade.dto.QrCodeTradeDto;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import org.springframework.stereotype.Repository;
 
@@ -50,9 +49,10 @@ public class QrCodeQueryRepository {
      * @return 이름, 입금단위 객체
      * @author 최영환
      */
-    public QRCodeTradeDto getQrCodeTitleAndAmount(Long qrCodeId) {
+    public QrCodeTradeDto getQrCodeTitleAndAmount(Long qrCodeId) {
         return queryFactory
-                .select(Projections.constructor(QRCodeTradeDto.class,
+                .select(Projections.constructor(QrCodeTradeDto.class,
+                        qrCode.qrCodeId,
                         qrCode.title,
                         qrCode.amount
                 ))
@@ -68,7 +68,7 @@ public class QrCodeQueryRepository {
      * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return 해당 회원의 보증금 입금내역 목록
      */
-    public List<DepositOverviewResponse> getQrCodesByLoginId(String loginId, Long lastQrCodeId) {
+    public List<QrCodeTradeDto> getQrCodesByLoginId(String loginId, Long lastQrCodeId) {
         List<Long> accountIds = accountQueryRepository.getAccountIdsByLoginId(loginId);
 
         if (accountIds == null || accountIds.isEmpty()) {
@@ -82,7 +82,7 @@ public class QrCodeQueryRepository {
         }
 
         return queryFactory
-                .selectDistinct(Projections.constructor(DepositOverviewResponse.class,
+                .selectDistinct(Projections.constructor(QrCodeTradeDto.class,
                         qrCode.qrCodeId,
                         qrCode.title,
                         qrCode.amount
