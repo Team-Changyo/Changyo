@@ -55,6 +55,7 @@ function SettlementDetail() {
 						doneSettlement={doneSettlement}
 						title={title}
 						moneyUnit={moneyUnit}
+						fetchSettlementGroup={fetchSettlementGroup}
 					/>
 				}
 			/>
