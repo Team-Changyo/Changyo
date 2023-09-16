@@ -210,7 +210,7 @@ public class TradeQueryRepository {
                         trade.id,
                         trade.status,
                         account.member.name,
-                        trade.createdDate
+                        trade.lastModifiedDate
                 ))
                 .from(trade)
                 .join(trade.account, account)
