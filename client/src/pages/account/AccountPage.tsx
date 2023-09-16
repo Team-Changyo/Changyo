@@ -23,7 +23,7 @@ function AccountPage() {
 			const response = await findAllAccountApi();
 			if (response.status === 200) {
 				setAccountList(response.data.data.accountDetailResponses);
-				setTotalMoney(response.data.data.accountSize);
+				setTotalMoney(response.data.data.accountTotalBalance);
 			}
 		} catch (error) {
 			if (isAxiosError(error)) {
