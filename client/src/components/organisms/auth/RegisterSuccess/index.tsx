@@ -17,7 +17,11 @@ function RegisterSuccess() {
 				<CompleteLottie />
 			</div>
 			<div className="next-btn">
-				<Button handleClick={() => navigate('/')} type="Primary" text="로그인 하러가기" />
+				<Button
+					handleClick={() => navigate('/auth/login', { replace: true, state: { home: true } })}
+					type="Primary"
+					text="로그인 하러가기"
+				/>
 			</div>
 		</RegisterSuccessContainer>
 	);

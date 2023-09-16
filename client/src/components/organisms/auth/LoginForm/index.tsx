@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from 'components/organisms/common/Button';
 import TextInput from 'components/atoms/auth/TextInput';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
-import { useNavigate, useNavigationType } from 'react-router-dom';
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { findMemberInfo, loginApi } from 'utils/apis/auth';
 import { toast } from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
@@ -11,13 +11,13 @@ import { LoginFormContainer } from './style';
 
 function LoginForm() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const navigateType = useNavigationType();
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [saveLoginState, setSaveLoginState] = useState(false);
 	const [, setMemberInfo] = useRecoilState(memberInfoState);
 
-	console.log(navigateType);
 	const login = async () => {
 		try {
 			const body = {
@@ -38,8 +38,12 @@ function LoginForm() {
 						setMemberInfo(response.data.data);
 						toast.success('로그인 되었습니다.');
 
+						if (location.state?.home) {
+							navigate('/', { replace: true });
+							return;
+						}
 						if (navigateType === 'POP') {
-							navigate('/');
+							navigate('/', { replace: true });
 							return;
 						}
 						navigate(-1);

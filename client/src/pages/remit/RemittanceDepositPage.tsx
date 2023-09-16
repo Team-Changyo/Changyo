@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { findDepositRemitInfoApi, remitDepositApi } from 'utils/apis/trade';
 import { IAccount, IDepositStoreAccount } from 'types/account';
 import queryString from 'query-string';
+import { isAxiosError } from 'axios';
 import RemittingPage from './RemittingPage';
 
 function RemittanceDepositPage() {
@@ -37,6 +38,12 @@ function RemittanceDepositPage() {
 			}
 		} catch (error) {
 			console.error(error);
+			if (isAxiosError(error)) {
+				if (error.response?.data.message === '계좌 정보가 존재하지 않습니다.') {
+					alert(error.response?.data.message);
+					navigate('/account/register');
+				}
+			}
 		}
 	};
 
