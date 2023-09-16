@@ -40,7 +40,6 @@ function RemittanceNormalPage() {
 	};
 
 	const confirmRemit = async () => {
-		// TODO : API 나오면 연결하기
 		setRemitting(true);
 
 		try {
@@ -51,7 +50,7 @@ function RemittanceNormalPage() {
 
 			const response = await remitApi(body);
 			console.log(response);
-			// TODO : 일반 qr송금 공유하기
+
 			if (response.status === 200) {
 				setTimeout(() => {
 					navigate('/success', {
