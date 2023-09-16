@@ -54,6 +54,8 @@ public class AccountService {
      */
     public Long createAccount(CreateAccountRequest request, String loginId) {
         Member member = getMember(loginId);
+        checkMemberActive(member);
+
         ApiResponse<DetailResponse> response = shinHanApiClient.getAccountDetail(
                 createAccountDetailRequest(request.getAccountNumber())
         );
@@ -73,16 +75,61 @@ public class AccountService {
         return savedAccount.getId();
     }
 
+
     /**
-     * 회원 엔티티 조회
+     * 계좌 별칭 수정
      *
-     * @param loginId 조회할 회원 로그인 아이디
-     * @return 조회된 회원
-     * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
+     * @param dto 수정 계좌 정보
+     * @return 수정된 계좌 정보
      */
-    private Member getMember(String loginId) {
-        return memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    public AccountEditResponse editTitle(EditAccountTitleDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        findAccount.editTitle(dto.getTitle());
+        return AccountEditResponse.of(findAccount);
+    }
+
+    /**
+     * 주계좌 여부 수정
+     *
+     * @param dto 수정할 계좌 정보
+     * @return 수정된 계좌 정보
+     */
+    public AccountEditResponse editMainAccount(AccountDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        if (findAccount.getMainAccount()) {
+            throw new IllegalArgumentException("주 계좌는 변경할 수 없습니다.");
+        }
+        // 주계좌 변경
+        Account mainAccount = accountQueryRepository.getMainAccountsById(findAccount.getMember().getId());
+        mainAccount.editMainAccount();
+
+        findAccount.editMainAccount();
+
+        return AccountEditResponse.of(findAccount);
+    }
+
+    /**
+     * 계좌 삭제
+     *
+     * @param dto 삭제할 계좌 정보
+     * @return 성공 여부 true: 삭제 완료
+     */
+    public Boolean removeAccount(AccountDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        findAccount.remove();
+        return true;
     }
 
     /**
@@ -105,7 +152,6 @@ public class AccountService {
                 mainAccount.editMainAccount();
             }
         }
-
         return accountRepository.save(account);
     }
 
@@ -170,14 +216,47 @@ public class AccountService {
     }
 
     /**
+     * 회원 엔티티 조회
+     *
+     * @param loginId 조회할 회원 로그인 아이디
+     * @return 조회된 회원
+     * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
+     */
+    private Member getMember(String loginId) {
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    }
+
+    /**
+     * 탈퇴한 회원지 체크
+     *
+     * @param member
+     * @throws ForbiddenException Member.active 가 false인 경우
+     */
+    private void checkMemberActive(Member member){
+        if(!member.getActive()){
+            throw new ForbiddenException("회원 정보가 없습니다");
+        }
+    }
+
+
+    /**
+     * 계좌가 로그인한 유저의 계좌인지 확인
+     *
      * @param account 계좌
      * @param loginId 로그인 아이디
+     * @throws ForbiddenException 계좌가 로그인한 유저의 계좌가 아닐 경우
      */
     private void checkIsMemberAccount(Account account, String loginId) {
         if (!account.getMember().getLoginId().equals(loginId)) {
             throw new ForbiddenException("접근 권한이 없습니다.");
         }
+    }
 
+    private void checkAccountActive(Account account){
+        if(!account.getActive()){
+            throw new NoAccountException("계좌 정보가 없습니다.");
+        }
     }
 
     /**
@@ -203,56 +282,4 @@ public class AccountService {
         return status.equals(HttpStatus.OK);
     }
 
-    /**
-     * 계좌 별칭 수정
-     *
-     * @param dto 수정 계좌 정보
-     * @return 수정된 계좌 정보
-     */
-    public AccountEditResponse editTitle(EditAccountTitleDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
-
-        checkIsMemberAccount(findAccount, dto.getLoginId());
-
-        findAccount.editTitle(dto.getTitle());
-        return AccountEditResponse.of(findAccount);
-    }
-
-    /**
-     * 주계좌 여부 수정
-     *
-     * @param dto 수정할 계좌 정보
-     * @return 수정된 계좌 정보
-     */
-    public AccountEditResponse editMainAccount(AccountDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
-
-        checkIsMemberAccount(findAccount, dto.getLoginId());
-
-        if (findAccount.getMainAccount()) {
-            throw new IllegalArgumentException("주 계좌는 변경할 수 없습니다.");
-        }
-        // 주계좌 변경
-        Account mainAccount = accountQueryRepository.getMainAccountsById(findAccount.getMember().getId());
-        mainAccount.editMainAccount();
-
-
-        findAccount.editMainAccount();
-
-
-        return AccountEditResponse.of(findAccount);
-    }
-
-    /**
-     * 계좌 삭제
-     *
-     * @param dto 삭제할 계좌 정보
-     * @return 성공 여부 true: 삭제 완료
-     */
-    public Boolean removeAccount(AccountDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
-        checkIsMemberAccount(findAccount, dto.getLoginId());
-        findAccount.remove();
-        return true;
-    }
 }

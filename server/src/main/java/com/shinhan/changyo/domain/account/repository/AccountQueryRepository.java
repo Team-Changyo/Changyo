@@ -73,7 +73,8 @@ public class AccountQueryRepository {
                 .select(account)
                 .from(account)
                 .where(account.mainAccount.eq(true),
-                        account.member.id.eq(id))
+                        account.member.id.eq(id),
+                        account.active.eq(true))
                 .fetchOne();
     }
 
@@ -81,7 +82,8 @@ public class AccountQueryRepository {
         return queryFactory
                 .selectOne()
                 .from(account)
-                .where(account.accountNumber.eq(accountNumber))
+                .where(account.accountNumber.eq(accountNumber),
+                        account.active.eq(true))
                 .fetchFirst() != null;
     }
 
@@ -95,7 +97,8 @@ public class AccountQueryRepository {
         return queryFactory.select(account.id)
                 .from(account)
                 .join(account.member, member)
-                .where(member.loginId.eq(loginId))
+                .where(member.loginId.eq(loginId),
+                        account.active.eq(true))
                 .fetch();
     }
 }
