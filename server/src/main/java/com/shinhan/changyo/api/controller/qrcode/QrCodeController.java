@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("/qrcode-management/qrcode")
+@RequestMapping("/qrcode")
 public class QrCodeController {
 
     private final QrCodeQueryService qrCodeQueryService;
