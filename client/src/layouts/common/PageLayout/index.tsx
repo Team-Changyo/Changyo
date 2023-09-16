@@ -8,7 +8,7 @@ function PageLayout({ children }: { children: ReactNode }) {
 
 	/* 탭바 Render 여부에 따라,  */
 	useEffect(() => {
-		if (isRender) setPaddingBottom('56px');
+		if (isRender) setPaddingBottom('80px');
 		else setPaddingBottom('0px');
 	}, [isRender]);
 

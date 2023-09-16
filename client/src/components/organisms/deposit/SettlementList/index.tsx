@@ -14,9 +14,10 @@ interface ISettlementListProps {
 	isReturned: boolean;
 	title: string;
 	moneyUnit: number;
+	fetchSettlementGroup: () => void;
 }
 
-function SettlementList({ settlements, isReturned, title, moneyUnit }: ISettlementListProps) {
+function SettlementList({ settlements, isReturned, title, moneyUnit, fetchSettlementGroup }: ISettlementListProps) {
 	const [isMultiReturnMode, setIsMultiReturnMode] = useState(false);
 	const [activeMultiReturnMenu, setActiveMultiReturnMenu] = useState(false);
 	const [toBeReturned, setToBeReturned] = useState<ISettlement[]>([]);
@@ -59,6 +60,7 @@ function SettlementList({ settlements, isReturned, title, moneyUnit }: ISettleme
 					toast.success('보증금 반환이 완료되었습니다.');
 					returnArr.length = 0;
 					toBeReturned.length = 0;
+					fetchSettlementGroup();
 					setIsMultiReturnMode(false);
 				}
 			} catch (error) {

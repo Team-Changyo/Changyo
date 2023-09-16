@@ -21,10 +21,12 @@ function AccountListItem({ account }: AccountListItemProps) {
 				<Shinhan />
 			</div>
 			<div className="account-info">
+				<div>
+					{account.title} {account?.mainAccount ? '👑' : ''}
+				</div>
 				<div className="alias">
-					{account.title}{' '}
 					<span className="bankname">
-						{bankName} {account.accountNumber} {account?.mainAccount ? '👑' : ''}
+						{bankName} {account.accountNumber}
 					</span>
 				</div>
 				<div className="balance">{balance} 원</div>

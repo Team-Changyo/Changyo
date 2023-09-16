@@ -4,11 +4,13 @@ import { IQRCode } from 'types/qr';
 import { isAxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { findAllQRApi } from 'utils/apis/qr';
+import QRListSkeleton from 'components/atoms/skeleton/QRListSkeleton';
 import { QRListWrapper } from './style';
 import QRListItem from '../QRListItem';
 
 function QRList() {
 	const [QRListArray, setQRList] = useState<IQRCode[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchQRList = async () => {
 		try {
@@ -16,6 +18,9 @@ function QRList() {
 
 			if (response.status === 200) {
 				setQRList(response.data.data.qrCodeResponses);
+				setTimeout(() => {
+					setIsLoading(false);
+				}, 400);
 			}
 		} catch (error) {
 			if (isAxiosError(error)) {
@@ -32,7 +37,9 @@ function QRList() {
 	return (
 		<QRListWrapper>
 			<ListTotalText text="관리 중" totalCnt={QRListArray.length} />
-			{QRListArray.length ? (
+			{isLoading ? (
+				<QRListSkeleton />
+			) : QRListArray.length ? (
 				QRListArray.map((el) => (
 					<QRListItem
 						key={el.qrCodeId}

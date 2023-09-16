@@ -26,6 +26,7 @@ export const TabbarItemWrapper = styled.div<{ $isActive: boolean }>`
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		margin-bottom: 1.5rem;
 		align-items: center;
 		width: 100%;
 		height: 100%;
@@ -59,8 +60,8 @@ export const TabbarCenterItemWrapper = styled.div`
 		height: 56px;
 		position: absolute;
 		left: 50%;
-		-webkit-transform: translate(-50%, -15%);
-		transform: translate(-50%, -15%);
+		-webkit-transform: translate(-50%, -30%);
+		transform: translate(-50%, -30%);
 
 		@media (min-width: 500px) {
 			&:hover {

@@ -35,6 +35,7 @@ export const HistoryListItemContainer = styled.div<{ $isDone: boolean }>`
 
 		div {
 			span {
+				font-size: 0.9rem;
 				color: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--main-color)')};
 			}
 		}

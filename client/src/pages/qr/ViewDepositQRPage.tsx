@@ -14,6 +14,7 @@ import { IShareData } from 'types/deposit';
 import { formatMoney } from 'utils/common/formatMoney';
 import toast from 'react-hot-toast';
 import { isAxiosError } from 'axios';
+import QRImageSkeleton from 'components/atoms/skeleton/QRImageSkeleton';
 
 function ViewDepositQRPage() {
 	const { qrCodeId } = useParams();
@@ -26,6 +27,7 @@ function ViewDepositQRPage() {
 		text: '송금을 요청합니다.',
 		url: 'https://j9c205.p.ssafy.io/',
 	});
+	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchData = async () => {
 		try {
@@ -49,6 +51,10 @@ function ViewDepositQRPage() {
 						)}원을 송금해주세요!`,
 						files: [file],
 					});
+
+					setTimeout(() => {
+						setIsLoading(false);
+					}, 400);
 				}
 			}
 		} catch (error) {
@@ -70,7 +76,7 @@ function ViewDepositQRPage() {
 					<RemittanceRequestInfo accountInfo={accountInfo} isDepositRequest depositTitle={title} />
 				}
 				MoneyUnit={<LargeMoneyText money={moneyUnit} />}
-				QRImage={<img src={`data:image/jpeg;base64,${base64QrCode}`} alt="" />}
+				QRImage={isLoading ? <QRImageSkeleton /> : <img src={`data:image/jpeg;base64,${base64QrCode}`} alt="" />}
 				GuideText={<QRGuideText isDepositRequest />}
 				QRShareBtn={
 					<Button
