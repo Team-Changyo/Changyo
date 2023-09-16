@@ -45,7 +45,10 @@ public class TransferQueryRepository {
                 ))
                 .from(account)
                 .join(account.member, member)
-                .where(member.loginId.eq(loginId))
+                .where(
+                        member.loginId.eq(loginId),
+                        account.mainAccount.eq(true)
+                )
                 .fetchOne();
     }
 
@@ -71,7 +74,8 @@ public class TransferQueryRepository {
                 .join(account.member, member)
                 .where(
                         qrCode.qrCodeId.eq(qrCodeId),
-                        qrCode.active.eq(true)
+                        qrCode.active.eq(true),
+                        account.mainAccount.eq(true)
                 )
                 .fetchOne();
     }
