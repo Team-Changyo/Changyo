@@ -36,6 +36,3 @@ jwt:
 
 changyo-account:
   accountNumber: 110112999999
-
-server:
-  port: 8083
