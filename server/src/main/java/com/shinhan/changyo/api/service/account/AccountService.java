@@ -49,21 +49,21 @@ public class AccountService {
      * @param request 등록할 계좌 정보
      * @param loginId 현재 로그인한 회원 정보
      * @return 등록된 계좌 식별키
+     * @throws NoSuchElementException 신한 api 서버에 계좌정보가 존재하지 않는 경우
+     * @throws DuplicateException 신한 api 서버에서 등록된 계좌가 챙겨요 계좌에 이미 등록 되어있는 경우
      */
     public Long createAccount(CreateAccountRequest request, String loginId) {
-
         Member member = getMember(loginId);
         ApiResponse<DetailResponse> response = shinHanApiClient.getAccountDetail(
                 createAccountDetailRequest(request.getAccountNumber())
         );
-
 
         if (response.getData() == null) {
             throw new NoSuchElementException("계좌 정보가 없습니다.");
         }
 
         if (accountQueryRepository.checkIsExistByAccountNumber(request.getAccountNumber())) { // 존재하면
-            throw new DuplicateException("계좌가 이미 등록되었습니다"); // TODO: 2023-09-14 홍진식 : member 쪽 Exception 사용중 수정 필요
+            throw new DuplicateException("계좌가 이미 등록되었습니다.");
         }
 
         CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
@@ -144,18 +144,24 @@ public class AccountService {
         return response;
     }
 
+
+    /**
+     * 계좌 거래내역 상세 조회 API 요청 객체 생성
+     * @param accountNumber 계좌 번호
+     * @return 요청 객체
+     */
+    private AccountDetailRequest createAccountDetailRequest(String accountNumber) {
+        return AccountDetailRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
+    }
+
     /**
      * 신한은행 계좌 잔액 조회 API 요청 객체 생성
      *
      * @param accountNumber 계좌번호
      * @return 요청 객체
      */
-
-    private AccountDetailRequest createAccountDetailRequest(String accountNumber) {
-        return AccountDetailRequest.builder()
-                .accountNumber(accountNumber)
-                .build();
-    }
 
     private BalanceRequest createBalanceRequest(String accountNumber) {
         return BalanceRequest.builder()

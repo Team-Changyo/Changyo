@@ -1,13 +1,16 @@
-package com.shinhan.changyo.api.controller.trade.request;
+package com.shinhan.changyo.api.controller.account.request;
 
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 public class AccountRequest {
+    @NotNull
     private Long accountId;
 
     @Builder
