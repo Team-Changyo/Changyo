@@ -1,6 +1,8 @@
 package com.shinhan.changyo.api.service.trade.dto;
 
 import com.shinhan.changyo.client.request.TransferRequest;
+import com.shinhan.changyo.domain.account.Account;
+import com.shinhan.changyo.domain.qrcode.SimpleQrCode;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,29 +10,22 @@ import lombok.Data;
 public class SimpleTradeDto {
 
     private Long accountId;
-    private String withdrawalAccountNumber;
-    private String bankCode;
-    private String depositAccountNumber;
-    private int amount;
-    private String depositMemberName;
+    private Long simpleQrCodeId;
 
     @Builder
-    public SimpleTradeDto(Long accountId, String withdrawalAccountNumber, String bankCode, String depositAccountNumber, int amount, String depositMemberName) {
+    public SimpleTradeDto(Long accountId, Long simpleQrCodeId) {
         this.accountId = accountId;
-        this.withdrawalAccountNumber = withdrawalAccountNumber;
-        this.bankCode = bankCode;
-        this.depositAccountNumber = depositAccountNumber;
-        this.amount = amount;
+        this.simpleQrCodeId = simpleQrCodeId;
     }
 
-    public TransferRequest toTransferRequest(String withdrawalMemberName) {
+    public TransferRequest toTransferRequest(Account account, SimpleQrCode simpleQrCode, String memberName) {
         return TransferRequest.builder()
-                .withdrawalAccountNumber(this.withdrawalAccountNumber)
-                .depositBankCode(this.bankCode)
-                .depositAccountNumber(this.depositAccountNumber)
-                .amount(this.amount)
-                .depositMemo(this.depositAccountNumber)
-                .withdrawalMemo(withdrawalMemberName)
+                .withdrawalAccountNumber(account.getAccountNumber())
+                .depositBankCode(account.getBankCode())
+                .depositAccountNumber(simpleQrCode.getAccountNumber())
+                .amount(simpleQrCode.getAmount())
+                .depositMemo(simpleQrCode.getMemberName())
+                .withdrawalMemo(memberName)
                 .build();
     }
 }

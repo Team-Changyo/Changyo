@@ -1,6 +1,5 @@
 package com.shinhan.changyo.docs.trade;
 
-import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
@@ -26,7 +25,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -54,11 +53,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
     void createTrade() throws Exception {
         CreateTradeRequest request = CreateTradeRequest.builder()
                 .accountId(1L)
-                .withdrawalAccountNumber("1102008999999")
                 .qrCodeId(1L)
-                .qrCodeTitle("럭셔리 글램핑 객실이용")
-                .depositAccountNumber("110054999999")
-                .amount(20000)
                 .build();
         Long tradeId = 1L;
 
@@ -79,16 +74,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("출금 계좌 식별키"),
-                                fieldWithPath("withdrawalAccountNumber").type(JsonFieldType.STRING)
-                                        .description("출금 계좌 번호"),
                                 fieldWithPath("qrCodeId").type(JsonFieldType.NUMBER)
-                                        .description("보증금 QR 코드 식별키"),
-                                fieldWithPath("qrCodeTitle").type(JsonFieldType.STRING)
-                                        .description("보증금 QR 코드 이름"),
-                                fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
-                                        .description("입금 계좌 번호"),
-                                fieldWithPath("amount").type(JsonFieldType.NUMBER)
-                                        .description("금액")
+                                        .description("보증금 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -109,12 +96,11 @@ public class TradeControllerDocsTest extends RestDocsSupport {
     void simpleTrade() throws Exception {
         SimpleTradeRequest request = SimpleTradeRequest.builder()
                 .accountId(1L)
-                .withdrawalAccountNumber("110184999999")
-                .bankCode("088")
-                .amount(20000)
-                .depositAccountNumber("110054999999")
-                .depositMemberName("홍진식")
+                .simpleQrCodeId(1L)
                 .build();
+
+        given(tradeService.simpleTrade(any(SimpleTradeDto.class), anyString()))
+                .willReturn(true);
 
         mockMvc.perform(
                         post("/trade/simple")
@@ -130,18 +116,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("출금 계좌 식별키"),
-                                fieldWithPath("withdrawalAccountNumber").type(JsonFieldType.STRING)
-                                        .description("출금 계좌 번호"),
-                                fieldWithPath("bankCode").type(JsonFieldType.STRING)
-                                        .description("은행코드"),
-                                fieldWithPath("depositMemberName").type(JsonFieldType.STRING)
-                                        .description("입금 계좌 코드 이름"),
-                                fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
-                                        .description("입금 계좌 번호"),
-                                fieldWithPath("depositMemberName").type(JsonFieldType.STRING)
-                                        .description("입금 계좌 번호"),
-                                fieldWithPath("amount").type(JsonFieldType.NUMBER)
-                                        .description("금액")
+                                fieldWithPath("simpleQrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("간편 송금 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -150,8 +126,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("송금 성공 여부")
                         )
                 ));
     }

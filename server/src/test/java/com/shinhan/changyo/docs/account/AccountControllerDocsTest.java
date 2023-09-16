@@ -21,8 +21,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -210,10 +209,9 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .bankCode("088")
                 .title("메인계좌 1")
                 .allTradeResponses(allTradeResponses)
-
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), 0))
+        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -314,7 +312,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), 1))
+        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -415,7 +413,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .allTradeResponses(allTradeResponses)
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), 2))
+        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(

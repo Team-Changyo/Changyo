@@ -9,30 +9,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SimpleTradeRequest {
     private Long accountId;
-    private String withdrawalAccountNumber;
-    private String bankCode;
-    private String depositAccountNumber;
-    private int amount;
-    private String depositMemberName;
+    private Long simpleQrCodeId;
 
     @Builder
-    public SimpleTradeRequest(Long accountId, String withdrawalAccountNumber, String bankCode, String depositAccountNumber, int amount, String depositMemberName) {
+    public SimpleTradeRequest(Long accountId, Long simpleQrCodeId) {
         this.accountId = accountId;
-        this.withdrawalAccountNumber = withdrawalAccountNumber;
-        this.bankCode = bankCode;
-        this.depositAccountNumber = depositAccountNumber;
-        this.amount = amount;
-        this.depositMemberName = depositMemberName;
+        this.simpleQrCodeId = simpleQrCodeId;
     }
 
     public SimpleTradeDto toSimpleTransferDto() {
         return SimpleTradeDto.builder()
                 .accountId(this.accountId)
-                .withdrawalAccountNumber(this.withdrawalAccountNumber)
-                .bankCode(this.bankCode)
-                .depositAccountNumber(this.depositAccountNumber)
-                .amount(this.amount)
-                .depositMemberName(this.depositMemberName)
+                .simpleQrCodeId(this.simpleQrCodeId)
                 .build();
     }
 }
