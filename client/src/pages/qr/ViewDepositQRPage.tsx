@@ -12,6 +12,7 @@ import { findQRApi } from 'utils/apis/qr';
 import { formatBankCode } from 'utils/common/formatBankCode';
 import { share } from 'utils/common/share';
 import { IShareData } from 'types/deposit';
+import { formatMoney } from 'utils/common/formatMoney';
 
 function ViewDepositQRPage() {
 	const { qrCodeId } = useParams();
@@ -37,12 +38,13 @@ function ViewDepositQRPage() {
 					setAccountInfo(`${formatBankCode(resObj.bankCode)} ${resObj.accountNumber} (${resObj.customerName})`);
 					setBase64QrCode(resObj.base64QrCode);
 					setMoneyUnit(resObj.amount);
-					const blob = await (await fetch(resObj.base64QrCode)).blob();
-					const file = new File([blob], 'changyo-qr.png', { type: blob.type });
+					const blob = await (await fetch(`data:image/jpeg;base64,${resObj.base64QrCode}`)).blob();
+					const file = new File([blob], 'changyo-qr.jpeg', { type: blob.type });
+					console.log(file);
 					setShareData({
 						title: `[${resObj.title}] 송금 요청`,
 						url: resObj.url,
-						text: `${resObj.customerName}님께 ${resObj.amount}을 송금해주세요!`,
+						text: `'${resObj.customerName}'님께 ${formatMoney(resObj.amount)}원을 송금해주세요!`,
 						files: [file],
 					});
 				}
