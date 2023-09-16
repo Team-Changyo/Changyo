@@ -40,21 +40,12 @@ export interface CheckAuthAccountApiBody {
 // - remit
 export interface RemitApiBody {
 	accountId: number;
-	withdrawalAccountNumber: string;
-	bankCode: string;
-	depositAccountNumber: string;
-	amount: number;
-	depositMemberName: string;
+	simpleQrCodeId: string;
 }
 
 export interface RemitDepositApiBody {
 	accountId: number;
-	withdrawalAccountNumber: string;
 	qrCodeId: number;
-	qrCodeTitle: string;
-	depositAccountNumber: string;
-	amount: number;
-	content: string;
 }
 
 export interface ReturnDepositApiBody {
