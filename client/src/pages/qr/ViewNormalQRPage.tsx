@@ -1,5 +1,5 @@
 import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
-import SubTextButton from 'components/atoms/common/SubTextButton';
+// import SubTextButton from 'components/atoms/common/SubTextButton';
 import React, { useEffect, useState } from 'react';
 import Button from 'components/organisms/common/Button';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
@@ -63,7 +63,8 @@ function ViewNormalQRPage() {
 				QRImage={<img src={`data:image/jpeg;base64,${base64QrCode}`} alt="" />}
 				GuideText={<QRGuideText isDepositRequest={false} remainTime={timeRemaining} />}
 				QRShareBtn={<Button type="Primary" handleClick={() => {}} text="QR 공유하기" />}
-				LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />}
+				// LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />}
+				LinkShareBtn={<div />}
 			/>
 		</PageLayout>
 	);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import LargeMoneyText from 'components/atoms/common/LargeMoneyText';
-import SubTextButton from 'components/atoms/common/SubTextButton';
 import Button from 'components/organisms/common/Button';
 import SubTabNavbar from 'components/organisms/common/SubTabNavbar';
 import QRGuideText from 'components/organisms/qr/QRGuideText';
@@ -13,6 +12,8 @@ import { formatBankCode } from 'utils/common/formatBankCode';
 import { share } from 'utils/common/share';
 import { IShareData } from 'types/deposit';
 import { formatMoney } from 'utils/common/formatMoney';
+import toast from 'react-hot-toast';
+import { isAxiosError } from 'axios';
 
 function ViewDepositQRPage() {
 	const { qrCodeId } = useParams();
@@ -30,7 +31,6 @@ function ViewDepositQRPage() {
 		try {
 			if (qrCodeId) {
 				const response = await findQRApi(qrCodeId);
-				console.log(response);
 
 				if (response.status === 200) {
 					const resObj = response.data.data;
@@ -40,17 +40,22 @@ function ViewDepositQRPage() {
 					setMoneyUnit(resObj.amount);
 					const blob = await (await fetch(`data:image/jpeg;base64,${resObj.base64QrCode}`)).blob();
 					const file = new File([blob], 'changyo-qr.jpeg', { type: blob.type });
-					console.log(file);
+
 					setShareData({
 						title: `[${resObj.title}] 송금 요청`,
 						url: resObj.url,
-						text: `'${resObj.customerName}'님께 ${formatMoney(resObj.amount)}원을 송금해주세요!`,
+						text: `[${resObj.title}] 송금 요청' | ${resObj.customerName}'님께 ${formatMoney(
+							resObj.amount,
+						)}원을 송금해주세요!`,
 						files: [file],
 					});
 				}
 			}
 		} catch (error) {
 			console.error(error);
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message);
+			}
 		}
 	};
 	useEffect(() => {
@@ -76,7 +81,8 @@ function ViewDepositQRPage() {
 						text="QR 공유하기"
 					/>
 				}
-				LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />}
+				// LinkShareBtn={<SubTextButton text="QR 대신 링크로 공유" handleClick={() => {}} />
+				LinkShareBtn={<div />}
 			/>
 		</PageLayout>
 	);
