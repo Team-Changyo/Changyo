@@ -211,7 +211,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .allTradeResponses(allTradeResponses)
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTrade(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -312,7 +312,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTrade(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -413,7 +413,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .allTradeResponses(allTradeResponses)
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTrade(any(AccountDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(

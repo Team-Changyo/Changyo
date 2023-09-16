@@ -7,6 +7,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountTradeAllRespon
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
+import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TradeRequest;
 import com.shinhan.changyo.client.response.TradeDetailResponse;
@@ -64,9 +65,11 @@ public class AccountQueryService {
      * @param status 입지구분 (0: 전체, 1: 입금, 2: 출금)
      * @return 입지 구분별 계좌내역
      */
-    public AccountTradeAllResponse getAccountTradeAll(AccountDto dto, int status) {
+    public AccountTradeAllResponse getAccountTrade(AccountDto dto, int status) {
         // 계좌 조회
         Account findAccount = getAccount(dto.getAccountId());
+        // 활성화 체크
+        checkAccountActive(findAccount);
         // 접근 권한 체크
         checkAccessibility(dto.getLoginId(), findAccount);
         // 신한 api 호출
@@ -85,17 +88,49 @@ public class AccountQueryService {
                 .build();
     }
 
+    /**
+     * account Id로 계좌 찾기
+     *
+     * @param accountId 계좌 식별키
+     * @return 찾은 계좌
+     * @throws NoAccountException 찾은 계좌가 없을때
+     */
     private Account getAccount(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() ->
-                new NoSuchElementException("존재 하지 않는 계좌입니다."));
+                new NoAccountException("존재 하지 않는 계좌입니다."));
     }
 
+    /**
+     * 계좌가 로그인한 유저의 계좌인지 확인
+     *
+     * @param loginId 로그인 아이디
+     * @param findAccount 계좌정보
+     * @throws ForbiddenException 접근 권한 없음
+     */
     private void checkAccessibility(String loginId, Account findAccount) {
         if (!findAccount.getMember().getLoginId().equals(loginId)) {
             throw new ForbiddenException("접근 권한이 없습니다.");
         }
     }
 
+    /**
+     * 계좌가 활성화 되었는지 확인
+     *
+     * @param account 계좌
+     * @throws NoAccountException account.active가 false인 경우
+     */
+    private void checkAccountActive(Account account) {
+        if (!account.getActive()) {
+            throw new NoAccountException("계좌 정보가 없습니다.");
+        }
+    }
+
+    /**
+     * 거래내역 상세 조회 API 호출
+     *
+     * @param findAccount
+     * @return List<TradeDetailResponse>
+     */
     private List<TradeDetailResponse> getTradeDetailResponses(Account findAccount) {
         ApiResponse<TradeResponse> tradeResponse =
                 shinHanApiClient.trade(createTradeRequest(findAccount.getAccountNumber()));
@@ -103,11 +138,25 @@ public class AccountQueryService {
         return tradeResponse.getData().getTrades();
     }
 
+    /**
+     * 신한 api 요청 객체 생성
+     *
+     * @param accountNumber
+     * @return TradeRequest
+     */
     private TradeRequest createTradeRequest(String accountNumber) {
         return TradeRequest.builder()
                 .accountNumber(accountNumber)
                 .build();
     }
+
+    /**
+     * 거래날짜 별 묶은 Map을 key(거래 날짜 별)로 정렬
+     *
+     * @param status 입지
+     * @param trades 거래내역
+     * @return 정렬된  Map
+     */
 
     private Map<String, List<AllTradeResponse>> getSortedAllTradeResponses(int status, List<TradeDetailResponse> trades) {
         Map<String, List<AllTradeResponse>> sortedAllTradeResponses = new LinkedHashMap<>();
@@ -120,7 +169,8 @@ public class AccountQueryService {
 
     /**
      * 신한 API 응답 전처리 후 Map 생성
-     *+
+     * +
+     *
      * @param trades
      * @param status
      * @return
