@@ -1,6 +1,7 @@
 package com.shinhan.changyo.docs.account;
 
 import com.shinhan.changyo.api.controller.account.AccountController;
+import com.shinhan.changyo.api.controller.account.request.AccountTradeRequest;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
 import com.shinhan.changyo.api.controller.account.response.*;
@@ -8,6 +9,7 @@ import com.shinhan.changyo.api.controller.trade.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
+import com.shinhan.changyo.api.service.account.dto.AccountTradeDto;
 import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.docs.qrcode.QrCodeControllerDocsTest;
@@ -176,7 +178,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailAll() throws Exception {
         Long accountId = 1L;
 
-        AccountRequest request = createAccountRequest(accountId);
+        AccountTradeRequest request = AccountTradeRequest.builder()
+                .accountId(accountId)
+                .startDate("")
+                .endDate("")
+                .build();
 
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
@@ -211,7 +217,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .allTradeResponses(allTradeResponses)
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTradeAll(any(AccountTradeDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -227,7 +233,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
-                                        .description("계좌 식별키")
+                                        .description("계좌 식별키"),
+                                fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                        .description("시작일"),
+                                fieldWithPath("endDate").type(JsonFieldType.STRING)
+                                        .description("종료일")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -276,7 +286,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailDeposit() throws Exception {
         Long accountId = 1L;
 
-        AccountRequest request = createAccountRequest(accountId);
+        AccountTradeRequest request = AccountTradeRequest.builder()
+                .accountId(accountId)
+                .startDate("")
+                .endDate("")
+                .build();
 
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
@@ -312,7 +326,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
 
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTradeAll(any(AccountTradeDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -328,7 +342,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
-                                        .description("계좌 식별키")
+                                        .description("계좌 식별키"),
+                                fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                        .description("시작일"),
+                                fieldWithPath("endDate").type(JsonFieldType.STRING)
+                                        .description("종료일")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -378,7 +396,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
     void getAccountDetailWithdrawal() throws Exception {
         Long accountId = 1L;
 
-        AccountRequest request = createAccountRequest(accountId);
+        AccountTradeRequest request = AccountTradeRequest.builder()
+                .accountId(accountId)
+                .startDate("")
+                .endDate("")
+                .build();
 
         AllTradeResponse allTradeResponses1 = AllTradeResponse.builder()
                 .tradeDate("20230220")
@@ -413,7 +435,7 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                 .allTradeResponses(allTradeResponses)
                 .build();
 
-        given(accountQueryService.getAccountTradeAll(any(AccountDto.class), anyInt()))
+        given(accountQueryService.getAccountTradeAll(any(AccountTradeDto.class), anyInt()))
                 .willReturn(response);
 
         mockMvc.perform(
@@ -429,7 +451,11 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
-                                        .description("계좌 식별키")
+                                        .description("계좌 식별키"),
+                                fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                        .description("시작일"),
+                                fieldWithPath("endDate").type(JsonFieldType.STRING)
+                                        .description("종료일")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)

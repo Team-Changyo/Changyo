@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.controller.account;
 
 import com.shinhan.changyo.api.ApiResponse;
+import com.shinhan.changyo.api.controller.account.request.AccountTradeRequest;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
@@ -76,14 +77,14 @@ public class AccountController {
      * @return 계좌내역 상세 목록
      */
     @PostMapping("/detail")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@RequestBody AccountRequest request) {
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailAll(@Valid @RequestBody AccountTradeRequest request) {
         log.debug("AccountController#getAccountDetailAll called");
         log.debug("AccountRequest={}", request);
 
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 0);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountTradeDto(loginId), 0);
 
         return ApiResponse.ok(response);
     }
@@ -95,14 +96,14 @@ public class AccountController {
      * @return 입금 계좌내역 상세
      */
     @PostMapping("/deposit")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailDeposit(@RequestBody AccountRequest request) {
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailDeposit(@Valid @RequestBody AccountTradeRequest request) {
         log.debug("AccountController#getAccountDetailDeposit called");
         log.debug("AccountRequest={}", request);
 
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 1);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountTradeDto(loginId), 1);
 
         return ApiResponse.ok(response);
     }
@@ -114,14 +115,14 @@ public class AccountController {
      * @return 출금 계좌내역 상세 목록
      */
     @PostMapping("/withdrawal")
-    public ApiResponse<AccountTradeAllResponse> getAccountDetailWithdrawal(@RequestBody AccountRequest request) {
+    public ApiResponse<AccountTradeAllResponse> getAccountDetailWithdrawal(@Valid @RequestBody AccountTradeRequest request) {
         log.debug("AccountController#getAccountDetailWithdrawal called");
         log.debug("AccountRequest={}", request);
 
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 2);
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountTradeDto(loginId), 2);
 
         return ApiResponse.ok(response);
     }
