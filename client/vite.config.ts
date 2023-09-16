@@ -9,4 +9,7 @@ import mkcert from 'vite-plugin-mkcert';
 export default defineConfig({
 	base: './',
 	plugins: [react(), eslint(), tsconfigPaths(), svgr(), mkcert()],
+	resolve: {
+		extensions: ['.js', '.ts', '.tsx', '.jsx'],
+	},
 });
