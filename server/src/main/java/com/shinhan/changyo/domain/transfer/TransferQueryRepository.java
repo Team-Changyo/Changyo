@@ -69,7 +69,10 @@ public class TransferQueryRepository {
                 .from(qrCode)
                 .join(qrCode.account, account)
                 .join(account.member, member)
-                .where(qrCode.qrCodeId.eq(qrCodeId))
+                .where(
+                        qrCode.qrCodeId.eq(qrCodeId),
+                        qrCode.active.eq(true)
+                )
                 .fetchOne();
     }
 

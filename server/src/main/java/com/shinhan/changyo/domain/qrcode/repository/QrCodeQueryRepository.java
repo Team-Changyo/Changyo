@@ -90,7 +90,7 @@ public class QrCodeQueryRepository {
                 .from(qrCode)
                 .where(
                         qrCode.qrCodeId.in(qrCodeIds),
-                        isLagerThanLastQrCodeId(lastQrCodeId)
+                        isGreaterThanLastQrCodeId(lastQrCodeId)
                 )
                 .groupBy(qrCode.qrCodeId)
                 .orderBy(qrCode.qrCodeId.desc())
@@ -120,8 +120,8 @@ public class QrCodeQueryRepository {
      * @param lastQrCodeId 마지막으로 조회된 QR 코드 식별키
      * @return null: null 인 경우 true: 더 큰 경우 false: 더 작은 경우
      */
-    private BooleanExpression isLagerThanLastQrCodeId(Long lastQrCodeId) {
-        return lastQrCodeId == null ? null : qrCode.qrCodeId.lt(lastQrCodeId);
+    private BooleanExpression isGreaterThanLastQrCodeId(Long lastQrCodeId) {
+        return lastQrCodeId == null ? null : qrCode.qrCodeId.gt(lastQrCodeId);
     }
 
     /**
