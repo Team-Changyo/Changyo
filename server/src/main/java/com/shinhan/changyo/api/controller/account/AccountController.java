@@ -6,7 +6,7 @@ import com.shinhan.changyo.api.controller.account.request.EditAccountTitleReques
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
-import com.shinhan.changyo.api.controller.trade.request.AccountRequest;
+import com.shinhan.changyo.api.controller.account.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.security.SecurityUtil;
@@ -60,6 +60,7 @@ public class AccountController {
     @GetMapping
     public ApiResponse<AccountResponse> getAccounts() {
         log.debug("AccountController#getAccounts called");
+
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 

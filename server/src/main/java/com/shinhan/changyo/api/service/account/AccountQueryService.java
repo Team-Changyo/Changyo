@@ -120,7 +120,7 @@ public class AccountQueryService {
 
     /**
      * 신한 API 응답 전처리 후 Map 생성
-     *
+     *+
      * @param trades
      * @param status
      * @return
