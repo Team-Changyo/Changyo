@@ -12,6 +12,7 @@ import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,8 @@ public class TradeQueryRepository {
                 .join(qrCode.account, account)
                 .where(
                         trade.account.id.in(accountIds),
-                        trade.status.eq(TradeStatus.WAIT)
+                        trade.status.eq(TradeStatus.WAIT),
+                        qrCode.active.eq(true)
                 )
                 .orderBy(trade.createdDate.desc())
                 .fetch();
@@ -93,7 +95,8 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.account.id.in(accountIds),
-                        trade.status.ne(TradeStatus.WAIT)
+                        trade.status.ne(TradeStatus.WAIT),
+                        qrCode.active.eq(true)
                 )
                 .fetchOne();
     }
@@ -128,15 +131,12 @@ public class TradeQueryRepository {
                 .where(
                         trade.account.id.in(accountIds),
                         trade.status.ne(TradeStatus.WAIT),
-                        isLagerThanLastTradeId(lastTradeId)
+                        qrCode.active.eq(true),
+                        isGreaterThanLastTradeId(lastTradeId)
                 )
                 .orderBy(trade.createdDate.desc())
                 .limit(PAGE_SIZE + 1)
                 .fetch();
-    }
-
-    private BooleanExpression isLagerThanLastTradeId(Long tradeId) {
-        return tradeId == null ? null : trade.id.lt(tradeId);
     }
 
     /**
@@ -152,7 +152,8 @@ public class TradeQueryRepository {
                 .join(trade.qrCode, qrCode)
                 .where(
                         qrCode.qrCodeId.eq(qrCodeId),
-                        trade.status.eq(TradeStatus.WAIT)
+                        trade.status.eq(TradeStatus.WAIT),
+                        qrCode.active.eq(true)
                 )
                 .fetchOne();
     }
@@ -171,7 +172,8 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.qrCode.qrCodeId.eq(qrCodeId),
-                        trade.status.eq(TradeStatus.WAIT)
+                        trade.status.eq(TradeStatus.WAIT),
+                        qrCode.active.eq(true)
                 )
                 .fetchOne();
     }
@@ -190,6 +192,7 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.qrCode.qrCodeId.eq(qrCodeId),
+                        trade.qrCode.active.eq(true),
                         trade.status.ne(TradeStatus.WAIT)
                 )
                 .fetchOne();
@@ -215,7 +218,8 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(
                         trade.qrCode.qrCodeId.eq(qrCodeId),
-                        isLagerThanLastTradeId(lastTradeId)
+                        trade.qrCode.active.eq(true),
+                        isGreaterThanLastTradeId(lastTradeId)
                 )
                 .orderBy(trade.createdDate.desc())
                 .limit(PAGE_SIZE * 2 + 1)
@@ -232,7 +236,10 @@ public class TradeQueryRepository {
         return queryFactory
                 .select(trade.depositAmount.sum())
                 .from(trade)
-                .where(trade.qrCode.qrCodeId.eq(qrCodeId))
+                .where(
+                        trade.qrCode.qrCodeId.eq(qrCodeId),
+                        trade.qrCode.active.eq(true)
+                )
                 .fetchOne();
     }
 
@@ -275,5 +282,35 @@ public class TradeQueryRepository {
                 .join(account.member, member)
                 .where(trade.id.eq(tradeId))
                 .fetchOne();
+    }
+
+    /**
+     * 요청된 송금의 마지막 수정일 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @param accountId 계좌 식별키
+     * @return 요청된 송금의 마지막 수정일
+     */
+    public LocalDateTime getLastCreatedDateIdByQrCodeIdAndAccountId(Long qrCodeId, Long accountId) {
+        return queryFactory
+                .select(trade.createdDate)
+                .from(trade)
+                .where(
+                        trade.qrCode.qrCodeId.eq(qrCodeId),
+                        trade.account.id.eq(accountId),
+                        trade.status.eq(TradeStatus.WAIT)
+                )
+                .orderBy(trade.createdDate.desc())
+                .fetchFirst();
+    }
+
+    /**
+     * 마지막으로 조회된 거래내역 식별키보다 큰 값 여부
+     *
+     * @param lastTradeId 마지막으로 조회된 거래내역 식별키
+     * @return true: 더 큰 경우 false: 더 작은 경우
+     */
+    private BooleanExpression isGreaterThanLastTradeId(Long lastTradeId) {
+        return lastTradeId == null ? null : trade.id.gt(lastTradeId);
     }
 }

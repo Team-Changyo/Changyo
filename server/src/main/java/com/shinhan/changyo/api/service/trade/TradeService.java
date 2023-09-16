@@ -5,6 +5,7 @@ import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
 import com.shinhan.changyo.api.service.trade.dto.MemberAccountDto;
 import com.shinhan.changyo.api.service.trade.dto.ReturnDepositDto;
 import com.shinhan.changyo.api.service.trade.dto.SimpleTradeDto;
+import com.shinhan.changyo.api.service.util.exception.DuplicateException;
 import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.TransferRequest;
 import com.shinhan.changyo.client.response.TransferResponse;
@@ -29,6 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -68,6 +71,7 @@ public class TradeService {
         QrCode qrCode = getQrCodeById(dto.getQrCodeId());
         Member member = getMemberByLoginId(loginId);
 
+        checkDuplicatedTrade(qrCode.getQrCodeId(), account.getId());
         checkAccountEqual(account, qrCode);
 
         ApiResponse<TransferResponse> transferResponse = shinHanApiClient.transfer(createTransferRequest(account, qrCode, member.getName()));
@@ -111,6 +115,8 @@ public class TradeService {
 
         for (ReturnDepositDto dto : dtos) {
             Trade trade = getTradeById(dto.getTradeId());
+
+            checkIsDone(trade.getStatus());
 
             MemberAccountDto depositAccount = getDepositAccount(dto.getTradeId());
             MemberAccountDto withdrawalAccount = getWithdrawalAccount(dto.getTradeId());
@@ -236,6 +242,18 @@ public class TradeService {
     }
 
     /**
+     * 반환완료된 거래 여부 확인
+     *
+     * @param tradeStatus 거래 상태
+     * @throws IllegalArgumentException 거래내역의 거래 상태가 반환대기가 아닌 경우
+     */
+    private void checkIsDone(TradeStatus tradeStatus) {
+        if (!tradeStatus.equals(TradeStatus.WAIT)) {
+            throw new IllegalArgumentException("이미 처리된 요청입니다.");
+        }
+    }
+
+    /**
      * 사유 존재 여부
      *
      * @param dto 반환정보
@@ -325,5 +343,60 @@ public class TradeService {
     private void returnWithoutReason(ReturnDepositDto dto, Trade trade, MemberAccountDto withdrawalAccount) {
         returnDeposit(withdrawalAccount, dto.getAmount());
         trade.editStatus(TradeStatus.DONE);
+    }
+
+    /**
+     * 중복 이체 검사
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @param tradeId  거래내역 식별키
+     * @throws DuplicateException 중복 이체 요청인 경우
+     */
+    private void checkDuplicatedTrade(Long qrCodeId, Long tradeId) {
+        LocalDateTime lastCreatedDate = tradeQueryRepository.getLastCreatedDateIdByQrCodeIdAndAccountId(qrCodeId, tradeId);
+
+        if (isDuplicatedTrade(lastCreatedDate)) {
+            throw new DuplicateException("이미 요청된 거래입니다.");
+        }
+    }
+
+    /**
+     * 중복된 거래가 존재하는지 확인
+     *
+     * @param lastCreatedDate 마지막 생성 시각
+     * @return true: 마지막 생성 시각이 존재하고 최근에 수정된 경우 false: 마지막 생성 시각이 존재하지 않거나 최근에 수정되지 않은 경우
+     */
+    private boolean isDuplicatedTrade(LocalDateTime lastCreatedDate) {
+        return isPresentTrade(lastCreatedDate) && isModifiedRecently(lastCreatedDate);
+    }
+
+    /**
+     * 거래내역 존재 여부 확인
+     *
+     * @param lastCreatedDate 마지막 생성 시각
+     * @return true: 마지막 생성 시각이 존재하는 경우 false: 마지막 생성 시각이 존재하지 않는 경우
+     */
+    private boolean isPresentTrade(LocalDateTime lastCreatedDate) {
+        return lastCreatedDate != null;
+    }
+
+    /**
+     * 최근 (3분 이내)에 수정되었는지 여부 확인
+     *
+     * @param lastCreatedDate 마지막 생성 시각
+     * @return true: 현재 시각과의 차이가 3분 미만인 경우 false: 현재 시각과의 차이가 3분 이상인 경우
+     */
+    private boolean isModifiedRecently(LocalDateTime lastCreatedDate) {
+        return getMinutesSinceLastModifiedDate(lastCreatedDate) < 1;
+    }
+
+    /**
+     * 마지막 생성 시각과 현재 시각의 차이 (분) 계산
+     *
+     * @param lastCreatedDate 마지막 생성 시각
+     * @return 마지막 생성 시각과 현재 시각 간의 차이 (분)
+     */
+    private long getMinutesSinceLastModifiedDate(LocalDateTime lastCreatedDate) {
+        return Duration.between(lastCreatedDate, LocalDateTime.now()).toMinutes();
     }
 }
