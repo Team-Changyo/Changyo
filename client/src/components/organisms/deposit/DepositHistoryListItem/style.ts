@@ -19,7 +19,7 @@ export const HistoryListItemContainer = styled.div<{ $isDone: boolean }>`
 		justify-content: center;
 
 		svg {
-			fill: ${({ $isDone }) => ($isDone ? 'var(--gray-500)' : 'var(--main-color)')};
+			fill: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--main-color)')};
 			width: 2.5rem;
 			height: 2.5rem;
 		}
@@ -33,13 +33,25 @@ export const HistoryListItemContainer = styled.div<{ $isDone: boolean }>`
 		flex-grow: 1;
 		padding-left: 10px;
 
-		.title {
-			color: var(--main-color);
+		div {
+			span {
+				color: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--main-color)')};
+			}
 		}
 
-		.time {
-			font-size: 0.9rem;
-			color: var(--gray-400);
+		.title {
+			font-weight: bold;
+		}
+		.member-name {
+			color: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--gray-500)')};
+		}
+
+		.money {
+			color: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--gray-500)')};
+		}
+
+		.return-datetime {
+			color: ${({ $isDone }) => ($isDone ? 'var(--gray-400)' : 'var(--gray-500)')};
 		}
 	}
 
