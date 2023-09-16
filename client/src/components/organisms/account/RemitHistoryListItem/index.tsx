@@ -9,6 +9,8 @@ interface RemitHistoryListItemProps {
 }
 
 function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
+	const formattedMoney = formatMoney(history.balance);
+
 	return (
 		<RemitHistoryListItemContainer>
 			<div className="history-logo">
@@ -19,10 +21,12 @@ function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
 				<span className="time">{history.tradeTime}</span>
 			</div>
 			<div className="history-money-info">
-				<span className="price">
-					{history.status === 1 ? formatMoney(history.depositAmount) : `-${formatMoney(history.withdrawalAmount)}`}원
-				</span>
-				<span className="balance">{formatMoney(history.balance)}원</span>
+				{history.status === 1 ? (
+					<span className="price primary">{`${formatMoney(history.depositAmount)}원`}</span>
+				) : (
+					<span className="price">-{`${formatMoney(history.withdrawalAmount)}원`}</span>
+				)}
+				<span className="balance">{formattedMoney}원</span>
 			</div>
 		</RemitHistoryListItemContainer>
 	);
