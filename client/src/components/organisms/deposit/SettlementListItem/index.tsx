@@ -14,7 +14,7 @@ interface ISettlementListItemProps {
 
 function SettlementListItem(props: ISettlementListItemProps) {
 	const { addToBeReturned, isMultiReturnMode, openReturnModal, settlement, toBeReturned } = props;
-	const isReturn = settlement.status === 'DONE';
+	const isReturn = settlement.status !== 'WAIT';
 
 	const handleReturn = () => {
 		toBeReturned.length = 0;

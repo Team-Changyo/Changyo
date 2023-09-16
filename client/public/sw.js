@@ -1,14 +1,16 @@
+// sw.js
+
 // install event
-self.addEventListener('install', (_e) => {
-	console.log('[Service Worker] installed');
+self.addEventListener('install', (event) => {
+	console.log('[Service Worker] installed', event);
 });
 
 // activate event
-self.addEventListener('activate', (_e) => {
-	console.log('[Service Worker] actived', e);
+self.addEventListener('activate', () => {
+	// console.log('[Service Worker] actived');
 });
 
 // fetch event
-self.addEventListener('fetch', (_e) => {
-	console.log('[Service Worker] fetched resource ' + e.request.url);
+self.addEventListener('fetch', () => {
+	// console.log('[Service Worker] fetched resource ' + e.request.url);
 });

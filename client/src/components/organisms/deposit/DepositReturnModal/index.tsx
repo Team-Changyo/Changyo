@@ -22,7 +22,7 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 	const { open, handleClose, toBeReturned, returnDeposit, title, moneyUnit } = props;
 	const [reason, setReason] = useState('선택');
 	const [reasonDetail, setReasonDetail] = useState('');
-	const [returnMoney, setReturnMoney] = useState(moneyUnit);
+	const [returnMoney, setReturnMoney] = useState(0);
 	const [showReasonOption, setShowReasonOption] = useState(false);
 	const name = `${toBeReturned[0]?.memberName}`;
 	const others = toBeReturned.length >= 2 ? ` 외 ${toBeReturned.length - 1}명` : '';
@@ -49,6 +49,10 @@ function DepositReturnModal(props: IDepositReturnModalProps) {
 			setShowReasonOption(false);
 		}
 	}, [returnMoney]);
+
+	useEffect(() => {
+		setReturnMoney(moneyUnit);
+	}, [moneyUnit]);
 
 	return (
 		<Modal open={open} onClose={returnCancel}>
