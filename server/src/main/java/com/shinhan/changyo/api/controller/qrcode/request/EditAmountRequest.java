@@ -14,15 +14,17 @@ public class EditAmountRequest {
     @NotBlank
     private int amount;
 
+
     @Builder
     public EditAmountRequest(int amount) {
         this.amount = amount;
     }
 
-    public EditAmountDto toEditAmountDto(Long qrCodeId) {
+    public EditAmountDto toEditAmountDto(Long qrCodeId, String loginId) {
         return EditAmountDto.builder()
                 .amount(this.amount)
                 .qrCodeId(qrCodeId)
+                .loginId(loginId)
                 .build();
     }
 }

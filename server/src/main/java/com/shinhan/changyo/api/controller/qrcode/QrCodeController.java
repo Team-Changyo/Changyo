@@ -31,7 +31,7 @@ public class QrCodeController {
      * 보증금 QR코드 생성 요청
      *
      * @param request 등록할 보증금 QR코드 정보
-     * @return 등록된 QR코드 식별키
+     * @return 등록된 QR코드  상세 정보
      */
     // TODO: 2023-09-09 홍진식 :  목록으로 안가고 qr코드 정보 바로 상세 조회
     @PostMapping
@@ -52,7 +52,7 @@ public class QrCodeController {
      * @return 단숭 송금 QR 상세 정보
      */
     @PostMapping("/simple")
-    public ApiResponse<SimpleQrCodeResponse> createSimpleQrCode(@Valid @RequestBody SimpleQrCodeRequest request){
+    public ApiResponse<SimpleQrCodeResponse> createSimpleQrCode(@Valid @RequestBody SimpleQrCodeRequest request) {
         log.debug("SimpleQrCodeRequest={}", request);
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
@@ -62,20 +62,22 @@ public class QrCodeController {
     }
 
 
-    // TODO: 2023-09-09 홍진식 Pathvariable 넣어줘야하는지, request에 포함 시킬지
     /**
      * 보증금 QR코드 금액 변경
      *
      * @param qrCodeId QR코드 식별키
-     * @param request 변경할 금액 정보
+     * @param request  변경할 금액 정보
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/amount/{qrCodeId}")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<QrCodeDetailResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request){
+    public ApiResponse<QrCodeDetailResponse> editAmount(@PathVariable Long qrCodeId, @RequestBody EditAmountRequest request) {
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("AmountRequest={}", request);
-        QrCodeDetailResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId));
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        QrCodeDetailResponse response = qrCodeService.editAmount(request.toEditAmountDto(qrCodeId, loginId));
         return ApiResponse.found(response);
     }
 
@@ -83,12 +85,12 @@ public class QrCodeController {
      * 보증금 QR코드 title 변경
      *
      * @param qrCodeId, QR코드 식별키
-     * @param request 변경할 제목 정보
+     * @param request   변경할 제목 정보
      * @return 변경된 QR코드 정보
      */
     @PatchMapping("/title/{qrCodeId}")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request){
+    public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request) {
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("EditTitleRequest={}", request);
         QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
@@ -105,7 +107,7 @@ public class QrCodeController {
 
     @DeleteMapping("/remove/{qrCodeId}")
     @ResponseStatus(HttpStatus.FOUND)
-    public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId){
+    public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId) {
         log.debug("qrCodeId={}", qrCodeId);
         Boolean result = qrCodeService.removeQrCode(qrCodeId);
         return ApiResponse.found(result);
@@ -119,7 +121,7 @@ public class QrCodeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<QrCodeResponses> getQrCodes(){
+    public ApiResponse<QrCodeResponses> getQrCodes() {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
         QrCodeResponses responses = qrCodeQueryService.getQrCodes(loginId);
@@ -135,7 +137,7 @@ public class QrCodeController {
 
     @GetMapping("/{qrCodeId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId){
+    public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId) {
         log.debug("qrCodeId={}", qrCodeId);
         QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId);
         return ApiResponse.ok(response);

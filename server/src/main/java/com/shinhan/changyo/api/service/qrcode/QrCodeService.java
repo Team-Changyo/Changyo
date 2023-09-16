@@ -176,6 +176,11 @@ public class QrCodeService {
 
     public QrCodeDetailResponse editAmount(EditAmountDto dto) {
         QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+
+        if(!checkIsLoginIdAccount(findQrCode, dto.getLoginId())){
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.editAmount(dto.getAmount());
         return QrCodeDetailResponse.of(findQrCode);
     }
@@ -195,5 +200,12 @@ public class QrCodeService {
     public QrCodeDetailResponse getQrCode(Long qrCodeId) {
         QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
         return QrCodeDetailResponse.of(findQrCode);
+    }
+
+    private boolean checkIsLoginIdAccount(QrCode findQrCode, String loginId){
+        if(findQrCode.getAccount().getMember().getLoginId().equals(loginId)){
+            return true;
+        }
+        return false;
     }
 }
