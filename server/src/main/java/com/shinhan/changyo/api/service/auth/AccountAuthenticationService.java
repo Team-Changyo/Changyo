@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class AuthenticationService {
+public class AccountAuthenticationService {
 
     private final AccountQueryRepository accountQueryRepository;
     private final ShinHanApiClient shinHanApiClient;
@@ -20,7 +20,7 @@ public class AuthenticationService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ValueOperations<String, String> valueOperations;
 
-    public AuthenticationService(AccountQueryRepository accountQueryRepository, ShinHanApiClient shinHanApiClient, RedisTemplate<String, String> redisTemplate) {
+    public AccountAuthenticationService(AccountQueryRepository accountQueryRepository, ShinHanApiClient shinHanApiClient, RedisTemplate<String, String> redisTemplate) {
         this.accountQueryRepository = accountQueryRepository;
         this.shinHanApiClient = shinHanApiClient;
         this.redisTemplate = redisTemplate;
