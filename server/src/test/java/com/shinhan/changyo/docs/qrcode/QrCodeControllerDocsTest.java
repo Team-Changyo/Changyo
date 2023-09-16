@@ -186,8 +186,10 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+
     @DisplayName("보증금 QR코드 금액 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editAmount() throws Exception {
         EditAmountRequest request = EditAmountRequest.builder()
                 .amount(15000)
@@ -251,6 +253,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 제목 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editTitle() throws Exception {
         EditTitleRequest request = EditTitleRequest.builder()
                 .title("제목 변경 하겠습니다")
@@ -314,10 +317,11 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR 삭제 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void removeQr() throws Exception {
         Boolean result = true;
 
-        given(qrCodeService.removeQrCode(anyLong()))
+        given(qrCodeService.removeQrCode(anyLong(), anyString()))
                 .willReturn(result);
 
         mockMvc.perform(

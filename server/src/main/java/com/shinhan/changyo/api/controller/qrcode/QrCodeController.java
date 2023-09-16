@@ -112,7 +112,10 @@ public class QrCodeController {
     @ResponseStatus(HttpStatus.FOUND)
     public ApiResponse<Boolean> removeQrCode(@PathVariable Long qrCodeId) {
         log.debug("qrCodeId={}", qrCodeId);
-        Boolean result = qrCodeService.removeQrCode(qrCodeId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        Boolean result = qrCodeService.removeQrCode(qrCodeId, loginId);
         return ApiResponse.found(result);
     }
 

@@ -198,8 +198,13 @@ public class QrCodeService {
         return QrCodeDetailResponse.of(findQrCode);
     }
 
-    public Boolean removeQrCode(Long qrCodeId) {
-        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+    public Boolean removeQrCode(Long qrCodeId, String loginId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, loginId)) {
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.remove();
         return true;
     }
