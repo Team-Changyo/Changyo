@@ -209,8 +209,12 @@ public class QrCodeService {
         return true;
     }
 
-    public QrCodeDetailResponse getQrCode(Long qrCodeId) {
-        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+    public QrCodeDetailResponse getQrCode(Long qrCodeId, String loginId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, loginId)) {
+            throw new ForbiddenException("접근 권한이 없습니다.");
+        }
         return QrCodeDetailResponse.of(findQrCode);
     }
 

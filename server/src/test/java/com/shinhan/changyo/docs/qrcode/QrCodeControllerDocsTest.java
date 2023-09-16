@@ -361,7 +361,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .url("www.naver.com")
                 .build();
 
-        given(qrCodeService.getQrCode(anyLong()))
+        given(qrCodeService.getQrCode(anyLong(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(

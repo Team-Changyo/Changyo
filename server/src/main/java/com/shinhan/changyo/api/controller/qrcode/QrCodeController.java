@@ -130,6 +130,7 @@ public class QrCodeController {
     public ApiResponse<QrCodeResponses> getQrCodes() {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
+
         QrCodeResponses responses = qrCodeQueryService.getQrCodes(loginId);
         return ApiResponse.ok(responses);
     }
@@ -145,7 +146,10 @@ public class QrCodeController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<QrCodeDetailResponse> getQrCode(@PathVariable Long qrCodeId) {
         log.debug("qrCodeId={}", qrCodeId);
-        QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        QrCodeDetailResponse response = qrCodeService.getQrCode(qrCodeId, loginId);
         return ApiResponse.ok(response);
     }
 
