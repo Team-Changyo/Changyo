@@ -77,15 +77,7 @@ public class TradeQueryService {
         List<QrCodeTradeDto> qrCodeTrades = qrCodeQueryRepository.getQrCodesByLoginId(loginId, lastQrCodeId);
         log.debug("qrCodeTrades={}", qrCodeTrades);
 
-        List<DepositOverviewResponse> overviews = qrCodeTrades.stream().map(qrCodeTrade -> DepositOverviewResponse.builder()
-                        .qrCodeId(qrCodeTrade.getQrCodeId())
-                        .qrCodeTitle(qrCodeTrade.getTitle())
-                        .amount(qrCodeTrade.getAmount())
-                        .remainCount(getWaitDepositCountByQrCodeId(qrCodeTrade.getQrCodeId()))
-                        .remainTotal(getWaitTotalAmountByQrCodeId(qrCodeTrade.getQrCodeId()))
-                        .build()
-                )
-                .collect(Collectors.toList());
+        List<DepositOverviewResponse> overviews = createDepositOverviews(qrCodeTrades);
 
         boolean hasNextPage = checkHasNextPage(qrCodeTrades);
 
@@ -110,6 +102,23 @@ public class TradeQueryService {
         log.debug("deposits={}", deposits);
 
         return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount, totalAmount);
+    }
+
+    /**
+     * 보증금 정산관리 리스트 생성
+     *
+     * @param qrCodeTrades QR 코드 리스트
+     * @return 보증금 정산관리 응답 리스트
+     */
+    private List<DepositOverviewResponse> createDepositOverviews(List<QrCodeTradeDto> qrCodeTrades) {
+        return qrCodeTrades.stream()
+                .map(qrCodeTrade -> DepositOverviewResponse.of(
+                                qrCodeTrade,
+                                getWaitDepositCountByQrCodeId(qrCodeTrade.getQrCodeId()),
+                                getWaitTotalAmountByQrCodeId(qrCodeTrade.getQrCodeId())
+                        )
+                )
+                .collect(Collectors.toList());
     }
 
     /**
