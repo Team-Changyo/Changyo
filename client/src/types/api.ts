@@ -38,7 +38,14 @@ export interface CheckAuthAccountApiBody {
 	authenticationNumber: string;
 }
 // - remit
-export interface RemitApiBody {}
+export interface RemitApiBody {
+	accountId: number;
+	withdrawalAccountNumber: string;
+	bankCode: string;
+	depositAccountNumber: string;
+	amount: number;
+	depositMemberName: string;
+}
 
 export interface RemitDepositApiBody {
 	accountId: number;

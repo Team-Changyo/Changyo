@@ -28,3 +28,10 @@ export interface IReturnSettlement {
 	reason: string;
 	description: string;
 }
+
+export interface IShareData {
+	title: string;
+	url: string;
+	text: string;
+	files?: File[];
+}
