@@ -3,16 +3,16 @@ package com.shinhan.changyo.api.service.account;
 import com.shinhan.changyo.api.ApiResponse;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
-import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
-import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
+import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
+import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
 import com.shinhan.changyo.api.service.util.exception.DuplicateException;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
+import com.shinhan.changyo.api.service.util.exception.NoAccountException;
+import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.request.AccountDetailRequest;
 import com.shinhan.changyo.client.request.BalanceRequest;
 import com.shinhan.changyo.client.response.BalanceResponse;
-import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
-import com.shinhan.changyo.client.ShinHanApiClient;
 import com.shinhan.changyo.client.response.DetailResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
@@ -197,6 +197,12 @@ public class AccountService {
         return status.equals(HttpStatus.OK);
     }
 
+    /**
+     * 계좌 별칭 수정
+     *
+     * @param dto 수정 계좌 정보
+     * @return 수정된 계좌 정보
+     */
     public AccountEditResponse editTitle(EditAccountTitleDto dto) {
         Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
 
@@ -206,7 +212,12 @@ public class AccountService {
         return AccountEditResponse.of(findAccount);
     }
 
-
+    /**
+     * 주계좌 여부 수정
+     *
+     * @param dto 수정할 계좌 정보
+     * @return 수정된 계좌 정보
+     */
     public AccountEditResponse editMainAccount(AccountDto dto) {
         Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
 
@@ -226,6 +237,12 @@ public class AccountService {
         return AccountEditResponse.of(findAccount);
     }
 
+    /**
+     * 계좌 삭제
+     *
+     * @param dto 삭제할 계좌 정보
+     * @return 성공 여부 true: 삭제 완료
+     */
     public Boolean removeAccount(AccountDto dto) {
         Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
         checkIsMemberAccount(findAccount, dto.getLoginId());

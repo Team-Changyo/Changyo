@@ -134,6 +134,7 @@ public class TradeQueryService {
 
     /**
      * QR 코드별 총 금액 조회
+     *
      * @param qrCodeId QR 코드 식별키
      * @return 해당 QR 코드 총 금액
      */

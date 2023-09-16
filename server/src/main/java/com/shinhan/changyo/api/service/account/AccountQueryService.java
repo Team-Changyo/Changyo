@@ -5,7 +5,6 @@ import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
-import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.ShinHanApiClient;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,46 +44,64 @@ public class AccountQueryService {
      */
     public AccountResponse getAccounts(String loginId) {
         List<AccountDetailResponse> accounts = accountQueryRepository.getAccountsByMemberId(loginId);
-//        checkIsEmpty(accounts);
+
         int totalBalance = accounts.stream()
                 .mapToInt(AccountDetailResponse::getBalance)
                 .sum();
 
-        Set<String> bankCodes = accounts.stream()
+        List<String> bankCodeList = accounts.stream()
                 .map(AccountDetailResponse::getBankCode)
-                .collect(Collectors.toSet());
-
-        List<String> bankCodeList = new ArrayList<>();
-        bankCodeList.addAll(bankCodes);
+                .distinct()
+                .collect(Collectors.toList());
 
         return AccountResponse.of(accounts, totalBalance, bankCodeList, accounts.size());
     }
 
     /**
-     * 등록 계좌 존재 여부 확인
+     * 입지 구분별 계좌내역 조회
      *
-     * @param accounts 등록된 계좌 목록
-     * @throws EntityNotFoundException 등록된 계좌 목록이 비어있거나 NULL 일 경우
+     * @param dto    조화할 계좌 정보
+     * @param status 입지구분 (0: 전체, 1: 입금, 2: 출금)
+     * @return 입지 구분별 계좌내역
      */
-    private void checkIsEmpty(List<AccountDetailResponse> accounts) {
-        if (accounts == null || accounts.isEmpty()) {
-            throw new NoAccountException("등록된 계좌가 없습니다.");
+    public AccountTradeAllResponse getAccountTradeAll(AccountDto dto, int status) {
+        // 계좌 조회
+        Account findAccount = getAccount(dto.getAccountId());
+        // 접근 권한 체크
+        checkAccessibility(dto.getLoginId(), findAccount);
+        // 신한 api 호출
+        List<TradeDetailResponse> trades = getTradeDetailResponses(findAccount);
+
+        // 거래 일자별로 정렬된 Map(Key: 거래일자 value: 해당 일자의 거래내역)
+        Map<String, List<AllTradeResponse>> sortedAllTradeResponses = getSortedAllTradeResponses(status, trades);
+
+        return AccountTradeAllResponse.builder()
+                .accountId(dto.getAccountId())
+                .accountNumber(findAccount.getAccountNumber())
+                .balance(findAccount.getBalance())
+                .bankCode(findAccount.getBankCode())
+                .title(findAccount.getTitle())
+                .allTradeResponses(sortedAllTradeResponses)
+                .build();
+    }
+
+    private Account getAccount(Long accountId) {
+        return accountRepository.findById(accountId).orElseThrow(() ->
+                new NoSuchElementException("존재 하지 않는 계좌입니다."));
+    }
+
+    private void checkAccessibility(String loginId, Account findAccount) {
+        if (!findAccount.getMember().getLoginId().equals(loginId)) {
+            throw new ForbiddenException("접근 권한이 없습니다.");
         }
     }
 
-    public AccountTradeAllResponse getAccountTradeAll(AccountDto dto) {
-        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 0);
+    private List<TradeDetailResponse> getTradeDetailResponses(Account findAccount) {
+        ApiResponse<TradeResponse> tradeResponse =
+                shinHanApiClient.trade(createTradeRequest(findAccount.getAccountNumber()));
+
+        return tradeResponse.getData().getTrades();
     }
-
-
-    public AccountTradeAllResponse getAccountTradeDeposit(AccountDto dto) {
-        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 1);
-    }
-
-    public AccountTradeAllResponse getAccountTradeWithdrawal(AccountDto dto) {
-        return getTradeResponse(dto.getLoginId(), dto.getAccountId(), 2);
-    }
-
 
     private TradeRequest createTradeRequest(String accountNumber) {
         return TradeRequest.builder()
@@ -93,11 +109,27 @@ public class AccountQueryService {
                 .build();
     }
 
+    private Map<String, List<AllTradeResponse>> getSortedAllTradeResponses(int status, List<TradeDetailResponse> trades) {
+        Map<String, List<AllTradeResponse>> sortedAllTradeResponses = new LinkedHashMap<>();
+        if (!trades.isEmpty()) {
+            Map<String, List<AllTradeResponse>> allTradeResponses = groupByTradeDate(trades, status);
+            sortedAllTradeResponses = sortMapOrderByKeyDesc(allTradeResponses);
+        }
+        return sortedAllTradeResponses;
+    }
 
-    private Map<String, List<AllTradeResponse>> createGroupByDateTime(List<TradeDetailResponse> trades, int status) {
+    /**
+     * 신한 API 응답 전처리 후 Map 생성
+     *
+     * @param trades
+     * @param status
+     * @return
+     */
+    private Map<String, List<AllTradeResponse>> groupByTradeDate(List<TradeDetailResponse> trades, int status) {
 
         // 필요한 정보만 뽑아서 list 화
         List<AllTradeResponse> allTradeResponses = trades.stream()
+                // 입지 구분에 따라서 처리
                 .filter(trade -> {
                     if (status == 0) {
                         return true;
@@ -109,78 +141,31 @@ public class AccountQueryService {
                         return false;
                     }
                 })
-                .map(trade -> {
-                    AllTradeResponse tmp = AllTradeResponse.builder()
-                            .tradeDate(trade.getTradeDate())
-                            .tradeTime(trade.getTradeTime())
-                            .content(trade.getContent())
-                            .balance(trade.getBalance())
-                            .withdrawalAmount(trade.getWithdrawalAmount())
-                            .depositAmount(trade.getDepositAmount())
-                            .status(trade.getStatus())
-                            .build();
-                    return tmp;
-
-                })
+                .map(trade -> AllTradeResponse.builder()
+                        .tradeDate(trade.getTradeDate())
+                        .tradeTime(trade.getTradeTime())
+                        .content(trade.getContent())
+                        .balance(trade.getBalance())
+                        .withdrawalAmount(trade.getWithdrawalAmount())
+                        .depositAmount(trade.getDepositAmount())
+                        .status(trade.getStatus())
+                        .build())
                 .collect(Collectors.toList());
 
         // 거래날짜별로 묶기
-        Map<String, List<AllTradeResponse>> res =
-                allTradeResponses.stream().collect(Collectors.groupingBy(
-                        AllTradeResponse::getTradeDate
-                ));
-
-
-        return res;
+        return allTradeResponses.stream().collect(Collectors.groupingBy(
+                AllTradeResponse::getTradeDate
+        ));
     }
 
 
     /**
-     * @param loginId   로그인 아이디
-     * @param accountId 계좌 식별키
-     * @param status    입지 구분 0 : 전체 / 1 : 입금(deposit) / 2 : 출금(withdrawal)
+     * 생성된 Map 정렬
+     *
+     * @param unsortedMap
      * @return
      */
-
-    private AccountTradeAllResponse getTradeResponse(String loginId, Long accountId, int status) {
-        // 계좌 조회
-        Account findAccount = accountRepository.findById(accountId).orElseThrow(() ->
-                new NoSuchElementException("존재 하지 않는 계좌입니다."));
-        // 접근 권한 체크
-        if (!findAccount.getMember().getLoginId().equals(loginId)) {
-            throw new ForbiddenException("접근 권한이 없습니다.");
-        }
-
-        // 신한 api 호출
-        ApiResponse<TradeResponse> tradeResponse =
-                shinHanApiClient.trade(createTradeRequest(findAccount.getAccountNumber()));
-
-        // 데이터 뽑기
-        List<TradeDetailResponse> trades = tradeResponse.getData().getTrades();
-
-
-        Map<String, List<AllTradeResponse>> allTradeResponses = null;
-        // 거래내역이 없는 경우
-        if (trades.size() != 0) {
-            allTradeResponses = createGroupByDateTime(trades, status);
-        }
-        Map<String, List<AllTradeResponse>> sortedAllTradeResponses =
-                sortMapByDateDescending(allTradeResponses);
-
-
-        AccountTradeAllResponse response = AccountTradeAllResponse.builder()
-                .accountId(accountId)
-                .accountNumber(findAccount.getAccountNumber())
-                .balance(findAccount.getBalance())
-                .bankCode(findAccount.getBankCode())
-                .title(findAccount.getTitle())
-                .allTradeResponses(sortedAllTradeResponses)
-                .build();
-
-        return response;
-    }
-
-    public Map<String, List<AllTradeResponse>> sortMapByDateDescending(Map<String, List<AllTradeResponse>> unsortedMap) {
+    public Map<String, List<AllTradeResponse>> sortMapOrderByKeyDesc(Map<String, List<AllTradeResponse>> unsortedMap) {
         return unsortedMap.entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByKey())) // 키를 내림차순으로 정렬

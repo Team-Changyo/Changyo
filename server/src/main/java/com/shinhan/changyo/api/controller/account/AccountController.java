@@ -83,7 +83,7 @@ public class AccountController {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId));
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 0);
 
         return ApiResponse.ok(response);
     }
@@ -102,7 +102,7 @@ public class AccountController {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeDeposit(request.toAccountDto(loginId));
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 1);
 
         return ApiResponse.ok(response);
     }
@@ -121,7 +121,7 @@ public class AccountController {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        AccountTradeAllResponse response = accountQueryService.getAccountTradeWithdrawal(request.toAccountDto(loginId));
+        AccountTradeAllResponse response = accountQueryService.getAccountTradeAll(request.toAccountDto(loginId), 2);
 
         return ApiResponse.ok(response);
     }

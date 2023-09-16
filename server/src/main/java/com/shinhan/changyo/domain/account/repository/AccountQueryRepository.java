@@ -84,4 +84,18 @@ public class AccountQueryRepository {
                 .where(account.accountNumber.eq(accountNumber))
                 .fetchFirst() != null;
     }
+
+    /**
+     * 계좌 식별키 목록 조회
+     *
+     * @param loginId 조회할 회원 로그인 아이디
+     * @return 해당 회원이 가진 계좌 식별키 목록
+     */
+    public List<Long> getAccountIdsByLoginId(String loginId) {
+        return queryFactory.select(account.id)
+                .from(account)
+                .join(account.member, member)
+                .where(member.loginId.eq(loginId))
+                .fetch();
+    }
 }
