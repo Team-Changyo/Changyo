@@ -1,7 +1,7 @@
 {
     "name": "챙겨요",
     "short_name": "챙겨요",
-    "start_url": "/",
+    "start_url": "https://j9c205.p.ssafy.io/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#2449FF",
