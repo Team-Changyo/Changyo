@@ -5,7 +5,7 @@ import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse
 import com.shinhan.changyo.api.controller.account.response.AccountResponse;
 import com.shinhan.changyo.api.controller.account.response.AccountTradeAllResponse;
 import com.shinhan.changyo.api.controller.account.response.AllTradeResponse;
-import com.shinhan.changyo.api.service.account.exception.NoAccountException;
+import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.client.ShinHanApiClient;

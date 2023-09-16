@@ -19,10 +19,11 @@ public class EditTitleRequest {
     }
 
 
-    public EditTitleDto toEditTitleDto(Long qrCodeId){
+    public EditTitleDto toEditTitleDto(Long qrCodeId, String loginId){
         return EditTitleDto.builder()
                 .qrCodeId(qrCodeId)
                 .title(this.title)
+                .loginId(loginId)
                 .build();
     }
 }

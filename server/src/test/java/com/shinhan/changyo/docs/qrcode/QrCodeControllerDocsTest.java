@@ -69,7 +69,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        post("/qrcode-management/qrcode")
+                        post("/qrcode")
                                 .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        post("/qrcode-management/qrcode/simple")
+                        post("/qrcode/simple")
                                 .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -186,8 +186,10 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+
     @DisplayName("보증금 QR코드 금액 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editAmount() throws Exception {
         EditAmountRequest request = EditAmountRequest.builder()
                 .amount(15000)
@@ -208,7 +210,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/qrcode-management/qrcode/amount/1")
+                        patch("/qrcode/amount/1")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -251,6 +253,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 제목 변경 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void editTitle() throws Exception {
         EditTitleRequest request = EditTitleRequest.builder()
                 .title("제목 변경 하겠습니다")
@@ -271,7 +274,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/qrcode-management/qrcode/title/1")
+                        patch("/qrcode/title/1")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -314,14 +317,15 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR 삭제 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void removeQr() throws Exception {
         Boolean result = true;
 
-        given(qrCodeService.removeQrCode(anyLong()))
+        given(qrCodeService.removeQrCode(anyLong(), anyString()))
                 .willReturn(result);
 
         mockMvc.perform(
-                        delete("/qrcode-management/qrcode/remove/1")
+                        delete("/qrcode/remove/1")
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -344,6 +348,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 상세조회 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void getQr() throws Exception {
 
         QrCodeDetailResponse response = QrCodeDetailResponse.builder()
@@ -357,11 +362,11 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .url("www.naver.com")
                 .build();
 
-        given(qrCodeService.getQrCode(anyLong()))
+        given(qrCodeService.getQrCode(anyLong(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/qrcode-management/qrcode/1")
+                        get("/qrcode/1")
                                 .header("Authentication", "test")
                 )
                 .andDo(print())
@@ -424,7 +429,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/qrcode-management/qrcode")
+                        get("/qrcode")
                                 .header("Authentication", "test")
                 )
                 .andDo(print())

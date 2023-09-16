@@ -1,4 +1,4 @@
-package com.shinhan.changyo.api.service.account.exception;
+package com.shinhan.changyo.api.service.util.exception;
 
 import java.util.NoSuchElementException;
 
