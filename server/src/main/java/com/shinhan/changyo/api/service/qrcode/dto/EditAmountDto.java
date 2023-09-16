@@ -13,9 +13,12 @@ public class EditAmountDto {
 
     private int amount;
 
+    private String loginId;
+
     @Builder
-    public EditAmountDto(Long qrCodeId, int amount) {
+    public EditAmountDto(Long qrCodeId, int amount, String loginId) {
         this.qrCodeId = qrCodeId;
         this.amount = amount;
+        this.loginId = loginId;
     }
 }

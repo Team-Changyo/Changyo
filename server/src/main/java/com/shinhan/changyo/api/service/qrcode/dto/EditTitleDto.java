@@ -12,9 +12,12 @@ public class EditTitleDto {
 
     private String title;
 
+    private String loginId;
+
     @Builder
-    public EditTitleDto(Long qrCodeId, String title) {
+    public EditTitleDto(Long qrCodeId, String title, String loginId) {
         this.qrCodeId = qrCodeId;
         this.title = title;
+        this.loginId = loginId;
     }
 }

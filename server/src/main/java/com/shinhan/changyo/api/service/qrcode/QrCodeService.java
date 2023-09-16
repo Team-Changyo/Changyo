@@ -8,10 +8,12 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.shinhan.changyo.api.controller.qrcode.response.QrCodeDetailResponse;
 import com.shinhan.changyo.api.controller.qrcode.response.SimpleQrCodeResponse;
+import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.api.service.qrcode.dto.EditAmountDto;
 import com.shinhan.changyo.api.service.qrcode.dto.EditTitleDto;
 import com.shinhan.changyo.api.service.qrcode.dto.QrCodeDto;
 import com.shinhan.changyo.api.service.qrcode.dto.SimpleQrCodeDto;
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
 import com.shinhan.changyo.domain.member.Member;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -53,6 +56,7 @@ public class QrCodeService {
     private final MemberQueryRepository memberQueryRepository;
 
     static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
+
     /**
      * QR코드 증록
      *
@@ -63,16 +67,18 @@ public class QrCodeService {
     public QrCodeDetailResponse createQrcode(QrCodeDto dto) {
         try {
             StringBuilder url = new StringBuilder("https://j9c205.ssafy.io/remittance/deposit?qrCodeId=");
-            String qrCodeBase64 = createQR(url.toString());
+            String qrCodeBase64 = url.toString();
 
             Account findAccount = accountRepository.findById(dto.getAccountId())
-                    .orElseThrow(() -> new IllegalArgumentException("계좌 정보가 존재하지 않습니다."));
+                    .orElseThrow(() -> new NoAccountException("계좌 정보가 존재하지 않습니다."));
 
             if (!findAccount.getMember().getLoginId().equals(dto.getLoginId())) {
-                throw new IllegalAccessException("잘못된 접근입니다.");
+                throw new ForbiddenException("계좌 접근 권한이 없습니다.");
             }
 
             QrCode saveQrCode = qrCodeRepository.save(dto.toEntity(url.toString(), qrCodeBase64, findAccount));
+
+            // ID를 추가해서 QR코드 생성
             url.append(saveQrCode.getQrCodeId());
             qrCodeBase64 = createQR(url.toString());
             saveQrCode.editUrlAndQrCodeBase64(url.toString(), qrCodeBase64);
@@ -148,7 +154,8 @@ public class QrCodeService {
             g.drawImage(overly, (int) Math.round(deltaWidth / 2), (int) Math.round(deltaHeight / 2), null);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.debug(e.toString());
+            throw new IllegalArgumentException("QR코드 생성 실패 - 내부 서버 문제");
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -170,25 +177,51 @@ public class QrCodeService {
     }
 
     public QrCodeDetailResponse editAmount(EditAmountDto dto) {
-        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, dto.getLoginId())) {
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.editAmount(dto.getAmount());
         return QrCodeDetailResponse.of(findQrCode);
     }
 
     public QrCodeDetailResponse editTitle(EditTitleDto dto) {
-        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, dto.getLoginId())) {
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.editTitle(dto.getTitle());
         return QrCodeDetailResponse.of(findQrCode);
     }
 
-    public Boolean removeQrCode(Long qrCodeId) {
-        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+    public Boolean removeQrCode(Long qrCodeId, String loginId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, loginId)) {
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.remove();
         return true;
     }
 
-    public QrCodeDetailResponse getQrCode(Long qrCodeId) {
-        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+    public QrCodeDetailResponse getQrCode(Long qrCodeId, String loginId) {
+        QrCode findQrCode = qrCodeRepository.findById(qrCodeId).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, loginId)) {
+            throw new ForbiddenException("접근 권한이 없습니다.");
+        }
         return QrCodeDetailResponse.of(findQrCode);
+    }
+
+    private boolean checkIsLoginIdAccount(QrCode findQrCode, String loginId) {
+        if (findQrCode.getAccount().getMember().getLoginId().equals(loginId)) {
+            return true;
+        }
+        return false;
     }
 }
