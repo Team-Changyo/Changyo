@@ -7,4 +7,5 @@ export const TABBAR_RENDER_EXCEPTS = [
 	'/account/register',
 	'/success',
 	'/fail',
+	'/404',
 ];

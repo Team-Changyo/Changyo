@@ -97,7 +97,8 @@ function AppRouter() {
 									<Route path="/success" element={<SuccessPage />} />
 									<Route path="/fail" element={<FailPage />} />
 								</Route>
-								<Route path="/*" element={<PageNotFound />} />
+								<Route path="/*" element={<Navigate replace to="/404" />} />
+								<Route path="/404" element={<PageNotFound />} />
 							</Routes>
 							<Tabbar />
 						</>
