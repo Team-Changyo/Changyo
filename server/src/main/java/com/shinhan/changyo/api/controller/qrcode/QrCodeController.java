@@ -93,7 +93,10 @@ public class QrCodeController {
     public ApiResponse<QrCodeDetailResponse> editTitle(@PathVariable Long qrCodeId, @RequestBody EditTitleRequest request) {
         log.debug("qrCodeId={}", qrCodeId);
         log.debug("EditTitleRequest={}", request);
-        QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId));
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        QrCodeDetailResponse response = qrCodeService.editTitle(request.toEditTitleDto(qrCodeId, loginId));
         return ApiResponse.found(response);
     }
 

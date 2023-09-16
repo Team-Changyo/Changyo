@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -55,6 +56,7 @@ public class QrCodeService {
     private final MemberQueryRepository memberQueryRepository;
 
     static final String LOGO_PATH = "src/main/resources/static/images/changyoLogo.png";
+
     /**
      * QR코드 증록
      *
@@ -175,9 +177,9 @@ public class QrCodeService {
     }
 
     public QrCodeDetailResponse editAmount(EditAmountDto dto) {
-        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
 
-        if(!checkIsLoginIdAccount(findQrCode, dto.getLoginId())){
+        if (!checkIsLoginIdAccount(findQrCode, dto.getLoginId())) {
             throw new ForbiddenException("수정 권한이 없습니다.");
         }
 
@@ -186,7 +188,12 @@ public class QrCodeService {
     }
 
     public QrCodeDetailResponse editTitle(EditTitleDto dto) {
-        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new IllegalArgumentException("QR코드 정보가 존재하지 않습니다."));
+        QrCode findQrCode = qrCodeRepository.findById(dto.getQrCodeId()).orElseThrow(() -> new NoSuchElementException("QR코드 정보가 존재하지 않습니다."));
+
+        if (!checkIsLoginIdAccount(findQrCode, dto.getLoginId())) {
+            throw new ForbiddenException("수정 권한이 없습니다.");
+        }
+
         findQrCode.editTitle(dto.getTitle());
         return QrCodeDetailResponse.of(findQrCode);
     }
@@ -202,8 +209,8 @@ public class QrCodeService {
         return QrCodeDetailResponse.of(findQrCode);
     }
 
-    private boolean checkIsLoginIdAccount(QrCode findQrCode, String loginId){
-        if(findQrCode.getAccount().getMember().getLoginId().equals(loginId)){
+    private boolean checkIsLoginIdAccount(QrCode findQrCode, String loginId) {
+        if (findQrCode.getAccount().getMember().getLoginId().equals(loginId)) {
             return true;
         }
         return false;
