@@ -151,11 +151,15 @@ public class TradeController {
         log.debug("TradeController#returnDeposit call");
         log.debug("ReturnDepositRequest={}", request);
 
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
         Boolean result = tradeService.returnDeposits(
                 request.getReturnRequests()
                         .stream()
                         .map(ReturnDepositRequest::toReturnDepositDto)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                loginId
         );
         log.debug("result={}", result);
 
