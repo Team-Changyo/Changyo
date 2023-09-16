@@ -59,11 +59,11 @@ function LoginForm() {
 				<Button text="로그인" type="Primary" handleClick={login} />
 				<div className="menu">
 					<button type="button" className="right-bar">
-						비밀번호 찾기
+						아이디 찾기
 					</button>
 					<span className="bar">|</span>
 					<button type="button" className="right-bar">
-						아이디 찾기
+						비밀번호 찾기
 					</button>
 					<span className="bar">|</span>
 					<button type="button" onClick={() => navigate('/auth/register')}>
