@@ -8,15 +8,17 @@ export const TabbarItemWrapper = styled.div<{ $isActive: boolean }>`
 	background-color: var(--white-color);
 	z-index: 30;
 
-	&:hover {
-		cursor: pointer;
+	@media (min-width: 500px) {
+		&:hover {
+			cursor: pointer;
 
-		a {
-			color: var(--main-color);
-		}
+			a {
+				color: var(--main-color);
+			}
 
-		svg {
-			fill: var(--main-color);
+			svg {
+				fill: var(--main-color);
+			}
 		}
 	}
 
@@ -24,6 +26,7 @@ export const TabbarItemWrapper = styled.div<{ $isActive: boolean }>`
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		margin-bottom: 1.5rem;
 		align-items: center;
 		width: 100%;
 		height: 100%;
@@ -57,11 +60,13 @@ export const TabbarCenterItemWrapper = styled.div`
 		height: 56px;
 		position: absolute;
 		left: 50%;
-		-webkit-transform: translate(-50%, -15%);
-		transform: translate(-50%, -15%);
+		-webkit-transform: translate(-50%, -30%);
+		transform: translate(-50%, -30%);
 
-		&:hover {
-			cursor: pointer;
+		@media (min-width: 500px) {
+			&:hover {
+				cursor: pointer;
+			}
 		}
 	}
 `;

@@ -1,13 +1,19 @@
 package com.shinhan.changyo.api.service.account;
 
 import com.shinhan.changyo.api.ApiResponse;
-import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
+import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.response.AccountEditResponse;
-import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
-import com.shinhan.changyo.client.BalanceRequest;
-import com.shinhan.changyo.client.BalanceResponse;
+import com.shinhan.changyo.api.service.account.dto.AccountDto;
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
+import com.shinhan.changyo.api.service.account.dto.EditAccountTitleDto;
+import com.shinhan.changyo.api.service.util.exception.DuplicateException;
+import com.shinhan.changyo.api.service.util.exception.ForbiddenException;
+import com.shinhan.changyo.api.service.util.exception.NoAccountException;
 import com.shinhan.changyo.client.ShinHanApiClient;
+import com.shinhan.changyo.client.request.AccountDetailRequest;
+import com.shinhan.changyo.client.request.BalanceRequest;
+import com.shinhan.changyo.client.response.BalanceResponse;
+import com.shinhan.changyo.client.response.DetailResponse;
 import com.shinhan.changyo.domain.account.Account;
 import com.shinhan.changyo.domain.account.repository.AccountQueryRepository;
 import com.shinhan.changyo.domain.account.repository.AccountRepository;
@@ -19,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -37,30 +42,94 @@ public class AccountService {
     private final MemberRepository memberRepository;
     private final ShinHanApiClient shinHanApiClient;
 
+
     /**
      * 계좌 등록
      *
-     * @param dto 등록할 계좌 정보
+     * @param request 등록할 계좌 정보
+     * @param loginId 현재 로그인한 회원 정보
      * @return 등록된 계좌 식별키
+     * @throws NoSuchElementException 신한 api 서버에 계좌정보가 존재하지 않는 경우
+     * @throws DuplicateException 신한 api 서버에서 등록된 계좌가 챙겨요 계좌에 이미 등록 되어있는 경우
      */
-    public Long createAccount(CreateAccountDto dto) {
-        Member member = getMember(dto.getMemberId());
+    public Long createAccount(CreateAccountRequest request, String loginId) {
+        Member member = getMember(loginId);
+        checkMemberActive(member);
+
+        ApiResponse<DetailResponse> response = shinHanApiClient.getAccountDetail(
+                createAccountDetailRequest(request.getAccountNumber())
+        );
+
+        if (response.getData() == null) {
+            throw new NoSuchElementException("계좌 정보가 없습니다.");
+        }
+
+        if (accountQueryRepository.checkIsExistByAccountNumber(request.getAccountNumber())) { // 존재하면
+            throw new DuplicateException("계좌가 이미 등록되었습니다.");
+        }
+
+        CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 
         Account savedAccount = saveAccount(dto, member);
 
         return savedAccount.getId();
     }
 
+
     /**
-     * 회원 엔티티 조회
+     * 계좌 별칭 수정
      *
-     * @param memberId 조회할 회원 식별키
-     * @return 조회된 회원
-     * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
+     * @param dto 수정 계좌 정보
+     * @return 수정된 계좌 정보
      */
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    public AccountEditResponse editTitle(EditAccountTitleDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        findAccount.editTitle(dto.getTitle());
+        return AccountEditResponse.of(findAccount);
+    }
+
+    /**
+     * 주계좌 여부 수정
+     *
+     * @param dto 수정할 계좌 정보
+     * @return 수정된 계좌 정보
+     */
+    public AccountEditResponse editMainAccount(AccountDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new NoAccountException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        if (findAccount.getMainAccount()) {
+            throw new IllegalArgumentException("주 계좌는 변경할 수 없습니다.");
+        }
+        // 주계좌 변경
+        Account mainAccount = accountQueryRepository.getMainAccountsById(findAccount.getMember().getId());
+        mainAccount.editMainAccount();
+
+        findAccount.editMainAccount();
+
+        return AccountEditResponse.of(findAccount);
+    }
+
+    /**
+     * 계좌 삭제
+     *
+     * @param dto 삭제할 계좌 정보
+     * @return 성공 여부 true: 삭제 완료
+     */
+    public Boolean removeAccount(AccountDto dto) {
+        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow(() -> new IllegalArgumentException("계좌 정보가 없습니다."));
+        checkAccountActive(findAccount);
+
+        checkIsMemberAccount(findAccount, dto.getLoginId());
+
+        findAccount.remove();
+        return true;
     }
 
     /**
@@ -75,10 +144,14 @@ public class AccountService {
 
         Account account = dto.toEntity(member, balance);
 
-        if (checkIsFirstAccount(member.getId())) {
+        if (checkIsFirstAccount(member.getId())) { // 첫 계좌면
             account.setMainAccount();
+        } else {
+            if (dto.getMainAccount()) { //메인 계좌로 설정 했으면
+                Account mainAccount = accountQueryRepository.getMainAccountsById(member.getId());
+                mainAccount.editMainAccount();
+            }
         }
-
         return accountRepository.save(account);
     }
 
@@ -112,7 +185,21 @@ public class AccountService {
      * @return API 응답
      */
     private ApiResponse<BalanceResponse> getBalanceResponse(String accountNumber) {
-        return shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        ApiResponse<BalanceResponse> response = shinHanApiClient.getAccountBalance(createBalanceRequest(accountNumber));
+        log.debug("response={}", response);
+        return response;
+    }
+
+
+    /**
+     * 계좌 거래내역 상세 조회 API 요청 객체 생성
+     * @param accountNumber 계좌 번호
+     * @return 요청 객체
+     */
+    private AccountDetailRequest createAccountDetailRequest(String accountNumber) {
+        return AccountDetailRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
     }
 
     /**
@@ -121,10 +208,55 @@ public class AccountService {
      * @param accountNumber 계좌번호
      * @return 요청 객체
      */
+
     private BalanceRequest createBalanceRequest(String accountNumber) {
         return BalanceRequest.builder()
                 .accountNumber(accountNumber)
                 .build();
+    }
+
+    /**
+     * 회원 엔티티 조회
+     *
+     * @param loginId 조회할 회원 로그인 아이디
+     * @return 조회된 회원
+     * @throws NoSuchElementException 조회하려는 회원이 존재하지 않는 경우
+     */
+    private Member getMember(String loginId) {
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    }
+
+    /**
+     * 탈퇴한 회원지 체크
+     *
+     * @param member
+     * @throws ForbiddenException Member.active 가 false인 경우
+     */
+    private void checkMemberActive(Member member){
+        if(!member.getActive()){
+            throw new ForbiddenException("회원 정보가 없습니다");
+        }
+    }
+
+
+    /**
+     * 계좌가 로그인한 유저의 계좌인지 확인
+     *
+     * @param account 계좌
+     * @param loginId 로그인 아이디
+     * @throws ForbiddenException 계좌가 로그인한 유저의 계좌가 아닐 경우
+     */
+    private void checkIsMemberAccount(Account account, String loginId) {
+        if (!account.getMember().getLoginId().equals(loginId)) {
+            throw new ForbiddenException("접근 권한이 없습니다.");
+        }
+    }
+
+    private void checkAccountActive(Account account){
+        if(!account.getActive()){
+            throw new NoAccountException("계좌 정보가 없습니다.");
+        }
     }
 
     /**
@@ -150,21 +282,4 @@ public class AccountService {
         return status.equals(HttpStatus.OK);
     }
 
-    public AccountEditResponse editTitle(EditAccountTitleDto dto) {
-        Account findAccount = accountRepository.findById(dto.getAccountId()).orElseThrow( () -> new IllegalArgumentException("계좌 정보가 없습니다."));
-        findAccount.editTitle(dto.getTitle());
-        return AccountEditResponse.of(findAccount);
-    }
-
-    public AccountEditResponse editMainAccount(Long accountId) {
-        List<Account> findAccounts = accountQueryRepository.getAccountsByMainAccountOrId(accountId);
-//        if(findAccounts.size() == 0){
-//            throw new IllegalAccessException("이미 주계좌로 등록되어있습니다.");
-//        }
-
-        for (Account findAccount: findAccounts) {
-            findAccount.editMainAccount();
-        }
-        return AccountEditResponse.of(findAccounts.get(1));
-    }
 }

@@ -1,5 +1,7 @@
 // REQUEST
 
+import { IReturnSettlement } from './deposit';
+
 // - member
 export interface LoginApiBody {
 	loginId: string;
@@ -20,41 +22,46 @@ export interface WithdrawalApiBody {
 }
 
 // - account
-export interface RegisterAccountApi {
-	memberId: number;
-	customerName: string;
+export interface RegisterAccountApiBody {
 	bankCode: string;
 	accountNumber: string;
-	productName: string;
 	title: string;
 	mainAccount: boolean;
 }
 
+export interface AuthRequestAccountApiBody {
+	bankCode: string;
+	accountNumber: string;
+}
+
+export interface CheckAuthAccountApiBody {
+	authenticationNumber: string;
+}
 // - remit
-export interface RemitApiBody {}
+export interface RemitApiBody {
+	accountId: number;
+	simpleQrCodeId: string;
+}
 
 export interface RemitDepositApiBody {
 	accountId: number;
-	withdrawalAccountNumber: string;
 	qrCodeId: number;
-	qrCodeTitle: string;
-	depositAccountNumber: string;
-	amount: number;
-	content: string;
 }
 
-export interface ReturnDepositApiBody {}
+export interface ReturnDepositApiBody {
+	returnRequests: IReturnSettlement[];
+}
 
 // - qr
 export interface CreateQRApiBody {
-	accountId: number;
+	accountNumber: string;
 	amount: number;
-	title: string;
 }
 
 export interface CreateDepositQRApiBody {
 	accountId: number;
 	amount: number;
+	title: string;
 }
 
 // RESPONSE

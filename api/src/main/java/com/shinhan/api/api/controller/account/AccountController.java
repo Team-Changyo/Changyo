@@ -3,6 +3,7 @@ package com.shinhan.api.api.controller.account;
 import com.shinhan.api.api.controller.ApiResponse;
 import com.shinhan.api.api.controller.account.request.AccountRequest;
 import com.shinhan.api.api.controller.account.request.CustomerNameRequest;
+import com.shinhan.api.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.api.api.controller.account.response.AccountResponse;
 import com.shinhan.api.api.controller.account.response.CustomerNameResponse;
 import com.shinhan.api.api.service.account.AccountQueryService;
@@ -20,6 +21,22 @@ import javax.validation.Valid;
 public class AccountController {
 
     private final AccountQueryService accountQueryService;
+
+    /**
+     * 계좌 정보 조회
+     */
+    @PostMapping("/v1/account")
+    public ApiResponse<AccountDetailResponse> getAccountDetail(@Valid @RequestBody AccountRequest request){
+        log.debug("call AccountController#getAccountBalance");
+        log.debug("accountNumber={}", request.getAccountNumber());
+
+        AccountDetailResponse response = accountQueryService.getAccountDetail(request.getAccountNumber());
+        log.debug("response={}", response);
+
+        return ApiResponse.ok(response);
+    }
+
+
 
     /**
      * 계좌잔액조회

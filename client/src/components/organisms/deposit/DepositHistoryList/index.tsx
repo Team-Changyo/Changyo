@@ -7,7 +7,7 @@ function DepositHistoryList({ histories, isDone }: { histories: IDepositHistory[
 	return (
 		<DepositHistoryListWrapper>
 			{histories.map((el) => {
-				return <DepositHistoryItem key={el.key} history={el} isDone={isDone} />;
+				return <DepositHistoryItem key={el.tradeId} history={el} isDone={isDone} />;
 			})}
 		</DepositHistoryListWrapper>
 	);

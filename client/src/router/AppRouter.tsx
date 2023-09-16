@@ -22,13 +22,16 @@ import SettlementDetail from 'pages/deposit/SettlementDetail';
 import AccountRegisterPage from 'pages/account/AccountRegisterPage';
 import SuccessPage from 'pages/etc/SuccessPage';
 import FailPage from 'pages/etc/FailPage';
-import { Toaster } from 'react-hot-toast';
-import { authState } from 'store/user';
+import { Toaster, toast } from 'react-hot-toast';
+import { memberInfoState } from 'store/member';
+import { isAxiosError } from 'axios';
+import { findMemberInfo } from 'utils/apis/auth';
+import PageNotFound from 'pages/etc/PageNotFound';
 import PrivateRoute from './PrivateRoute';
 
 function AppRouter() {
 	const [isLoading, setIsLoading] = useState(true);
-	const [auth, setAuth] = useRecoilState(authState);
+	const [memberInfo, setMemberInfo] = useRecoilState(memberInfoState);
 
 	const loading = () => {
 		setTimeout(() => {
@@ -36,18 +39,23 @@ function AppRouter() {
 		}, 1500);
 	};
 
-	const fetchUserData = () => {
+	const fetchUserData = async () => {
 		const accessToken = localStorage.getItem('accessToken');
-		const grantType = localStorage.getItem('grantType');
 
-		// TODO API 나오면 로직 추가
-		if (accessToken && grantType) {
-			const authData = {
-				grantType,
-				accessToken,
-			};
+		if (accessToken) {
+			try {
+				const response = await findMemberInfo();
 
-			setAuth(authData);
+				if (response.status === 200) {
+					setMemberInfo(response.data.data);
+					toast.success('로그인 되었습니다.');
+				}
+			} catch (error) {
+				console.error(error);
+				if (isAxiosError(error)) {
+					toast.error(error.response?.data.message);
+				}
+			}
 		}
 	};
 
@@ -69,17 +77,17 @@ function AppRouter() {
 					) : (
 						<>
 							<Routes>
-								<Route path="/" element={<Navigate replace to={auth ? '/account' : '/auth/login'} />} />
+								<Route path="/" element={<Navigate replace to={memberInfo ? '/account' : '/auth/login'} />} />
 								<Route path="/auth/login" element={<LoginPage />} />
 								<Route path="/auth/register" element={<RegisterPage />} />
 
 								<Route path="/" element={<PrivateRoute />}>
 									<Route path="/account" element={<AccountPage />} />
-									<Route path="/account/:aid" element={<AccountDetailPage />} />
+									<Route path="/account/:accountId" element={<AccountDetailPage />} />
 									<Route path="/account/register" element={<AccountRegisterPage />} />
 									<Route path="/qr" element={<QRPage />} />
 									<Route path="/qr/normal" element={<ViewQRPageNormal />} />
-									<Route path="/qr/deposit/:qid" element={<ViewQRPageDeposit />} />
+									<Route path="/qr/deposit/:qrCodeId" element={<ViewQRPageDeposit />} />
 									<Route path="/qr/create" element={<CreateQRPage />} />
 									<Route path="/deposit" element={<DepositPage />} />
 									<Route path="/deposit/settlement/:sid" element={<SettlementDetail />} />
@@ -89,6 +97,8 @@ function AppRouter() {
 									<Route path="/success" element={<SuccessPage />} />
 									<Route path="/fail" element={<FailPage />} />
 								</Route>
+								<Route path="/*" element={<Navigate replace to="/404" />} />
+								<Route path="/404" element={<PageNotFound />} />
 							</Routes>
 							<Tabbar />
 						</>

@@ -9,6 +9,16 @@ include::{snippets}/create-trade/request-fields.adoc[]
 include::{snippets}/create-trade/http-response.adoc[]
 include::{snippets}/create-trade/response-fields.adoc[]
 
+=== 간편 송금
+
+==== HTTP Request
+include::{snippets}/simple-trade/http-request.adoc[]
+include::{snippets}/simple-trade/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/simple-trade/http-response.adoc[]
+include::{snippets}/simple-trade/response-fields.adoc[]
+
 === 보증금 송금관리 반환대기 조회
 
 ==== HTTP Request

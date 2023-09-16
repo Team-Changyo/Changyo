@@ -2,7 +2,7 @@ package com.shinhan.changyo.api.service.trade;
 
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
-import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
+import com.shinhan.changyo.api.service.trade.dto.QrCodeTradeDto;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.shinhan.changyo.domain.trade.SizeConstants.PAGE_SIZE;
@@ -53,6 +54,7 @@ public class TradeQueryService {
      */
     public DoneWithdrawalResponse getDoneWithdrawalTrades(String loginId, Long lastTradeId) {
         int totalCount = tradeQueryRepository.getDoneWithdrawalTradesCount(loginId).intValue();
+
         List<DoneWithdrawalDetailResponse> doneWithdrawals = tradeQueryRepository.getDoneWithdrawalTrades(loginId, lastTradeId);
         log.debug("doneWithdrawals={}", doneWithdrawals);
 
@@ -69,11 +71,15 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 입금내역 목록
      */
     public DepositResponse getDepositTrades(String loginId, Long lastQrCodeId) {
-        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId);
-        List<DepositOverviewResponse> overviews = tradeQueryRepository.getDepositTrades(loginId, lastQrCodeId);
-        log.debug("overviews={}", overviews);
+        Long result = qrCodeQueryRepository.getDepositTradesTotalCount(loginId);
+        int totalCount = castToIntOrDefault(result);
 
-        boolean hasNextPage = checkHasNextPage(overviews);
+        List<QrCodeTradeDto> qrCodeTrades = qrCodeQueryRepository.getQrCodesByLoginId(loginId, lastQrCodeId);
+        log.debug("qrCodeTrades={}", qrCodeTrades);
+
+        List<DepositOverviewResponse> overviews = createDepositOverviews(qrCodeTrades);
+
+        boolean hasNextPage = checkHasNextPage(qrCodeTrades);
 
         return DepositResponse.of(hasNextPage, totalCount, overviews);
     }
@@ -81,20 +87,96 @@ public class TradeQueryService {
     /**
      * 보증금 정산관리 상세조회
      *
-     * @param qrCodeId     QR 코드 식별키
+     * @param qrCodeId    QR 코드 식별키
      * @param lastTradeId 마지막
      * @return 보증금 정산관리 상세조회 목록
      */
     public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastTradeId) {
-        QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
+        QrCodeTradeDto qrCodeTrade = getQrCodeTrade(qrCodeId);
 
-        int waitCount = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId);
-        int doneCount = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId);
+        int waitCount = getWaitDepositCountByQrCodeId(qrCodeId);
+        int doneCount = getDoneDepositCountByQrCodeId(qrCodeId);
+        int totalAmount = getTotalAmountByQrCodeId(qrCodeId);
 
         List<DepositDetailDto> deposits = tradeQueryRepository.getDepositDetails(qrCodeId, lastTradeId);
         log.debug("deposits={}", deposits);
 
-        return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount);
+        return createDepositDetailResponse(qrCodeTrade, deposits, waitCount, doneCount, totalAmount);
+    }
+
+    /**
+     * 보증금 정산관리 리스트 생성
+     *
+     * @param qrCodeTrades QR 코드 리스트
+     * @return 보증금 정산관리 응답 리스트
+     */
+    private List<DepositOverviewResponse> createDepositOverviews(List<QrCodeTradeDto> qrCodeTrades) {
+        return qrCodeTrades.stream()
+                .map(qrCodeTrade -> DepositOverviewResponse.of(
+                                qrCodeTrade,
+                                getWaitDepositCountByQrCodeId(qrCodeTrade.getQrCodeId()),
+                                getWaitTotalAmountByQrCodeId(qrCodeTrade.getQrCodeId())
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * QR 코드별 반환대기 상태 총 개수 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드별 반환대기 총 개수
+     */
+    private int getWaitDepositCountByQrCodeId(Long qrCodeId) {
+        Long result = tradeQueryRepository.getWaitDepositCountByQrCodeId(qrCodeId);
+        return castToIntOrDefault(result);
+    }
+
+    /**
+     * QR 코드별 반환완료 상태 총 개수 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드별 반환완료 총 개수
+     */
+    private int getDoneDepositCountByQrCodeId(Long qrCodeId) {
+        Long result = tradeQueryRepository.getDoneDepositCountByQrCodeId(qrCodeId);
+        return castToIntOrDefault(result);
+    }
+
+    /**
+     * QR 코드별 총 금액 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return 해당 QR 코드 총 금액
+     */
+    private int getTotalAmountByQrCodeId(Long qrCodeId) {
+        Integer result = tradeQueryRepository.getTotalAmountByQrCodeId(qrCodeId);
+        return getResultOrZero(result);
+    }
+
+    /**
+     * QR 코드별 반환대기 상태 총 금액 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드별 반환대기 총 금액
+     */
+    private int getWaitTotalAmountByQrCodeId(Long qrCodeId) {
+        Integer result = tradeQueryRepository.getWaitTotalAmountByQrCodeId(qrCodeId);
+        return getResultOrZero(result);
+    }
+
+    /**
+     * QR 코드 이름, 거래 금액 조회
+     *
+     * @param qrCodeId QR 코드 식별키
+     * @return QR 코드 이름, 거래 금액
+     */
+    private QrCodeTradeDto getQrCodeTrade(Long qrCodeId) {
+        QrCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
+        if (qrCodeTrade == null) {
+            throw new NoSuchElementException("존재하지 않는 보증금 정산내역입니다.");
+        }
+        return qrCodeTrade;
     }
 
     /**
@@ -104,9 +186,10 @@ public class TradeQueryService {
      * @param deposits    보증금 입금내역
      * @param waitCount   반환대기 목록 전체개수
      * @param doneCount   반환완료 목록 전체개수
+     * @param totalAmount 총 금액
      * @return 보증금 정산관리 상세조회 목록
      */
-    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount) {
+    private DepositDetailResponse createDepositDetailResponse(QrCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount, int totalAmount) {
         List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
         List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
         boolean hasNextPage = checkHasNextPage(deposits);
@@ -115,7 +198,7 @@ public class TradeQueryService {
                 .hasNextPage(hasNextPage)
                 .qrCodeTitle(qrCodeTrade.getTitle())
                 .amount(qrCodeTrade.getAmount())
-                .totalAmount(qrCodeTrade.getAmount() * deposits.size())
+                .totalAmount(totalAmount)
                 .waitCount(waitCount)
                 .doneCount(doneCount)
                 .waitDetails(waitDetails)
@@ -145,6 +228,26 @@ public class TradeQueryService {
         return details.stream()
                 .filter(detail -> detail.getStatus().equals(TradeStatus.WAIT))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * NULL 체크 후 값 반환
+     *
+     * @param intValue 체크할 Integer 타입 정수갑
+     * @return null 인 경우 0, 아닌 경우 원본값
+     */
+    private int getResultOrZero(Integer intValue) {
+        return intValue == null ? 0 : intValue;
+    }
+
+    /**
+     * Long 타입 NULL 체크 후 Integer 변환
+     *
+     * @param longValue 체크할 Long 타입 정수갑
+     * @return null 인 경우 0, 아닌 경우 원본값
+     */
+    private int castToIntOrDefault(Long longValue) {
+        return longValue == null ? 0 : longValue.intValue();
     }
 
     /**

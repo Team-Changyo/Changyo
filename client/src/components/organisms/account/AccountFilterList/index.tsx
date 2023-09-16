@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import FilterListItem from 'components/atoms/common/FilterListItem';
+import { formatBankCode } from 'utils/common/formatBankCode';
 import { AccountFilterListWrapper } from './style';
 
 interface AccountFilterListProps {
@@ -13,14 +14,6 @@ interface AccountFilterListProps {
  * @param setSelectedCode 필터 클릭 시 선택된 코드(selectedCode) 변경
  */
 function AccountFilterList({ bankCodes, selectedCode, setSelectedCode }: AccountFilterListProps) {
-	console.log(bankCodes);
-
-	// TODO : api 나오면 교체
-	const tmp = [
-		{ code: '088', content: '신한' },
-		{ code: '055', content: '국민' },
-	];
-
 	return (
 		<AccountFilterListWrapper>
 			{/* 전체 */}
@@ -33,12 +26,12 @@ function AccountFilterList({ bankCodes, selectedCode, setSelectedCode }: Account
 			/>
 
 			{/* 은행필터 */}
-			{tmp.map((el) => (
+			{bankCodes.map((el) => (
 				<FilterListItem
-					key={el.code}
-					value={el.code}
-					$isActive={el.code === selectedCode}
-					text={el.content}
+					key={el}
+					value={el}
+					$isActive={el === selectedCode}
+					text={formatBankCode(el)}
 					setSelected={setSelectedCode}
 				/>
 			))}

@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import Button from 'components/organisms/common/Button';
 import TextInput from 'components/atoms/auth/TextInput';
 import { ReactComponent as Check } from 'assets/icons/check.svg';
-import { useNavigate } from 'react-router-dom';
-import { loginApi } from 'utils/apis/auth';
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom';
+import { findMemberInfo, loginApi } from 'utils/apis/auth';
 import { toast } from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
-import { authState } from 'store/user';
+import { memberInfoState } from 'store/member';
 import { LoginFormContainer } from './style';
 
 function LoginForm() {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const navigateType = useNavigationType();
 	const [loginId, setLoginId] = useState('');
 	const [password, setPassword] = useState('');
 	const [saveLoginState, setSaveLoginState] = useState(false);
-	const [, setAuth] = useRecoilState(authState);
+	const [, setMemberInfo] = useRecoilState(memberInfoState);
 
 	const login = async () => {
 		try {
@@ -23,22 +25,32 @@ function LoginForm() {
 				password,
 			};
 
-			const response = await loginApi(body);
+			const loginResponse = await loginApi(body);
 
-			if (response.status === 200) {
-				toast.success('로그인에 성공했습니다.');
-				console.log(response);
-				localStorage.setItem('grantType', response.data.data.grantType);
-				localStorage.setItem('accessToken', response.data.data.accessToken);
-				localStorage.setItem('refreshToken', response.data.data.refreshToken);
+			if (loginResponse.status === 200) {
+				localStorage.setItem('accessToken', loginResponse.data.data.accessToken);
+				localStorage.setItem('refreshToken', loginResponse.data.data.refreshToken);
 
-				const auth = {
-					grantType: response.data.data.grantType,
-					accessToken: response.data.data.accessToken,
-				};
+				try {
+					const response = await findMemberInfo();
 
-				setAuth(auth);
-				navigate('/');
+					if (response.status === 200) {
+						setMemberInfo(response.data.data);
+						toast.success('로그인 되었습니다.');
+
+						if (location.state?.home) {
+							navigate('/', { replace: true });
+							return;
+						}
+						if (navigateType === 'POP') {
+							navigate('/', { replace: true });
+							return;
+						}
+						navigate(-1);
+					}
+				} catch (error) {
+					toast.error('회원정보 로드에 실패했습니다. 잠시 후 다시 시도하세요.');
+				}
 			}
 		} catch (error) {
 			toast.error('아이디와 비밀번호를 확인하세요');
@@ -57,12 +69,12 @@ function LoginForm() {
 			<div className="btn-group">
 				<Button text="로그인" type="Primary" handleClick={login} />
 				<div className="menu">
-					<button type="button" className="right-bar">
-						비밀번호 찾기
+					<button type="button" className="right-bar" onClick={() => toast.success('아이디 찾기를 수행합니다.')}>
+						아이디 찾기
 					</button>
 					<span className="bar">|</span>
-					<button type="button" className="right-bar">
-						아이디 찾기
+					<button type="button" className="right-bar" onClick={() => toast.success('비밀번호 찾기를 수행합니다.')}>
+						비밀번호 찾기
 					</button>
 					<span className="bar">|</span>
 					<button type="button" onClick={() => navigate('/auth/register')}>

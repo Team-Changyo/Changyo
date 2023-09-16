@@ -1,16 +1,16 @@
 import React from 'react';
-import { ISettlementGroup } from 'types/deposit';
 import { formatMoney } from 'utils/common/formatMoney';
 import { SettlementGroupInfoContainer } from './style';
 
-function SettlementGroupInfo({ settlementGroup }: { settlementGroup: ISettlementGroup }) {
-	const formattedMoneyUnit = formatMoney(settlementGroup.moneyUnit);
-	const formattedTotalMoney = formatMoney(settlementGroup.cntBeforeReturn * settlementGroup.moneyUnit);
+function SettlementGroupInfo(props: { title: string; moneyUnit: number; totalMoney: number }) {
+	const { title, moneyUnit, totalMoney } = props;
+	const formattedMoneyUnit = formatMoney(moneyUnit);
+	const formattedTotalMoney = formatMoney(totalMoney);
 
 	return (
 		<SettlementGroupInfoContainer>
 			<div className="title">
-				<span>{settlementGroup.title}</span> 건
+				<span>{title}</span> 건
 			</div>
 			<div className="money-unit">
 				입금단위 <span>{formattedMoneyUnit}원</span>

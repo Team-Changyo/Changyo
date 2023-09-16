@@ -4,6 +4,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import Button from 'components/organisms/common/Button';
 import CertCodeInput from 'components/atoms/auth/CertCodeInput';
 import { toast } from 'react-hot-toast';
+import { checkAuthAccountApi } from 'utils/apis/account';
+import { isAxiosError } from 'axios';
 import { CertModalContainer } from './style';
 
 interface ICertModalProps {
@@ -18,14 +20,26 @@ function CertModal(props: ICertModalProps) {
 	const { open, handleClose, bankName, accountNumber, setCertified } = props;
 	const [certCode, setCertCode] = useState('');
 
-	const confirmCert = () => {
-		// TODO API 연결
-		if (certCode === '1234') {
-			toast.success('계좌 인증에 성공했습니다!');
-			handleClose();
-			setCertified(true);
-		} else {
-			toast.error('계좌 인증에 실패했습니다. 인증 번호를 다시 확인해주세요');
+	// 계좌 인증확인
+	const confirmCert = async () => {
+		try {
+			const body = {
+				accountNumber,
+				authenticationNumber: certCode,
+			};
+
+			const response = await checkAuthAccountApi(body);
+
+			if (response.status === 204) {
+				toast.success('계좌 인증에 성공했습니다!');
+				handleClose();
+				setCertified(true);
+			}
+		} catch (error) {
+			console.error(error);
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message);
+			}
 		}
 	};
 

@@ -5,6 +5,7 @@ import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnRequest;
 import com.shinhan.changyo.api.controller.trade.response.*;
+import com.shinhan.changyo.api.controller.trade.request.SimpleTradeRequest;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import com.shinhan.changyo.security.SecurityUtil;
@@ -40,11 +41,32 @@ public class TradeController {
     public ApiResponse<Long> createTrade(@Valid @RequestBody CreateTradeRequest request) {
         log.debug("TradeController#createTrade call");
         log.debug("CreateTradeRequest={}", request);
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
 
-        Long saveId = tradeService.createTrade(request.toCreateTradeDto());
+        Long saveId = tradeService.createTrade(request.toCreateTradeDto(), loginId);
         log.debug("saveId={}", saveId);
 
         return ApiResponse.ok(saveId);
+    }
+
+    /**
+     * 간편 송금 API
+     *
+     * @param request 간평 송금 요청 정보
+     * @return HttpStatus.OK
+     */
+    @PostMapping("/simple")
+    public ApiResponse<Boolean> simpleTrade(@Valid @RequestBody SimpleTradeRequest request) {
+        log.debug("TransferController#getSimpleQrTransferInfo call");
+        log.debug("SimpleTransferRequest={}", request);
+
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        Boolean result = tradeService.simpleTrade(request.toSimpleTransferDto(), loginId);
+
+        return ApiResponse.ok(result);
     }
 
     /**
@@ -103,7 +125,7 @@ public class TradeController {
     /**
      * 보증금 정산관리 상세조회 API
      *
-     * @param qrCodeId     QR 코드 식별키
+     * @param qrCodeId    QR 코드 식별키
      * @param lastTradeId 마지막으로 조회된 QR 코드 식별키
      * @return 보증금 정산관리 상세조회 목록
      */
@@ -129,11 +151,15 @@ public class TradeController {
         log.debug("TradeController#returnDeposit call");
         log.debug("ReturnDepositRequest={}", request);
 
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
         Boolean result = tradeService.returnDeposits(
                 request.getReturnRequests()
                         .stream()
                         .map(ReturnDepositRequest::toReturnDepositDto)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                loginId
         );
         log.debug("result={}", result);
 

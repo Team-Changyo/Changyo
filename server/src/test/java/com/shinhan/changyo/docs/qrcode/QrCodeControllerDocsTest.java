@@ -38,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class QrCodeControllerDocsTest extends RestDocsSupport {
     private final QrCodeService qrCodeService = mock(QrCodeService.class);
     private final QrCodeQueryService qrCodeQueryService = mock(QrCodeQueryService.class);
+
     @Override
     protected Object initController() {
         return new QrCodeController(qrCodeQueryService, qrCodeService);
@@ -46,9 +47,8 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
     @DisplayName("보증금 QR코드 생성 API")
     @Test
     @WithMockUser(roles = "MEMBER")
-    void createQr() throws Exception{
+    void createQr() throws Exception {
         QrCodeRequest request = QrCodeRequest.builder()
-                .url("www.naver.com")
                 .accountId(1L)
                 .amount(20000)
                 .title("프라이빗 객실")
@@ -69,9 +69,10 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                post("/api/qrcode-management/qrcode")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
+                        post("/qrcode")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -79,8 +80,6 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL"),
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("계좌 식별 키"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)
@@ -112,32 +111,36 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.url").type(JsonFieldType.STRING)
                                         .description("결제 페이지 URL")
                         )
-                    ));
+                ));
     }
 
     @DisplayName("단순송금 QR코드 생성 API")
     @Test
-    void createSimpleQr() throws Exception{
+    @WithMockUser(roles = "MEMBER")
+    void createSimpleQr() throws Exception {
         SimpleQrCodeRequest request = SimpleQrCodeRequest.builder()
-                .url("www.naver.com")
-                .accountId(1L)
+                .accountNumber("111123123456")
+                .bankCode("088")
                 .amount(20000)
                 .build();
 
         SimpleQrCodeResponse response = SimpleQrCodeResponse.builder()
-                .bankCode("088")
+                .simpleQrCodeId(1L)
+                .url("https://temp/url")
+                .base64QrCode("base64base64base64")
+                .memberName("홍진식")
                 .accountNumber("11345678915")
-                .customerName("홍진식")
+                .bankCode("088")
                 .amount(20000)
-                .base64QrCode("123123123")
-                .url("www.naver.com")
+                .createdDate("2023-09-14 23:42")
                 .build();
 
-        given(qrCodeService.createSimpleQrcode(any(SimpleQrCodeDto.class)))
+        given(qrCodeService.createSimpleQrcode(any(SimpleQrCodeDto.class), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
-                        post("/api/qrcode-management/qrcode/simple")
+                        post("/qrcode/simple")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -147,10 +150,10 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL"),
-                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
-                                        .description("계좌 식별 키"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("입금받을 계좌번호"),
+                                fieldWithPath("bankCode").type(JsonFieldType.STRING)
+                                        .description("입금받을 계좌 은행번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER)
                                         .description("금액")
                         ),
@@ -161,25 +164,33 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                         .description("상태"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
-                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
-                                        .description("은행 코드"),
-                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
-                                        .description("계좌 번호"),
-                                fieldWithPath("data.customerName").type(JsonFieldType.STRING)
-                                        .description("계좌번호 실명"),
-                                fieldWithPath("data.amount").type(JsonFieldType.NUMBER)
-                                        .description("금액"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.simpleQrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("간편송금 QR 식별키"),
+                                fieldWithPath("data.url").type(JsonFieldType.STRING)
+                                        .description("간편송금 URL"),
                                 fieldWithPath("data.base64QrCode").type(JsonFieldType.STRING)
                                         .description("QR코드 base64"),
-                                fieldWithPath("data.url").type(JsonFieldType.STRING)
-                                        .description("결제 페이지 URL")
+                                fieldWithPath("data.memberName").type(JsonFieldType.STRING)
+                                        .description("회원이름"),
+                                fieldWithPath("data.accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌번호"),
+                                fieldWithPath("data.bankCode").type(JsonFieldType.STRING)
+                                        .description("은행코드"),
+                                fieldWithPath("data.amount").type(JsonFieldType.NUMBER)
+                                        .description("금액"),
+                                fieldWithPath("data.createdDate").type(JsonFieldType.STRING)
+                                        .description("생성일")
                         )
                 ));
     }
 
+
     @DisplayName("보증금 QR코드 금액 변경 API")
     @Test
-    void editAmount() throws Exception{
+    @WithMockUser(roles = "MEMBER")
+    void editAmount() throws Exception {
         EditAmountRequest request = EditAmountRequest.builder()
                 .amount(15000)
                 .build();
@@ -199,7 +210,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/api/qrcode-management/qrcode/amount/1")
+                        patch("/qrcode/amount/1")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -242,8 +253,9 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 제목 변경 API")
     @Test
-    void editTitle() throws Exception{
-         EditTitleRequest request = EditTitleRequest.builder()
+    @WithMockUser(roles = "MEMBER")
+    void editTitle() throws Exception {
+        EditTitleRequest request = EditTitleRequest.builder()
                 .title("제목 변경 하겠습니다")
                 .build();
 
@@ -262,7 +274,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        patch("/api/qrcode-management/qrcode/title/1")
+                        patch("/qrcode/title/1")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -305,14 +317,15 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR 삭제 API")
     @Test
-    void removeQr() throws Exception{
+    @WithMockUser(roles = "MEMBER")
+    void removeQr() throws Exception {
         Boolean result = true;
 
-        given(qrCodeService.removeQrCode(anyLong()))
+        given(qrCodeService.removeQrCode(anyLong(), anyString()))
                 .willReturn(result);
 
         mockMvc.perform(
-                        delete("/api/qrcode-management/qrcode/remove/1")
+                        delete("/qrcode/remove/1")
                 )
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -335,7 +348,8 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 QR코드 상세조회 API")
     @Test
-    void getQr() throws Exception{
+    @WithMockUser(roles = "MEMBER")
+    void getQr() throws Exception {
 
         QrCodeDetailResponse response = QrCodeDetailResponse.builder()
                 .qrCodeId(1L)
@@ -348,11 +362,12 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .url("www.naver.com")
                 .build();
 
-        given(qrCodeService.getQrCode(anyLong()))
+        given(qrCodeService.getQrCode(anyLong(), anyString()))
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/api/qrcode-management/qrcode/1")
+                        get("/qrcode/1")
+                                .header("Authentication", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -389,13 +404,14 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
     @DisplayName("보증금 QR코드 목록 조회")
     @Test
     @WithMockUser(roles = "MEMBER")
-    void getQrs() throws Exception{
+    void getQrs() throws Exception {
 
         QrCodeResponse response1 = QrCodeResponse.builder()
                 .qrCodeId(1L)
                 .accountNumber("11345678915")
                 .title("프라이빗 객실")
                 .amount(20000)
+                .bankCode("088")
                 .build();
 
         QrCodeResponse response2 = QrCodeResponse.builder()
@@ -403,6 +419,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .accountNumber("321561235")
                 .title("일반 객실")
                 .amount(10000)
+                .bankCode("088")
                 .build();
 
         List<QrCodeResponse> qrCodeLst = List.of(response1, response2);
@@ -412,7 +429,8 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                 .willReturn(response);
 
         mockMvc.perform(
-                        get("/api/qrcode-management/qrcode")
+                        get("/qrcode")
+                                .header("Authentication", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -426,7 +444,7 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("message").type(JsonFieldType.STRING)
                                         .description("메시지"),
                                 fieldWithPath("data.qrCodeSize").type(JsonFieldType.NUMBER)
-                                                .description("QR코드 개수"),
+                                        .description("QR코드 개수"),
                                 fieldWithPath("data.qrCodeResponses[].qrCodeId").type(JsonFieldType.NUMBER)
                                         .description("QR코드 식별 키"),
                                 fieldWithPath("data.qrCodeResponses[].accountNumber").type(JsonFieldType.STRING)
@@ -434,7 +452,9 @@ public class QrCodeControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.qrCodeResponses[].title").type(JsonFieldType.STRING)
                                         .description("QR코드 제목"),
                                 fieldWithPath("data.qrCodeResponses[].amount").type(JsonFieldType.NUMBER)
-                                        .description("금액")
+                                        .description("금액"),
+                                fieldWithPath("data.qrCodeResponses[].bankCode").type(JsonFieldType.STRING)
+                                        .description("은행코드")
                         )
                 ));
     }

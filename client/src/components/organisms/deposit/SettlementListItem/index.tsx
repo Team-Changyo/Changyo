@@ -14,6 +14,7 @@ interface ISettlementListItemProps {
 
 function SettlementListItem(props: ISettlementListItemProps) {
 	const { addToBeReturned, isMultiReturnMode, openReturnModal, settlement, toBeReturned } = props;
+	const isReturn = settlement.status !== 'WAIT';
 
 	const handleReturn = () => {
 		toBeReturned.length = 0;
@@ -22,27 +23,25 @@ function SettlementListItem(props: ISettlementListItemProps) {
 	};
 
 	const isSelected = () => {
-		const idx = toBeReturned.findIndex((el) => el.key === settlement.key);
+		const idx = toBeReturned.findIndex((el) => el.tradeId === settlement.tradeId);
 		if (idx === -1) return false;
 		return true;
 	};
 
 	return (
-		<SettlementListItemContainer $isReturned={settlement.isReturned}>
+		<SettlementListItemContainer $isReturned={isReturn}>
 			<div className="settlement-logo">
 				<Coin />
 			</div>
 			<div className="settlement-info">
-				<div className="depositor-name">
-					입금자명 <span>{settlement.depositorName}</span>
-				</div>
+				<div className="depositor-name">{settlement.memberName}</div>
 				<div className="return-datetime">
-					입금일시 <span>{settlement.dateTime}</span>
+					{settlement.tradeDate} <span>{isReturn ? '반환' : '입금'}</span>
 				</div>
 			</div>
 			<div className="return-btn">
 				{/* 반환된 건이면 완료 버튼 (비활성화 버튼) */}
-				{settlement.isReturned ? (
+				{isReturn ? (
 					<button type="button" className="returned" disabled>
 						완료
 					</button>

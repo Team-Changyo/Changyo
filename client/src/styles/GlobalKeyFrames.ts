@@ -9,4 +9,16 @@ export const GlobalKeyFrames = createGlobalStyle`
             margin-bottom: 30rem;
         }
     }
+
+    @keyframes pulseSkeleton {
+        0% {
+             opacity: 1;
+            }
+        50% {
+            opacity: 0.4;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
 `;

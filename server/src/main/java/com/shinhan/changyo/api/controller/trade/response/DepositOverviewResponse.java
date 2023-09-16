@@ -1,5 +1,6 @@
 package com.shinhan.changyo.api.controller.trade.response;
 
+import com.shinhan.changyo.api.service.trade.dto.QrCodeTradeDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +19,15 @@ public class DepositOverviewResponse {
         this.amount = amount;
         this.remainTotal = remainTotal;
         this.remainCount = remainCount;
+    }
+
+    public static DepositOverviewResponse of(QrCodeTradeDto dto, int remainCount, int remainTotal) {
+        return DepositOverviewResponse.builder()
+                .qrCodeId(dto.getQrCodeId())
+                .qrCodeTitle(dto.getTitle())
+                .amount(dto.getAmount())
+                .remainTotal(remainTotal)
+                .remainCount(remainCount)
+                .build();
     }
 }

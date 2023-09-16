@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   # database setting
@@ -12,6 +12,8 @@ spring:
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
   # jpa setting
   jpa:
     hibernate:

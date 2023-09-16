@@ -1,8 +1,8 @@
-import { RegisterAccountApi } from 'types/api';
+import { AuthRequestAccountApiBody, CheckAuthAccountApiBody, RegisterAccountApiBody } from 'types/api';
 import instance from './instance';
 
 // 계좌 등록
-export const registerAccountApi = async (body: RegisterAccountApi) => {
+export const registerAccountApi = async (body: RegisterAccountApiBody) => {
 	const response = await instance.post('/account', body);
 	return response;
 };
@@ -13,8 +13,32 @@ export const findAllAccountApi = async () => {
 	return response;
 };
 
-// 계좌 상세조회
-export const findAccountApi = async (accountId: number) => {
-	const response = await instance.get(`/account/${accountId}`);
+// 계좌 상세조회 (전체)
+export const findAccountAllApi = async (accountId: string) => {
+	const response = await instance.post(`/account/detail`, { accountId, startDate: '', endDate: '' });
+	return response;
+};
+
+// 계좌 상세조회 (입금)
+export const findAccountInApi = async (accountId: string) => {
+	const response = await instance.post(`/account/deposit`, { accountId, startDate: '', endDate: '' });
+	return response;
+};
+
+// 계좌 상세조회 (출금)
+export const findAccountOutApi = async (accountId: string) => {
+	const response = await instance.post(`/account/withdrawal`, { accountId, startDate: '', endDate: '' });
+	return response;
+};
+
+// 1원 이체 요청
+export const authRequestAccountApi = async (body: AuthRequestAccountApiBody) => {
+	const response = await instance.post('/authentication', body);
+	return response;
+};
+
+// 1원 이체 확인
+export const checkAuthAccountApi = async (body: CheckAuthAccountApiBody) => {
+	const response = await instance.post('/authentication/check', body);
 	return response;
 };

@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class CreateAccountDto {
-    private Long memberId;
+    private String loginId;
     private String customerName;
     private String bankCode;
     private String accountNumber;
@@ -16,8 +16,8 @@ public class CreateAccountDto {
     private Boolean mainAccount;
 
     @Builder
-    public CreateAccountDto(Long memberId, String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
-        this.memberId = memberId;
+    public CreateAccountDto(String loginId, String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
+        this.loginId = loginId;
         this.customerName = customerName;
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tab, Tabs } from '@mui/material';
-import { ISettlement, ISettlementGroup } from 'types/deposit';
+import { ISettlement } from 'types/deposit';
 import { SettlementSubtabContainer } from './style';
 import SettlementList from '../SettlementList';
 
@@ -18,32 +18,20 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 	);
 }
 
-function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGroup }) {
+function SettlementSubtab(props: {
+	waitSettlement: ISettlement[];
+	doneSettlement: ISettlement[];
+	title: string;
+	moneyUnit: number;
+	fetchSettlementGroup: () => void;
+}) {
+	const { waitSettlement, doneSettlement, title, moneyUnit, fetchSettlementGroup } = props;
 	const [value, setValue] = React.useState(0);
-
-	// API 나오면 통합
-	const settlements: ISettlement[] = [
-		{ key: 0, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '홍진식' },
-		{ key: 1, isReturned: true, dateTime: '2023-03-08 11:53', depositorName: '김진식' },
-		{ key: 2, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '홍진식' },
-		{ key: 3, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 4, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 5, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 6, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 7, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 8, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최진식' },
-		{ key: 9, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 10, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 11, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 12, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 13, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '전인혁' },
-		{ key: 14, isReturned: false, dateTime: '2023-03-08 11:23', depositorName: '최익현' },
-	];
 
 	return (
 		<SettlementSubtabContainer>
 			<div className="tab-selector">
-				<Tabs value={value} onChange={(e, nv) => setValue(nv)}>
+				<Tabs value={value} onChange={(_e, nv) => setValue(nv)}>
 					<Tab label="반환 전" />
 					<Tab label="반환 완료" />
 				</Tabs>
@@ -53,18 +41,22 @@ function SettlementSubtab({ settlementGroup }: { settlementGroup: ISettlementGro
 				{/* 반환 전 탭 */}
 				<TabPanel value={value} index={0}>
 					<SettlementList
-						settlements={settlements.filter((el) => !el.isReturned)}
+						settlements={waitSettlement}
 						isReturned={false}
-						settlementGroup={settlementGroup}
+						title={title}
+						moneyUnit={moneyUnit}
+						fetchSettlementGroup={fetchSettlementGroup}
 					/>
 				</TabPanel>
 
 				{/* 반환 완료 탭 */}
 				<TabPanel value={value} index={1}>
 					<SettlementList
-						settlements={settlements.filter((el) => el.isReturned)}
+						settlements={doneSettlement}
 						isReturned
-						settlementGroup={settlementGroup}
+						title={title}
+						moneyUnit={moneyUnit}
+						fetchSettlementGroup={fetchSettlementGroup}
 					/>
 				</TabPanel>
 			</div>

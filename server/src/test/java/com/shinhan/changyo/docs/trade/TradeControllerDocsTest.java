@@ -4,11 +4,13 @@ import com.shinhan.changyo.api.controller.trade.TradeController;
 import com.shinhan.changyo.api.controller.trade.request.CreateTradeRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnDepositRequest;
 import com.shinhan.changyo.api.controller.trade.request.ReturnRequest;
+import com.shinhan.changyo.api.controller.trade.request.SimpleTradeRequest;
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.TradeQueryService;
 import com.shinhan.changyo.api.service.trade.TradeService;
 import com.shinhan.changyo.api.service.trade.dto.CreateTradeDto;
 import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
+import com.shinhan.changyo.api.service.trade.dto.SimpleTradeDto;
 import com.shinhan.changyo.docs.RestDocsSupport;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -47,23 +49,20 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 송금 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void createTrade() throws Exception {
         CreateTradeRequest request = CreateTradeRequest.builder()
                 .accountId(1L)
-                .withdrawalAccountNumber("1102008999999")
                 .qrCodeId(1L)
-                .qrCodeTitle("럭셔리 글램핑 객실이용")
-                .depositAccountNumber("110054999999")
-                .amount(20000)
-                .content("최영환")
                 .build();
         Long tradeId = 1L;
 
-        given(tradeService.createTrade(any(CreateTradeDto.class)))
+        given(tradeService.createTrade(any(CreateTradeDto.class), anyString()))
                 .willReturn(tradeId);
 
         mockMvc.perform(
                         post("/trade")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -75,18 +74,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("accountId").type(JsonFieldType.NUMBER)
                                         .description("출금 계좌 식별키"),
-                                fieldWithPath("withdrawalAccountNumber").type(JsonFieldType.STRING)
-                                        .description("출금 계좌 번호"),
                                 fieldWithPath("qrCodeId").type(JsonFieldType.NUMBER)
-                                        .description("보증금 QR 코드 식별키"),
-                                fieldWithPath("qrCodeTitle").type(JsonFieldType.STRING)
-                                        .description("보증금 QR 코드 이름"),
-                                fieldWithPath("depositAccountNumber").type(JsonFieldType.STRING)
-                                        .description("입금 계좌 번호"),
-                                fieldWithPath("amount").type(JsonFieldType.NUMBER)
-                                        .description("금액"),
-                                fieldWithPath("content").type(JsonFieldType.STRING)
-                                        .description("출금 계좌 회원 이름")
+                                        .description("보증금 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -97,6 +86,48 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.NUMBER)
                                         .description("거래내역 식별키")
+                        )
+                ));
+    }
+
+    @DisplayName("간편 송금 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void simpleTrade() throws Exception {
+        SimpleTradeRequest request = SimpleTradeRequest.builder()
+                .accountId(1L)
+                .simpleQrCodeId(1L)
+                .build();
+
+        given(tradeService.simpleTrade(any(SimpleTradeDto.class), anyString()))
+                .willReturn(true);
+
+        mockMvc.perform(
+                        post("/trade/simple")
+                                .header("Authentication", "test")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("simple-trade",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("accountId").type(JsonFieldType.NUMBER)
+                                        .description("출금 계좌 식별키"),
+                                fieldWithPath("simpleQrCodeId").type(JsonFieldType.NUMBER)
+                                        .description("간편 송금 QR 코드 식별키")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("송금 성공 여부")
                         )
                 ));
     }
@@ -131,6 +162,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/withdrawal/wait")
+                                .header("Authentication", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -194,6 +226,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/withdrawal/done")
+                                .header("Authentication", "test")
                                 .param("lastTradeId", "2")
                 )
                 .andDo(print())
@@ -265,6 +298,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/deposit")
+                                .header("Authentication", "test")
                                 .param("lastQrCodeId", "2")
                 )
                 .andDo(print())
@@ -272,8 +306,8 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .andDo(document("search-deposits",
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                          parameterWithName("lastQrCodeId")
-                                  .description("마지막으로 조회된 QR 코드 식별키")
+                                parameterWithName("lastQrCodeId")
+                                        .description("마지막으로 조회된 QR 코드 식별키")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -339,6 +373,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/trade/deposit/detail")
+                                .header("Authentication", "test")
                                 .param("qrCodeId", qrCodeId)
                                 .param("lastTradeId", "2")
                 )
@@ -399,6 +434,7 @@ public class TradeControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("보증금 반환 API")
     @Test
+    @WithMockUser(roles = "MEMBER")
     void returnDeposit() throws Exception {
         ReturnDepositRequest request1 = ReturnDepositRequest.builder()
                 .tradeId(1L)
@@ -421,11 +457,12 @@ public class TradeControllerDocsTest extends RestDocsSupport {
                 .returnRequests(requests)
                 .build();
 
-        given(tradeService.returnDeposits(anyList()))
+        given(tradeService.returnDeposits(anyList(), anyString()))
                 .willReturn(true);
 
         mockMvc.perform(
                         post("/trade/deposit")
+                                .header("Authentication", "test")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

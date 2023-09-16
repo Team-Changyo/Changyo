@@ -1,15 +1,47 @@
 export interface IAccount {
-	key: number;
-	alias: string;
+	accountId: number;
 	accountNumber: string;
+	balance: number;
 	bankCode: string;
-	accountHolder: string;
+	mainAccount: boolean;
+	title: string;
 }
 
-export interface IHistory {
-	key: number;
-	title: string;
-	time: string;
-	price: number;
+// 점주 계좌
+export interface IStoreAccount {
+	memberName: string;
+	amount: number;
+	bankCode: string;
+	accountNumber: string;
+}
+// 점주 계좌 (보증금 송금 시 사용)
+export interface IDepositStoreAccount extends IStoreAccount {
+	qrCodeId: number;
+	qrCodeTitle: string;
+	productName: string;
+}
+
+// 점주 계좌 (보증금 송금 시 사용)
+export interface INormalStoreAccount extends IStoreAccount {
+	simpleQrCodeId: number;
+}
+
+export interface IDetailInfo {
+	accountId: number;
+	accountNumber: string;
 	balance: number;
+	bankCode: string;
+	title: string;
+	allTradeResponses: {
+		[date: string]: ITradeHistory[];
+	};
+}
+export interface ITradeHistory {
+	tradeDate: string;
+	tradeTime: string;
+	content: string;
+	balance: number;
+	withdrawalAmount: number;
+	depositAmount: number;
+	status: number;
 }

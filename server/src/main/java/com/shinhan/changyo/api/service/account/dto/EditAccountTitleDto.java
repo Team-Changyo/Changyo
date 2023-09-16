@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EditAccountTitleDto {
     private String title;
-
     private Long accountId;
+    private String loginId;
 
     @Builder
-    public EditAccountTitleDto(String title, Long accountId) {
+    public EditAccountTitleDto(String title, Long accountId, String loginId) {
         this.title = title;
         this.accountId = accountId;
+        this.loginId = loginId;
     }
 
 }

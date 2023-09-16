@@ -33,7 +33,7 @@ public class Account extends TimeBaseEntity {
     private String productName;
     @Column(nullable = false, length = 20)
     private String customerName;
-    @Column(unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String title;
     @Column(nullable = false)
     private Boolean mainAccount;
@@ -87,5 +87,9 @@ public class Account extends TimeBaseEntity {
         }else{
             this.mainAccount = true;
         }
+    }
+
+    public void remove() {
+        this.active = false;
     }
 }

@@ -2,23 +2,33 @@ import React from 'react';
 import { ReactComponent as Shinhan } from 'assets/icons/banklogo/088.svg';
 import { formatMoney } from 'utils/common/formatMoney';
 import { useNavigate } from 'react-router-dom';
+import { IAccount } from 'types/account';
+import { formatBankCode } from 'utils/common/formatBankCode';
 import { AccountListItemContainer } from './style';
 
 interface AccountListItemProps {
-	isMainAccount: boolean;
+	account: IAccount;
 }
 
-function AccountListItem({ isMainAccount }: AccountListItemProps) {
+function AccountListItem({ account }: AccountListItemProps) {
 	const navigate = useNavigate();
-	const balance = formatMoney(20000);
+	const balance = formatMoney(account?.balance);
+	const bankName = formatBankCode(account?.bankCode);
 
 	return (
-		<AccountListItemContainer onClick={() => navigate('/account/1')}>
+		<AccountListItemContainer onClick={() => navigate(`/account/${account.accountId}`)}>
 			<div className="bank-logo">
 				<Shinhan />
 			</div>
 			<div className="account-info">
-				<div className="alias">항상 가난한 내 신한 {isMainAccount ? '👑' : ''}</div>
+				<div>
+					{account.title} {account?.mainAccount ? '👑' : ''}
+				</div>
+				<div className="alias">
+					<span className="bankname">
+						{bankName} {account.accountNumber}
+					</span>
+				</div>
 				<div className="balance">{balance} 원</div>
 			</div>
 			<div className="detail-btn">

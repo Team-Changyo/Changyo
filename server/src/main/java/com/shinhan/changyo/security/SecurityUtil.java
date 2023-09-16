@@ -10,6 +10,10 @@ public class SecurityUtil {
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("No authentication information");
         }
+        if(authentication.getName().equals("anonymousUser")){
+            throw new SecurityException("로그인이 필요합니다.");
+        }
+
         return authentication.getName();
     }
 }

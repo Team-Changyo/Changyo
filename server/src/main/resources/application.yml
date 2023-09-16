@@ -1,13 +1,19 @@
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
   # database setting
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa
     password:
+    driver-class-name: org.h2.Driver
   # h2 setting
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true
   # jpa setting
   jpa:
     hibernate:
@@ -17,6 +23,7 @@ spring:
         default_batch_fetch_size: 100
         format_sql: true
     open-in-view: true
+    defer-datasource-initialization: true
 
 # log setting
 logging:
@@ -28,5 +35,4 @@ jwt:
   secret: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 changyo-account:
-  id: 1
-  accountNumber: 110291999999
+  accountNumber: 110112999999

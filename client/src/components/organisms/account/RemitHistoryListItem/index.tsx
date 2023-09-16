@@ -1,26 +1,33 @@
 import React from 'react';
 import { ReactComponent as Shinhan } from 'assets/icons/account/coin.svg';
-import { IHistory } from 'types/account';
 import { formatMoney } from 'utils/common/formatMoney';
+import { ITradeHistory } from 'types/account';
 import { RemitHistoryListItemContainer } from './style';
 
 interface RemitHistoryListItemProps {
-	history: IHistory;
+	history: ITradeHistory;
 }
 
 function RemitHistoryListItem({ history }: RemitHistoryListItemProps) {
+	const formattedMoney = formatMoney(history.balance);
+
+	console.log(history.withdrawalAmount);
 	return (
 		<RemitHistoryListItemContainer>
 			<div className="history-logo">
 				<Shinhan />
 			</div>
 			<div className="history-info">
-				<span className="title">{history.title}</span>
-				<span className="time">{history.time}</span>
+				<span className="title">{history.content}</span>
+				<span className="time">{history.tradeTime}</span>
 			</div>
 			<div className="history-money-info">
-				<span className="price">{formatMoney(history.price)}원</span>
-				<span className="balance">{formatMoney(history.balance)}원</span>
+				{history.withdrawalAmount === 0 ? (
+					<span className="price primary">{`${formatMoney(history.depositAmount)}원`}</span>
+				) : (
+					<span className="price">-{`${formatMoney(history.withdrawalAmount)}원`}</span>
+				)}
+				<span className="balance">{formattedMoney}원</span>
 			</div>
 		</RemitHistoryListItemContainer>
 	);

@@ -13,7 +13,9 @@ public class ReturnDepositRequest {
 
     @NotNull
     private Long tradeId;
+    @NotNull
     private int amount;
+    @NotNull
     private int fee;
     private String reason;
     private String description;

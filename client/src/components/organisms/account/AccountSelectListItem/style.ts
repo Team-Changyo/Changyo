@@ -24,5 +24,8 @@ export const AccountSelectListItemContainer = styled.li`
 	}
 	.change {
 		display: flex;
+		&:hover {
+			cursor: pointer;
+		}
 	}
 `;

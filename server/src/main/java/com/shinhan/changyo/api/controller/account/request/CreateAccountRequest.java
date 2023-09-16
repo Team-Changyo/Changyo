@@ -1,6 +1,7 @@
 package com.shinhan.changyo.api.controller.account.request;
 
 import com.shinhan.changyo.api.service.account.dto.CreateAccountDto;
+import com.shinhan.changyo.client.response.DetailResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,38 +12,30 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class CreateAccountRequest {
-    @NotNull
-    private Long memberId;
-    @NotBlank
-    private String customerName;
     @NotBlank
     private String bankCode;
     @NotBlank
     private String accountNumber;
     @NotBlank
-    private String productName;
-    @NotBlank    private String title;
+    private String title;
     @NotNull
     private Boolean mainAccount;
 
     @Builder
-    public CreateAccountRequest(Long memberId, String customerName, String bankCode, String accountNumber, String productName, String title, Boolean mainAccount) {
-        this.memberId = memberId;
-        this.customerName = customerName;
+    public CreateAccountRequest(String bankCode, String accountNumber, String title, Boolean mainAccount) {
         this.bankCode = bankCode;
         this.accountNumber = accountNumber;
-        this.productName = productName;
         this.title = title;
         this.mainAccount = mainAccount;
     }
 
-    public CreateAccountDto toCreateAccountDto() {
+    public CreateAccountDto toCreateAccountDto(DetailResponse response, String loginId) {
         return CreateAccountDto.builder()
-                .memberId(this.memberId)
-                .customerName(this.customerName)
+                .loginId(loginId)
+                .customerName(response.getCustomerName())
                 .bankCode(this.bankCode)
                 .accountNumber(this.accountNumber)
-                .productName(this.productName)
+                .productName(response.getProductName())
                 .title(this.title)
                 .mainAccount(this.mainAccount)
                 .build();

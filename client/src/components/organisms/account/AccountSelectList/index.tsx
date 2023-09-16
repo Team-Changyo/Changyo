@@ -11,11 +11,15 @@ function AccountSelectList({
 }) {
 	return (
 		<div>
-			{accounts.map((el) => (
-				<div key={el.key} onClick={() => setSelected(el)} role="presentation">
-					<AccountSelectListItem account={el} />
-				</div>
-			))}
+			{accounts.length ? (
+				accounts.map((el) => (
+					<div key={el.accountId} onClick={() => setSelected(el)} role="presentation">
+						<AccountSelectListItem account={el} />
+					</div>
+				))
+			) : (
+				<div />
+			)}
 		</div>
 	);
 }

@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CheckAuthenticationRequest {
 
+    private String accountNumber;
     private String authenticationNumber;
 
     @Builder
-    private CheckAuthenticationRequest(String authenticationNumber) {
+    private CheckAuthenticationRequest(String accountNumber, String authenticationNumber) {
+        this.accountNumber = accountNumber;
         this.authenticationNumber = authenticationNumber;
     }
 }

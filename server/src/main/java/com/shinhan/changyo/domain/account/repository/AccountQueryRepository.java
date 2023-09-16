@@ -30,20 +30,24 @@ public class AccountQueryRepository {
     /**
      * 회원별 계좌 전체 조회
      *
-     * @param memberId 계좌 조회할 회원 식별키
+     * @param loginId 회원 로그인 아이디
      * @return 계좌 개수, 계좌 정보 목록
      */
-    public List<AccountDetailResponse> getAccountsByMemberId(Long memberId) {
+    public List<AccountDetailResponse> getAccountsByMemberId(String loginId) {
         return queryFactory
                 .select(Projections.constructor(AccountDetailResponse.class,
+                        account.id,
                         account.accountNumber,
                         account.balance,
                         account.bankCode,
-                        account.mainAccount
+                        account.mainAccount,
+                        account.title
                 ))
                 .from(account)
                 .join(account.member, member)
-                .where(account.member.id.eq(memberId))
+                .where(account.member.loginId.eq(loginId),
+                        account.active.eq(true))
+                .orderBy(account.mainAccount.desc())
                 .fetch();
     }
 
@@ -58,18 +62,43 @@ public class AccountQueryRepository {
                 .select(account.count())
                 .from(account)
                 .join(account.member, member)
-                .where(account.member.id.eq(memberId))
+                .where(account.member.id.eq(memberId),
+                        account.active.eq(true))
                 .fetchFirst().intValue();
     }
 
-    public List<Account> getAccountsByMainAccountOrId(Long accountId) {
-        BooleanExpression condition = account.mainAccount.eq(true)
-                .or(account.id.eq(accountId));
 
+    public Account getMainAccountsById(Long id) {
         return queryFactory
                 .select(account)
-                .where(condition)
-                .orderBy(account.mainAccount.desc())
+                .from(account)
+                .where(account.mainAccount.eq(true),
+                        account.member.id.eq(id),
+                        account.active.eq(true))
+                .fetchOne();
+    }
+
+    public Boolean checkIsExistByAccountNumber(String accountNumber) {
+        return queryFactory
+                .selectOne()
+                .from(account)
+                .where(account.accountNumber.eq(accountNumber),
+                        account.active.eq(true))
+                .fetchFirst() != null;
+    }
+
+    /**
+     * 계좌 식별키 목록 조회
+     *
+     * @param loginId 조회할 회원 로그인 아이디
+     * @return 해당 회원이 가진 계좌 식별키 목록
+     */
+    public List<Long> getAccountIdsByLoginId(String loginId) {
+        return queryFactory.select(account.id)
+                .from(account)
+                .join(account.member, member)
+                .where(member.loginId.eq(loginId),
+                        account.active.eq(true))
                 .fetch();
     }
 }
