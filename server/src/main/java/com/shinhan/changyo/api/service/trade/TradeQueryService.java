@@ -71,7 +71,9 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 입금내역 목록
      */
     public DepositResponse getDepositTrades(String loginId, Long lastQrCodeId) {
-        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId);
+        Long result = qrCodeQueryRepository.getDepositTradesTotalCount(loginId);
+        int totalCount = castToIntOrDefault(result);
+
         List<QrCodeTradeDto> qrCodeTrades = qrCodeQueryRepository.getQrCodesByLoginId(loginId, lastQrCodeId);
         log.debug("qrCodeTrades={}", qrCodeTrades);
 
