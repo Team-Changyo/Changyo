@@ -151,7 +151,7 @@ values (1, 1, '이체', 20000, 20000, '김신한', 33155100, 'WAIT', '챙겨요'
 
 create table if not exists report
 (
-    report             bigint primary key not null auto_increment,
+    report_id             bigint primary key not null auto_increment,
     member_id          bigint             not null,
     deposit_trade_id   bigint             not null,
     reason             varchar(50)        not null,

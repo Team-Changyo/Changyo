@@ -44,10 +44,6 @@ public class TradeController {
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        if (request.getWithdrawalAccountNumber().equals(request.getDepositAccountNumber())) {
-            throw new IllegalArgumentException("동일한 계좌 번호입니다.");
-        }
-
         Long saveId = tradeService.createTrade(request.toCreateTradeDto(), loginId);
         log.debug("saveId={}", saveId);
 
@@ -61,16 +57,16 @@ public class TradeController {
      * @return HttpStatus.OK
      */
     @PostMapping("/simple")
-    public ApiResponse<?> simpleTrade(@Valid @RequestBody SimpleTradeRequest request) {
+    public ApiResponse<Boolean> simpleTrade(@Valid @RequestBody SimpleTradeRequest request) {
         log.debug("TransferController#getSimpleQrTransferInfo call");
         log.debug("SimpleTransferRequest={}", request);
 
         String loginId = SecurityUtil.getCurrentLoginId();
         log.debug("loginId={}", loginId);
 
-        tradeService.simpleTrade(request.toSimpleTransferDto(), loginId);
+        Boolean result = tradeService.simpleTrade(request.toSimpleTransferDto(), loginId);
 
-        return ApiResponse.ok(null);
+        return ApiResponse.ok(result);
     }
 
     /**

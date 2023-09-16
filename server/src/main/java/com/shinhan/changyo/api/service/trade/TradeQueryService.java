@@ -2,7 +2,7 @@ package com.shinhan.changyo.api.service.trade;
 
 import com.shinhan.changyo.api.controller.trade.response.*;
 import com.shinhan.changyo.api.service.trade.dto.DepositDetailDto;
-import com.shinhan.changyo.api.service.trade.dto.QRCodeTradeDto;
+import com.shinhan.changyo.api.service.trade.dto.QrCodeTradeDto;
 import com.shinhan.changyo.domain.qrcode.repository.QrCodeQueryRepository;
 import com.shinhan.changyo.domain.trade.TradeStatus;
 import com.shinhan.changyo.domain.trade.repository.TradeQueryRepository;
@@ -71,21 +71,23 @@ public class TradeQueryService {
      * @return 해당 회원의 보증금 입금내역 목록
      */
     public DepositResponse getDepositTrades(String loginId, Long lastQrCodeId) {
-        int totalCount = tradeQueryRepository.getDepositTradesTotalCount(loginId);
-        List<DepositOverviewResponse> overviews = qrCodeQueryRepository.getQrCodesByLoginId(loginId, lastQrCodeId);
-        log.debug("overviews={}", overviews);
+        Long result = qrCodeQueryRepository.getDepositTradesTotalCount(loginId);
+        int totalCount = castToIntOrDefault(result);
 
-        overviews = overviews.stream().map(overview -> DepositOverviewResponse.builder()
-                        .qrCodeId(overview.getQrCodeId())
-                        .qrCodeTitle(overview.getQrCodeTitle())
-                        .amount(overview.getAmount())
-                        .remainCount(getWaitDepositCountByQrCodeId(overview.getQrCodeId()))
-                        .remainTotal(getWaitTotalAmountByQrCodeId(overview.getQrCodeId()))
+        List<QrCodeTradeDto> qrCodeTrades = qrCodeQueryRepository.getQrCodesByLoginId(loginId, lastQrCodeId);
+        log.debug("qrCodeTrades={}", qrCodeTrades);
+
+        List<DepositOverviewResponse> overviews = qrCodeTrades.stream().map(qrCodeTrade -> DepositOverviewResponse.builder()
+                        .qrCodeId(qrCodeTrade.getQrCodeId())
+                        .qrCodeTitle(qrCodeTrade.getTitle())
+                        .amount(qrCodeTrade.getAmount())
+                        .remainCount(getWaitDepositCountByQrCodeId(qrCodeTrade.getQrCodeId()))
+                        .remainTotal(getWaitTotalAmountByQrCodeId(qrCodeTrade.getQrCodeId()))
                         .build()
                 )
                 .collect(Collectors.toList());
 
-        boolean hasNextPage = checkHasNextPage(overviews);
+        boolean hasNextPage = checkHasNextPage(qrCodeTrades);
 
         return DepositResponse.of(hasNextPage, totalCount, overviews);
     }
@@ -98,7 +100,7 @@ public class TradeQueryService {
      * @return 보증금 정산관리 상세조회 목록
      */
     public DepositDetailResponse getDepositDetails(Long qrCodeId, Long lastTradeId) {
-        QRCodeTradeDto qrCodeTrade = getQrCodeTrade(qrCodeId);
+        QrCodeTradeDto qrCodeTrade = getQrCodeTrade(qrCodeId);
 
         int waitCount = getWaitDepositCountByQrCodeId(qrCodeId);
         int doneCount = getDoneDepositCountByQrCodeId(qrCodeId);
@@ -160,8 +162,8 @@ public class TradeQueryService {
      * @param qrCodeId QR 코드 식별키
      * @return QR 코드 이름, 거래 금액
      */
-    private QRCodeTradeDto getQrCodeTrade(Long qrCodeId) {
-        QRCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
+    private QrCodeTradeDto getQrCodeTrade(Long qrCodeId) {
+        QrCodeTradeDto qrCodeTrade = qrCodeQueryRepository.getQrCodeTitleAndAmount(qrCodeId);
         if (qrCodeTrade == null) {
             throw new NoSuchElementException("존재하지 않는 보증금 정산내역입니다.");
         }
@@ -178,7 +180,7 @@ public class TradeQueryService {
      * @param totalAmount 총 금액
      * @return 보증금 정산관리 상세조회 목록
      */
-    private DepositDetailResponse createDepositDetailResponse(QRCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount, int totalAmount) {
+    private DepositDetailResponse createDepositDetailResponse(QrCodeTradeDto qrCodeTrade, List<DepositDetailDto> deposits, int waitCount, int doneCount, int totalAmount) {
         List<DepositDetailDto> waitDetails = filterWaitDepositDetails(deposits);
         List<DepositDetailDto> doneDetails = filterDoneDepositDetails(deposits);
         boolean hasNextPage = checkHasNextPage(deposits);
