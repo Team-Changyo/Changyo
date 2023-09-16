@@ -5,7 +5,7 @@ import com.shinhan.changyo.api.controller.account.request.AccountTradeRequest;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
 import com.shinhan.changyo.api.controller.account.response.*;
-import com.shinhan.changyo.api.controller.trade.request.AccountRequest;
+import com.shinhan.changyo.api.controller.account.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;

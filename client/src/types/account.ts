@@ -7,15 +7,23 @@ export interface IAccount {
 	title: string;
 }
 
-// 점주 계좌 (보증금 송금 시 사용)
+// 점주 계좌
 export interface IStoreAccount {
-	qrCodeId: number;
-	qrCodeTitle: string;
+	memberName: string;
 	amount: number;
 	bankCode: string;
 	accountNumber: string;
+}
+// 점주 계좌 (보증금 송금 시 사용)
+export interface IDepositStoreAccount extends IStoreAccount {
+	qrCodeId: number;
+	qrCodeTitle: string;
 	productName: string;
-	memberName: string;
+}
+
+// 점주 계좌 (보증금 송금 시 사용)
+export interface INormalStoreAccount extends IStoreAccount {
+	simpleQrCodeId: number;
 }
 
 export interface IDetailInfo {

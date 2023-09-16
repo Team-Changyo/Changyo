@@ -13,7 +13,6 @@ function DepositHistoryListStack() {
 		try {
 			const response = await findAllWaitRemitHistoryApi();
 
-			console.log('wait', response);
 			if (response.status === 200) {
 				setWaitHistories(response.data.data.waitWithdrawals);
 			}
@@ -26,7 +25,6 @@ function DepositHistoryListStack() {
 		try {
 			const response = await findAllDoneRemitHistoryApi();
 
-			console.log('done', response);
 			if (response.status === 200) {
 				setDoneHistories(response.data.data.doneWithdrawals);
 			}
@@ -55,7 +53,7 @@ function DepositHistoryListStack() {
 				{doneHistories.length ? (
 					<DepositHistoryList histories={doneHistories} isDone />
 				) : (
-					<div>반환 대기중인 정산건이 없습니다.</div>
+					<div>반환 완료된 정산건이 없습니다.</div>
 				)}
 			</div>
 		</DepositHistoryListStackContainer>

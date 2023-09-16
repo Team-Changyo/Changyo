@@ -10,27 +10,24 @@ import RemittanceInfo from 'components/organisms/remittance/RemittanceInfo';
 import ToAccountInfo from 'components/organisms/remittance/ToAccountInfo';
 import FromAccountInfo from 'components/organisms/remittance/FromAccountInfo';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { findRemitInfoApi, remitDepositApi } from 'utils/apis/trade';
-import { IAccount, IStoreAccount } from 'types/account';
+import { findDepositRemitInfoApi, remitDepositApi } from 'utils/apis/trade';
+import { IAccount, IDepositStoreAccount } from 'types/account';
 import queryString from 'query-string';
-import { useRecoilState } from 'recoil';
-import { memberInfoState } from 'store/member';
 import RemittingPage from './RemittingPage';
 
 function RemittanceDepositPage() {
-	const [memberInfo] = useRecoilState(memberInfoState);
 	const [remitting, setRemitting] = useState(false);
 	const { search } = useLocation();
 	const { qrCodeId } = queryString.parse(search);
 
 	const navigate = useNavigate();
-	const [storeAccount, setStoreAccount] = useState<IStoreAccount>();
+	const [storeAccount, setStoreAccount] = useState<IDepositStoreAccount>();
 	const [clientAccount, setClientAccount] = useState<IAccount>();
 
 	const fetchData = async () => {
 		try {
 			if (qrCodeId) {
-				const response = await findRemitInfoApi(qrCodeId as string);
+				const response = await findDepositRemitInfoApi(qrCodeId as string);
 				console.log(response);
 				if (response.status === 200) {
 					const resObj = response.data.data;
@@ -51,12 +48,7 @@ function RemittanceDepositPage() {
 		try {
 			const body = {
 				accountId: clientAccount?.accountId as number,
-				withdrawalAccountNumber: clientAccount?.accountNumber as string,
 				qrCodeId: storeAccount?.qrCodeId as number,
-				qrCodeTitle: storeAccount?.qrCodeTitle as string,
-				depositAccountNumber: storeAccount?.accountNumber as string,
-				amount: storeAccount?.amount as number,
-				content: memberInfo?.name as string,
 			};
 
 			const response = await remitDepositApi(body);
@@ -102,7 +94,7 @@ function RemittanceDepositPage() {
 				Navbar={<SubTabNavbar text="보증금 송금" closePath="/" type="close" />}
 				RemittanceInfo={<RemittanceInfo isDepositRequest depositTitle={storeAccount?.qrCodeTitle} />}
 				ToAccountInfoTitle={<OptionTitleText text="입금할 계좌" />}
-				ToAccountInfo={<ToAccountInfo />}
+				ToAccountInfo={<ToAccountInfo storeAccount={storeAccount} />}
 				FromAccountInfoTitle={<OptionTitleText text="출금할 내 계좌" />}
 				FromAccountInfo={<FromAccountInfo account={clientAccount as IAccount} />}
 				MoneyUnitTitle={<OptionTitleText text="보낼 금액" />}
