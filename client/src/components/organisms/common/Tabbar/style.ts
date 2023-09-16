@@ -12,7 +12,7 @@ export const TabContainer = styled.nav`
 	display: flex;
 	width: 100%;
 	max-width: 500px;
-	height: 56px;
+	height: 80px;
 	margin: 0 auto;
 `;
 
@@ -27,7 +27,7 @@ export const TabBackground = styled.div`
 
 	#box {
 		width: 40px;
-		height: 40px;
+		height: 64px;
 		background-color: var(--white-color);
 		z-index: 10;
 	}
@@ -37,7 +37,7 @@ export const TabBackground = styled.div`
 		display: inline-block;
 		background: var(--white-color);
 		width: 50%;
-		height: 56px;
+		height: 80px;
 		box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.16);
 		border-radius: 0 2rem 0 0;
 	}
@@ -47,7 +47,7 @@ export const TabBackground = styled.div`
 		display: inline-block;
 		background: var(--white-color);
 		width: 50%;
-		height: 56px;
+		height: 80px;
 		box-shadow: 0 0 0.4rem 0 rgba(0, 0, 0, 0.16);
 		border-radius: 2rem 0 0 0;
 	}
