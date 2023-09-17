@@ -74,8 +74,7 @@ public class TransferQueryRepository {
                 .join(account.member, member)
                 .where(
                         qrCode.qrCodeId.eq(qrCodeId),
-                        qrCode.active.eq(true),
-                        account.mainAccount.eq(true)
+                        qrCode.active.eq(true)
                 )
                 .fetchOne();
     }
