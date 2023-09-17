@@ -189,4 +189,21 @@ public class AccountController {
 
         return ApiResponse.found(result);
     }
+
+    /**
+     * 주계좌 소유 여부 확인 API
+     *
+     * @return true: 로그인한 회원이 주계좌 소유시 false: 주계좌를 소유하지 않은 경우
+     */
+    @GetMapping("/account/main")
+    public ApiResponse<Boolean> hasMainAccount() {
+        log.debug("AccountController#hasMainAccount called");
+
+        String loginId = SecurityUtil.getCurrentLoginId();
+        log.debug("loginId={}", loginId);
+
+        Boolean result = accountQueryService.hasMainAccount(loginId);
+
+        return ApiResponse.ok(result);
+    }
 }
