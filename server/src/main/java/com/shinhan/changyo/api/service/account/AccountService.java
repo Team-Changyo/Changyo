@@ -70,14 +70,6 @@ public class AccountService {
 
         CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
 
-        // 주계좌 소유 여부 확인
-        if (dto.getMainAccount()) {
-            Integer size = accountQueryRepository.getMainAccountSizeByLoginId(loginId);
-            if (size != null && size >= 1) {
-                throw new DuplicateException("주계좌는 한번에 하나만 등록할 수 있습니다.");
-            }
-        }
-        
         Account savedAccount = saveAccount(dto, member);
 
         return savedAccount.getId();
