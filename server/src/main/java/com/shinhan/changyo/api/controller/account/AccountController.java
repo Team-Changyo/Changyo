@@ -195,7 +195,7 @@ public class AccountController {
      *
      * @return true: 로그인한 회원이 주계좌 소유시 false: 주계좌를 소유하지 않은 경우
      */
-    @GetMapping("/account/main")
+    @GetMapping("/main")
     public ApiResponse<Boolean> hasMainAccount() {
         log.debug("AccountController#hasMainAccount called");
 
