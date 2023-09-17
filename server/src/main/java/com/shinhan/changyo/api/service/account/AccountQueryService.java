@@ -22,7 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -101,11 +104,22 @@ public class AccountQueryService {
                 .build();
     }
 
+    /**
+     * 주계좌 소유 여부 확인
+     *
+     * @param loginId 현재 로그인한 회원의 로그인 아이디
+     * @return true: 해당 회원이 주계좌를 가지고 있는 경우 false: 해당 회원이 주계좌를 가지고 있지 않은 경우
+     */
+    public Boolean hasMainAccount(String loginId) {
+        Long size = accountQueryRepository.getMainAccountSizeByLoginId(loginId);
+        return size != null && size >= 1;
+    }
 
     private LocalDate getFormattedLocalDate(DateTimeFormatter dateTimeFormatter, String tradeDate) {
         tradeDate = String.format("%s-%s-%s", tradeDate.substring(0, 4), tradeDate.substring(4, 6), tradeDate.substring(6, 8));
         return LocalDate.parse(tradeDate, dateTimeFormatter);
     }
+
     /**
      * account Id로 계좌 찾기
      *
@@ -121,7 +135,7 @@ public class AccountQueryService {
     /**
      * 계좌가 로그인한 유저의 계좌인지 확인
      *
-     * @param loginId 로그인 아이디
+     * @param loginId     로그인 아이디
      * @param findAccount 계좌정보
      * @throws ForbiddenException 접근 권한 없음
      */

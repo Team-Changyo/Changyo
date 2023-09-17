@@ -50,7 +50,7 @@ public class AccountService {
      * @param loginId 현재 로그인한 회원 정보
      * @return 등록된 계좌 식별키
      * @throws NoSuchElementException 신한 api 서버에 계좌정보가 존재하지 않는 경우
-     * @throws DuplicateException 신한 api 서버에서 등록된 계좌가 챙겨요 계좌에 이미 등록 되어있는 경우
+     * @throws DuplicateException     신한 api 서버에서 등록된 계좌가 챙겨요 계좌에 이미 등록 되어있는 경우
      */
     public Long createAccount(CreateAccountRequest request, String loginId) {
         Member member = getMember(loginId);
@@ -69,6 +69,14 @@ public class AccountService {
         }
 
         CreateAccountDto dto = request.toCreateAccountDto(response.getData(), loginId);
+
+        // 주계좌 소유 여부 확인
+        if (dto.getMainAccount()) {
+            Long size = accountQueryRepository.getMainAccountSizeByLoginId(loginId);
+            if (size != null && size >= 1) {
+                throw new DuplicateException("주계좌는 한번에 하나만 등록할 수 있습니다.");
+            }
+        }
 
         Account savedAccount = saveAccount(dto, member);
 
@@ -193,6 +201,7 @@ public class AccountService {
 
     /**
      * 계좌 거래내역 상세 조회 API 요청 객체 생성
+     *
      * @param accountNumber 계좌 번호
      * @return 요청 객체
      */
@@ -233,8 +242,8 @@ public class AccountService {
      * @param member
      * @throws ForbiddenException Member.active 가 false인 경우
      */
-    private void checkMemberActive(Member member){
-        if(!member.getActive()){
+    private void checkMemberActive(Member member) {
+        if (!member.getActive()) {
             throw new ForbiddenException("회원 정보가 없습니다");
         }
     }
@@ -253,8 +262,8 @@ public class AccountService {
         }
     }
 
-    private void checkAccountActive(Account account){
-        if(!account.getActive()){
+    private void checkAccountActive(Account account) {
+        if (!account.getActive()) {
             throw new NoAccountException("계좌 정보가 없습니다.");
         }
     }
