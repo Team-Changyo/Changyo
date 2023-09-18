@@ -1,7 +1,6 @@
 package com.shinhan.changyo.domain.account.repository;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shinhan.changyo.api.controller.account.response.AccountDetailResponse;
 import com.shinhan.changyo.domain.account.Account;
@@ -100,5 +99,22 @@ public class AccountQueryRepository {
                 .where(member.loginId.eq(loginId),
                         account.active.eq(true))
                 .fetch();
+    }
+
+    /**
+     * 로그인 중인 회원의 주계좌 개수 조회
+     *
+     * @param loginId 로그인 중인 회읜의 로그인 아이디
+     * @return 로그인 중인 회원의 주계좌 개수
+     */
+    public Long getMainAccountSizeByLoginId(String loginId) {
+        return queryFactory
+                .select(account.count())
+                .from(account)
+                .join(account.member, member)
+                .where(
+                        member.loginId.eq(loginId)
+                )
+                .fetchOne();
     }
 }

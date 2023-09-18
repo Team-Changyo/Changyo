@@ -86,3 +86,13 @@ include::{snippets}/search-account-detail-withdrawal/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/search-account-detail-withdrawal/http-response.adoc[]
 include::{snippets}/search-account-detail-withdrawal/response-fields.adoc[]
+
+[[check-main]]
+=== 주계좌 소유 여부 확인
+
+==== HTTP Request
+include::{snippets}/check-main/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/check-main/http-response.adoc[]
+include::{snippets}/check-main/response-fields.adoc[]

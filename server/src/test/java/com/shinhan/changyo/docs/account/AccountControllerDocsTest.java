@@ -1,11 +1,11 @@
 package com.shinhan.changyo.docs.account;
 
 import com.shinhan.changyo.api.controller.account.AccountController;
+import com.shinhan.changyo.api.controller.account.request.AccountRequest;
 import com.shinhan.changyo.api.controller.account.request.AccountTradeRequest;
 import com.shinhan.changyo.api.controller.account.request.CreateAccountRequest;
 import com.shinhan.changyo.api.controller.account.request.EditAccountTitleRequest;
 import com.shinhan.changyo.api.controller.account.response.*;
-import com.shinhan.changyo.api.controller.account.request.AccountRequest;
 import com.shinhan.changyo.api.service.account.AccountQueryService;
 import com.shinhan.changyo.api.service.account.AccountService;
 import com.shinhan.changyo.api.service.account.dto.AccountDto;
@@ -656,6 +656,36 @@ public class AccountControllerDocsTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.BOOLEAN)
                                         .description("삭제 결과: true 또는 false")
+                        )
+                ));
+    }
+
+    @DisplayName("주계좌 소유 여부 확인 API")
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void hasMainAccount() throws Exception {
+        Boolean result = true;
+
+        given(accountQueryService.hasMainAccount(anyString()))
+                .willReturn(result);
+
+        mockMvc.perform(
+                        get("/account/main")
+                                .header("Authentication", "test")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("check-main",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+                                        .description("확인 결과: true 또는 false")
                         )
                 ));
     }
