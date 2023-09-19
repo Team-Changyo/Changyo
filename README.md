@@ -54,7 +54,7 @@
 |
 
 # Documents
-- [챙겨요_개발기획서](http://naver.me/FLhMlqeH)
+- [챙겨요_개발기획서](http://naver.me/xxRTG8H8)
 - [챙겨요_Figma(Mockup)](http://naver.me/xQ8AVUSt)
 - [챙겨요_ERD](http://naver.me/xRPMvRpR)
-- [챙겨요_발표자료](http://naver.me/xxRTG8H8)
+- [챙겨요_발표자료](http://naver.me/FLhMlqeH)
