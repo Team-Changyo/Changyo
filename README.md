@@ -49,9 +49,8 @@
 |전인혁|임우택|최영환|홍진식|
 |:---:|:---:|:---:|:---:|
 |팀장 / FE|BE|BE|BE|
-|![](https://avatars.githubusercontent.com/u/21137298?v=4)|![](https://avatars.githubusercontent.com/u/74171272?v=4)|![](https://avatars.githubusercontent.com/u/85945540?v=4)|![](https://avatars.githubusercontent.com/u/28581484?v=4)|
+|![](https://avatars.githubusercontent.com/u/21137298?v=4)|![](https://avatars.githubusercontent.com/u/28581484?v=4)|![](https://avatars.githubusercontent.com/u/85945540?v=4)|![](https://avatars.githubusercontent.com/u/74171272?v=4)|
 |[wjs5025](https://github.com/wjs5025)|[Chaos0103](https://github.com/Chaos0103)|[longBright](https://github.com/longBright)|[jinsikhong](https://github.com/jinsikhong)|
-|
 
 # Documents
 - [챙겨요_개발기획서](http://naver.me/xxRTG8H8)
